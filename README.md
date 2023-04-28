@@ -1,8 +1,6 @@
 # ft_irc
-
 This project is about creating our own IRC server.
 We will use an actual IRC client to connect to the server and test it.
-Internet is ruled by solid standards protocols that allow connected computers to interact with each other.
 
 ## IRC 
 **Internet Relay Chat** is a text-based communication protocol on the Internet.
@@ -35,4 +33,7 @@ Executable will be run as follows:
 ### IRC
 - [Internet Relay Chat - Wikipedia](https://en.wikipedia.org/wiki/Internet_Relay_Chat)
 - [RFC 1459: Internet Relay Chat Protocol](https://www.rfc-editor.org/rfc/rfc1459)
+
+### IRC client
+- HexChat: [Client Documentation — HexChat 2.16.0 documentation](https://hexchat.readthedocs.io/en/latest/)
 
