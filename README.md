@@ -27,8 +27,10 @@ Executable will be run as follows:
 	- Have *operators* and regular users.
 	- Implement commands that are specific to operators.
 
-## Documentation
-### Socket Programming
+## Socket Programming
+- [Socket Programming in C/C++ - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-cc/)
+- [Socket Programming in C/C++: Handling multiple clients on server without multi threading - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/)
+
 ### Socket creation
 ```cpp
 int sockfd = socket(domain, type, protocol);
@@ -75,18 +77,11 @@ int new_socket = accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 Extracts the first connection request on the queue of pending connections and creates a new connected socket and return a new file descriptor.
 **At this point the connection is established between client and server, and they are ready to transfer data.**
 
-
 ## References
-- IRC client used: `hexchat`
-
 ### IRC
 - [Internet Relay Chat - Wikipedia](https://en.wikipedia.org/wiki/Internet_Relay_Chat)
 - [RFC 1459: Internet Relay Chat Protocol](https://www.rfc-editor.org/rfc/rfc1459)
 
-### IRC client
+#### IRC client
 - HexChat: [Client Documentation — HexChat 2.16.0 documentation](https://hexchat.readthedocs.io/en/latest/)
-
-### Socket Programming
-- [Socket Programming in C/C++ - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-cc/)
-- [Socket Programming in C/C++: Handling multiple clients on server without multi threading - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/)
 
