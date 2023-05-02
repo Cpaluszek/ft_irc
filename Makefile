@@ -16,8 +16,8 @@ SRC_FILES		:=	main.cpp
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
-OBJS			:=	$(SRC_FILES:%.c=$(BUILD_DIR)/%.o)
-DEPS			:=	$(SRC_FILES:%.c=$(BUILD_DIR)/%.d)
+OBJS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
+DEPS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.d)
 CCDEFS			:=	NAME=\"$(NAME)\"
 
 # Compiler options
@@ -54,7 +54,7 @@ $(NAME): $(OBJS)
 
 -include $(DEPS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c Makefile
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@mkdir -p $(@D)
 	$(CC) $(CC_FLAGS) $(CC_DEPS_FLAGS) $(CC_DEFS_FLAGS) -I$(HEADERS_DIR) -c $< -o $@
 
