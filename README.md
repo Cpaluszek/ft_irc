@@ -27,6 +27,55 @@ Executable will be run as follows:
 	- Have *operators* and regular users.
 	- Implement commands that are specific to operators.
 
+## Documentation
+### Socket Programming
+### Socket creation
+```cpp
+int sockfd = socket(domain, type, protocol);
+```
+
+- *sockfd*: socket descriptor (similar to file descriptor)
+- *domain:* integer, specifies communication domain. 
+	- *AF_LOCAL*: communication between processes on the same host
+	- *AF_INET* - *AF_INET6*: communication between different hosts (IPV4 - 6)
+- *type*: communication type
+	- *SOCK_STREAM*: TCP
+	- *SOCKER_DGRAM*: UDP
+- *protocol*: protocol value for Internet Protocol (IP), which is 0
+	- Same number which appears on protocol field in the IP header of a packer (man protocols)
+
+### Socket options
+```cpp
+int setsockopt(int sockfd, int level, int optname,  const void *optval, socklen_t optlen);
+```
+This helps set the options for the socket referred by the file descriptor.
+Completely optional, but it helps in reuse of address and port.
+- Prevents error such as: "address already in use"
+
+### Bind
+```cpp
+int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+```
+
+After the creation of the socket, this function binds the socket to the address and port number specified.
+
+### Listen
+```cpp
+int listen(int sockfd, int backlog);
+```
+
+Puts the server socket in a passive mode, where it waits for the client to approach the server to make a connection.
+- The backlog, defines the maximum length to which the queue of pending connections for sockdf may grow.
+
+### Accept
+```cpp
+int new_socket = accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+```
+
+Extracts the first connection request on the queue of pending connections and creates a new connected socket and return a new file descriptor.
+**At this point the connection is established between client and server, and they are ready to transfer data.**
+
+
 ## References
 - IRC client used: `hexchat`
 
@@ -36,4 +85,8 @@ Executable will be run as follows:
 
 ### IRC client
 - HexChat: [Client Documentation — HexChat 2.16.0 documentation](https://hexchat.readthedocs.io/en/latest/)
+
+### Socket Programming
+- [Socket Programming in C/C++ - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-cc/)
+- [Socket Programming in C/C++: Handling multiple clients on server without multi threading - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/)
 
