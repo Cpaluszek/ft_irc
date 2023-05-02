@@ -30,7 +30,7 @@ MAKE			:=	make -C
 #########################
 
 all:
-	$(CC) $(CC_FLAGS) src/main.cpp -o serv
+	$(CC) $(CC_FLAGS) src/server.cpp -o serv
 	$(CC) $(CC_FLAGS) src/client.cpp -o client
 
 clean:
