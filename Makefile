@@ -17,15 +17,11 @@ SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
 OBJS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
-DEPS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.d)
-CCDEFS			:=	NAME=\"$(NAME)\"
 
 # Compiler options
 CC				:=	c++
 DEBUG_FLAG		:=	-g3 #-fsanitize=address
 CC_FLAGS		:=	-Wextra -Werror -Wall
-CC_DEPS_FLAGS	:=	-MP -MMD
-CC_DEFS_FLAGS	:=	$(foreach def,$(CCDEFS),-D $(def))
 
 MAKE			:=	make -C
 
@@ -47,16 +43,18 @@ _WHITE			:=	\x1b[37m
 # 		RULES			#
 #########################
 
+socket:
+	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
+	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
+
 all: banner $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@ 
-
--include $(DEPS)
+	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@mkdir -p $(@D)
-	$(CC) $(CC_FLAGS) $(CC_DEPS_FLAGS) $(CC_DEFS_FLAGS) -I$(HEADERS_DIR) -c $< -o $@
+	$(CC) $(CC_FLAGS) -I$(HEADERS_DIR) -c $< -o $@
 
 clean: banner
 	@rm -rf $(BUILD_DIR)
@@ -75,4 +73,4 @@ banner:
 	@echo ""	
 
 
-.PHONY: all clean fclean re force banner
+.PHONY: all clean fclean re banner
