@@ -29,7 +29,6 @@ Executable will be run as follows:
 
 ## Socket Programming
 - [Socket Programming in C/C++ - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-cc/)
-- [Socket Programming in C/C++: Handling multiple clients on server without multi threading - GeeksforGeeks](https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/)
 
 ### Socket creation
 ```cpp
@@ -77,10 +76,46 @@ int new_socket = accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 Extracts the first connection request on the queue of pending connections and creates a new connected socket and return a new file descriptor.
 **At this point the connection is established between client and server, and they are ready to transfer data.**
 
+### `send()`
+This function is used to transmit message to another socket.
+
+```cpp
+ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+```
+The argument *sockfd* is the file descriptor of the sending socket.
+On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately.
+
+### `recv()`
+This function is used to receive message from a socket.
+
+```cpp
+ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+```
+
+### `getaddrinfo()`
+This function is used to obtain a list of socket addresses that match the specified node and service.
+
+**Example:** [getaddrinfo(3) - Linux manual page](https://www.man7.org/linux/man-pages/man3/getaddrinfo.3.html)
+
+-> `freeaddrinfo()` is used to free the allocated memory by `getaddrinfo()`
+
+## Handle multiple clients connections
+The `poll()` or `select()` functions are both used to monitor multiple file descriptors, waiting until one or more file descriptors become "ready" for some class of I/O operations.
+In general `poll()` is more flexible and scalable than `select()`.
+- `poll()` doesn't have the FD_SETSIZE limit of `select()`, which limits the number of fds that can be monitored (1024)
+- `select()` has a timeout parameter that allows the caller to specify how long it should wait
+
+
+|          | `poll()`                                                                                        | `select()`                                                                                                        |
+|----------|-------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| **PROS** | More scalable -> not limit on number of fds<br/> Doesn't modify the descriptor set passed to it | Widely supported on many platforms<br/> Can be faster in some cases                                               |
+| **CONS** | Not as widely supported on some platforms<br/> May be slightly slower than select in some cases | Has a limit on the number of file descriptors that can be monitored<br/> Modifies the descriptor set passed to it |
+
 ## References
 ### IRC
 - [Internet Relay Chat - Wikipedia](https://en.wikipedia.org/wiki/Internet_Relay_Chat)
 - [RFC 1459: Internet Relay Chat Protocol](https://www.rfc-editor.org/rfc/rfc1459)
+- [RFC 2810: Internet Relay Chat: Architecture](https://www.rfc-editor.org/rfc/rfc2810)
 
 #### IRC client
 - HexChat: [Client Documentation — HexChat 2.16.0 documentation](https://hexchat.readthedocs.io/en/latest/)
