@@ -30,8 +30,8 @@ MAKE			:=	make -C
 #########################
 
 all:
-	$(CC) $(CC_FLAGS) src/server.cpp -o serv
-	$(CC) $(CC_FLAGS) src/client.cpp -o client
+	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
+	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
 
 clean:
 	@rm serv client
