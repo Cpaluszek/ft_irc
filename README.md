@@ -112,7 +112,10 @@ In general `poll()` is more flexible and scalable than `select()`.
 | **CONS** | Not as widely supported on some platforms<br/> May be slightly slower than select in some cases | Has a limit on the number of file descriptors that can be monitored<br/> Modifies the descriptor set passed to it |
 
 ## References
-### IRC
+Simple IRC implementation project:
+- [chirc — The UChicago χ-Projects](http://chi.cs.uchicago.edu/chirc/index.html)
+
+### IRC Documentation
 - [Internet Relay Chat - Wikipedia](https://en.wikipedia.org/wiki/Internet_Relay_Chat)
 - [RFC 1459: Internet Relay Chat Protocol](https://www.rfc-editor.org/rfc/rfc1459)
 - [RFC 2810: Internet Relay Chat: Architecture](https://www.rfc-editor.org/rfc/rfc2810)
