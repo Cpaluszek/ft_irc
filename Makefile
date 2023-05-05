@@ -1,29 +1,22 @@
 #########################
 #		VARIABLES		#
 #########################
-
-# Folders and names
-NAME			:=	ircserv	
+NAME			:=	ircserv
 
 HEADERS_DIR		:=	inc
-HEADERS_FILES	:=	irc.hpp
-
+HEADERS_FILES	:=	Server.hpp Client.hpp
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
 SRC_DIR			:=	src
-SRC_FILES		:=	main.cpp
-
+SRC_FILES		:=	main.cpp Server.cpp Client.cpp
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
 OBJS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 
-# Compiler options
 CC				:=	c++
-DEBUG_FLAG		:=	-g3 #-fsanitize=address
-CC_FLAGS		:=	-Wextra -Werror -Wall
-
-MAKE			:=	make -C
+DEBUG_FLAG		:=	-g3
+CC_FLAGS		:=	-Wextra -Werror -Wall -std=c++98 $(DEBUG_FLAG)
 
 # define standard colors
 _END			:=	\x1b[0m
@@ -73,4 +66,4 @@ banner:
 	@echo ""	
 
 
-.PHONY: all clean fclean re banner
+.PHONY: all clean fclean re banner socket
