@@ -36,16 +36,12 @@ _WHITE			:=	\x1b[37m
 # 		RULES			#
 #########################
 
-socket:
-	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
-	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
-
 all: banner $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CC_FLAGS) -I$(HEADERS_DIR) -c $< -o $@
 
@@ -65,5 +61,8 @@ banner:
 	@echo "(__)   (__)(____)(__)(__\_) \___)"
 	@echo ""	
 
+socket:
+	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
+	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
 
 .PHONY: all clean fclean re banner socket
