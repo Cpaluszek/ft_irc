@@ -35,7 +35,15 @@ int main(void) {
 	std::cout << "Hello message sent" << std::endl;
 	read(clientFd, buffer, 1024);
 	std::cout << "Read: " << buffer << std::endl;
-
-	 close(clientFd);
-	 return 0;
+	while (1) {
+		std::string input;
+		std::cout << "Message: ";
+		std::cin >> input;
+		if (std::cin.eof()) {
+			break ;
+		}
+		send(clientFd, input.c_str(), input.length(), 0);
+	}
+	close(clientFd);
+	return 0;
 }
