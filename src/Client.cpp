@@ -3,3 +3,9 @@
 //
 
 #include "../inc/Client.hpp"
+
+Client::Client(): _socketFd(0) {
+}
+
+Client::~Client() {
+}

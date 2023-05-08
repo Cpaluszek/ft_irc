@@ -98,12 +98,16 @@ void Server::registerNewClient() {
 	this->_connectionCount += 1;
 
 	// Todo: add client to map
+	this->_clients[clientFd];
+
+	std::cout << "Current map size: " << this->_clients.size() << std::endl;
 
 	// Send welcome message
 	if (send(clientFd, WELCOME_MSG, std::string(WELCOME_MSG).length(), 0) == -1) {
 		std::cout << "send() error: " << strerror(errno) << std::endl;
 	}
-	std::cout << "[" << getCurrentDateTime() << "]: new connection from " << inet_ntoa(address.sin_addr) << " on socket " << clientFd << std::endl;
+	std::cout << "[" << getCurrentDateTime() << "]: new connection from " << inet_ntoa(address.sin_addr)
+			<< " on socket " << clientFd << std::endl;
 }
 
 // Note: rename to readClientRequest() ?
@@ -117,16 +121,16 @@ void Server::handleClientRequest(unsigned int index) {
 			std::cout << "recv() error: " << strerror(errno) << std::endl;
 		}
 		std::cout << "[" << getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
+		// Remove from map
+		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
 		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
-		// Todo: remove from map
 		this->_connectionCount -= 1;
 	}
 	else {
 		std::cout << "Content: " << buffer << std::endl;
 		// Todo: handle client request and respond
 	}
-
 	memset(&buffer, 0, 6000);
 }
 

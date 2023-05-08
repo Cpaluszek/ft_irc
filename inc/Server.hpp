@@ -10,9 +10,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <poll.h>
+#include <map>
+
+#include "Client.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define WELCOME_MSG "$%@^&*(#(_!(#*)&#))*%"
+
+class Client;
 
 // Note: use singleton pattern -> seems not useful
 class Server {
@@ -29,10 +34,11 @@ private:
 
 	static std::string getCurrentDateTime();
 
-	std::string 	_name;
-	std::string 	_password;
-	int 			_serverSocketFd;
-	unsigned int	_connectionCount;
+	std::string 			_name;
+	std::string 			_password;
+	int 					_serverSocketFd;
+	unsigned int			_connectionCount;
+	std::map<int, Client>	_clients;
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
 	struct pollfd	*_pollFds;
