@@ -13,6 +13,7 @@
 #include <map>
 
 #include "Client.hpp"
+#include "Utils.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define WELCOME_MSG "$%@^&*(#(_!(#*)&#))*%"
@@ -20,19 +21,19 @@
 class Client;
 
 // Note: use singleton pattern -> seems not useful
+// Todo: how to use the password ? -> on new client connection?
+
 class Server {
 public:
 	~Server();
 	Server(std::string port, std::string password);
-	void serverLoop(void);
+	void serverLoop();
 
 private:
 	Server();
 	void SetupServerSocket(int port);
 	void registerNewClient();
-	void handleClientRequest(unsigned int index);
-
-	static std::string getCurrentDateTime();
+	void readClientRequest(unsigned int index);
 
 	std::string 			_name;
 	std::string 			_password;

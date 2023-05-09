@@ -3,8 +3,7 @@
 
 Server::Server(std::string port, std::string password) {
 	std::cout << "Port: " << port << std::endl;
-// Todo: how to detect port argument error ?
-// numbers only - range [0, ???]
+	// Todo: how to detect port argument error ? numbers only - range [0, ???]
 	SetupServerSocket(atoi(port.c_str()));
 
 	// Todo: set server password
@@ -24,7 +23,8 @@ Server::Server(std::string port, std::string password) {
 
 Server::~Server() {
 	close(this->_serverSocketFd);
-	if (this->_pollFds) {	// Note: unnecessary delete protection?
+	// Note: unnecessary delete protection?
+	if (this->_pollFds) {
 		delete [] this->_pollFds;
 	}
 }
@@ -54,11 +54,10 @@ void Server::SetupServerSocket(int port) {
 	if (listen(this->_serverSocketFd, SOMAXCONN) < 0) {
 		throw std::runtime_error(std::string("listen() failed: ") + strerror(errno));
 	}
-
-	std::cout << "Server started ready to accept connections" << std::endl;
+	std::cout << "[" << Utils::getCurrentDateTime() << "]: Server started ready to accept connections" << std::endl;
 }
 
-void Server::serverLoop(void) {
+void Server::serverLoop() {
 	int pollCount;
 	while (true) {
 		pollCount = poll(this->_pollFds, this->_connectionCount, -1);
@@ -78,15 +77,14 @@ void Server::serverLoop(void) {
 			else {
 				// Client request
 				std::cout << "Client request" << std::endl;
-				handleClientRequest(i);
+				readClientRequest(i);
 			}
 		}
 	}
 }
 
 void Server::registerNewClient() {
-	// Todo: sockaddr_in vs sockaddr_storage?
-	struct sockaddr_in address;
+	struct sockaddr_storage address;
 	socklen_t addressLen = sizeof(address);
 	int clientFd = accept(this->_serverSocketFd, (struct sockaddr*)&address, &addressLen);
 	if (clientFd == -1) {
@@ -97,21 +95,18 @@ void Server::registerNewClient() {
 	this->_pollFds[this->_connectionCount].events = POLLIN;
 	this->_connectionCount += 1;
 
-	// Todo: add client to map
+	// Add client to map
 	this->_clients[clientFd];
-
-	std::cout << "Current map size: " << this->_clients.size() << std::endl;
 
 	// Send welcome message
 	if (send(clientFd, WELCOME_MSG, std::string(WELCOME_MSG).length(), 0) == -1) {
 		std::cout << "send() error: " << strerror(errno) << std::endl;
 	}
-	std::cout << "[" << getCurrentDateTime() << "]: new connection from " << inet_ntoa(address.sin_addr)
+	std::cout << "[" << Utils::getCurrentDateTime() << "]: new connection from " << inet_ntoa(((struct sockaddr_in *)&address)->sin_addr)
 			<< " on socket " << clientFd << std::endl;
 }
 
-// Note: rename to readClientRequest() ?
-void Server::handleClientRequest(unsigned int index) {
+void Server::readClientRequest(unsigned int index) {
 	// Note: what size to use ?
 	char buffer[10000];
 	ssize_t nBytes = recv(this->_pollFds[index].fd, buffer, sizeof(buffer), 0);
@@ -120,27 +115,15 @@ void Server::handleClientRequest(unsigned int index) {
 		if (nBytes < 0) {
 			std::cout << "recv() error: " << strerror(errno) << std::endl;
 		}
-		std::cout << "[" << getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
-		// Remove from map
+		std::cout << "[" << Utils::getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
 		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
 		this->_connectionCount -= 1;
 	}
 	else {
-		std::cout << "Content: " << buffer << std::endl;
+		std::cout << "Content[" << nBytes << "]: " << buffer << std::endl;
 		// Todo: handle client request and respond
 	}
-	memset(&buffer, 0, 6000);
-}
-
-
-// ------------ STATIC ---------------
-// Note: move to another class? Utils class?
-std::string Server::getCurrentDateTime() {
-	time_t     now = time(0);
-	char       buf[80];
-
-	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", localtime(&now));
-	return buf;
+	memset(&buffer, 0, 10000);
 }

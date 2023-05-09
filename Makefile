@@ -4,11 +4,11 @@
 NAME			:=	ircserv
 
 HEADERS_DIR		:=	inc
-HEADERS_FILES	:=	Server.hpp Client.hpp
+HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
 SRC_DIR			:=	src
-SRC_FILES		:=	main.cpp Server.cpp Client.cpp
+SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
