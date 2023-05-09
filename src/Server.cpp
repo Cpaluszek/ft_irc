@@ -70,13 +70,9 @@ void Server::serverLoop() {
 				continue;
 			}
 			if (this->_pollFds[i].fd == this->_serverSocketFd) {
-				// New client
-				std::cout << "New client connection" << std::endl;
 				registerNewClient();
 			}
 			else {
-				// Client request
-				std::cout << "Client request" << std::endl;
 				readClientRequest(i);
 			}
 		}
@@ -118,12 +114,45 @@ void Server::readClientRequest(unsigned int index) {
 		std::cout << "[" << Utils::getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
+		// TODO: attention au trash code
 		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
 		this->_connectionCount -= 1;
 	}
 	else {
-		std::cout << "Content[" << nBytes << "]: " << buffer << std::endl;
-		// Todo: handle client request and respond
+		// Todo: Check for '\r\n'
+		// Find \r\n -> substr -> getResponse ...
+		std::string input(buffer);
+		size_t pos;
+		while ((pos = input.find("\r\n")) != std::string::npos) {
+			std::string current = input.substr(0, pos);
+			input.erase(0, pos + 2);
+			std::string response = handleClientRequest(current, this->_pollFds[index].fd);
+			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {
+				std::cout << "send() error: " << strerror(errno) << std::endl;
+			}
+		}
 	}
 	memset(&buffer, 0, 10000);
+}
+
+std::string Server::handleClientRequest(std::string rawString, int index) {
+	// Generate response
+	Request request(rawString);
+	if (!request.isValid) {
+		return "Invalid Message\n";
+	}
+	(void) index;
+	if (request.command == "CAP") {
+		return "CAP command\n";
+	}
+	if (request.command == "PASS") {
+		return "PASSWORD command\n";
+	}
+	if (request.command == "NICK") {
+		return "NICK command\n";
+	}
+	if (request.command == "USER") {
+		return "USER command\n";
+	}
+	return "Invalid command\n";
 }

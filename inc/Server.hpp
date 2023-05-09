@@ -14,9 +14,10 @@
 
 #include "Client.hpp"
 #include "Utils.hpp"
+#include "Request.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
-#define WELCOME_MSG "$%@^&*(#(_!(#*)&#))*%"
+#define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*%\n -----"
 
 class Client;
 
@@ -34,6 +35,7 @@ private:
 	void SetupServerSocket(int port);
 	void registerNewClient();
 	void readClientRequest(unsigned int index);
+	std::string handleClientRequest(std::string request, int index);
 
 	std::string 			_name;
 	std::string 			_password;
@@ -42,5 +44,6 @@ private:
 	std::map<int, Client>	_clients;
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
+	// Todo: map ou list
 	struct pollfd	*_pollFds;
 };
