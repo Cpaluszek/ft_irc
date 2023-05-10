@@ -130,7 +130,6 @@ void Server::readClientRequest(unsigned int index) {
 #ifdef DEBUG_RESPONSE
 				std::cout << "Response: " << response << std::endl;
 #endif
-
 			// Todo: create a while loop to make sure the full content is sent
 			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {
 				std::cout << "send() error: " << strerror(errno) << std::endl;

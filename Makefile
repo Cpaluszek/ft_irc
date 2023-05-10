@@ -41,7 +41,6 @@ all: banner $(NAME)
 debug: banner $(OBJS)
 	$(CC) $(CC_FLAGS) -D DEBUG_RESPONSE -D DEBUG_REQUEST $(OBJS) $(LIBS) -o $(NAME)
 
-
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
 
@@ -69,4 +68,4 @@ socket:
 	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
 	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
 
-.PHONY: all clean fclean re banner socket
+.PHONY: all clean fclean re banner socket debug
