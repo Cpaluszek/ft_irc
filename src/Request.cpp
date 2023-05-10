@@ -1,7 +1,5 @@
 
-
 #include "../inc/Request.hpp"
-
 
 Request::~Request() {}
 
@@ -11,7 +9,9 @@ Request::Request(std::string rawString) : isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-			std::cout << "## \"" << rawString << "\" ---> command:";
+	if (DEBUG_REQUEST) {
+		std::cout << "## \"" << rawString << "\" ---> command:";
+	}
 	size_t pos;
 	while ((pos = rawString.find(' ')) != std::string::npos) {
 		this->args.push_back(rawString.substr(0, pos));
@@ -21,9 +21,11 @@ Request::Request(std::string rawString) : isValid(true) {
 	this->command = this->args[0];
 	this->args.erase(this->args.begin());
 			// ---- DEBUG ----
-			std::cout << this->command << " - args {";
-			for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
-				std::cout << *it << ".";
-			}
-			std::cout << "}" << std::endl;
+	if (DEBUG_REQUEST) {
+		std::cout << this->command << " - args {";
+		for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
+			std::cout << *it << ".";
+		}
+		std::cout << "}" << std::endl;
+	}
 }

@@ -11,7 +11,6 @@ Server::Server(std::string port, std::string password) {
 		throw std::invalid_argument("Password cannot be empty");
 	}
 	this->_password = password;
-	std::cout << "Password: " << password << std::endl;
 
 	// Setup poll file descriptors
 	this->_pollFds = new struct pollfd[SOMAXCONN];
@@ -129,6 +128,11 @@ void Server::readClientRequest(unsigned int index) {
 			if (response.length() == 0) {
 				continue ;
 			}
+			if (DEBUG_RESPONSE) {
+				std::cout << "Response: " << response << std::endl;
+			}
+
+			// Todo: create a while loop to make sure the full content is sent
 			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {
 				std::cout << "send() error: " << strerror(errno) << std::endl;
 			}
@@ -165,13 +169,14 @@ std::string Server::passCmd(const Request& request, int fd) {
 	if (this->_clients[fd].isRegistered) {
 		return ERR_ALREADYREGISTERED(this->_clients[fd].nickName);
 	}
-	if (request.args.empty()) {
+	if (request.args.empty() || request.args[0].length() == 0) {
 		return ERR_NEEDMOREPARAMS(this->_clients[fd].nickName, std::string("PASS"));
 	}
 	if (request.args.size() == 1 && request.args[0] == this->_password) {
 		this->_clients[fd].isRegistered = true;
 		return NO_RESPONSE;
 	}
-	return ERR_PASSWDMISMATCH(this->_clients[fd].nickName);
+	// Todo: Disconnect client ? + send message to announce disconnection?
+	return ERR_PASSWDMISMATCH(std::string("Client"));
 }
 

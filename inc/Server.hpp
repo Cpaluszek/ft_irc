@@ -19,13 +19,14 @@
 #include "NumericReplies.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
-#define SERVER_NAME std::string("FT.IRC")
+#define SERVER_NAME std::string("FT_IRC")
 #define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*% -----\n"
+
+#define DEBUG_RESPONSE 1
 
 class Client;
 
 // Note: use singleton pattern -> seems not useful
-// Todo: how to use the password ? -> on new client connection?
 
 class Server {
 public:
