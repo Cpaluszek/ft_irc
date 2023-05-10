@@ -20,7 +20,6 @@ Request::Request(std::string rawString) : isValid(true) {
 	this->args.push_back(rawString);
 	this->command = this->args[0];
 	this->args.erase(this->args.begin());
-			// ---- DEBUG ----
 #ifdef DEBUG_REQUEST
 	std::cout << this->command << " - args {";
 	for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {

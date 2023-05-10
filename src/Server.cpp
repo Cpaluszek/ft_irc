@@ -139,7 +139,7 @@ void Server::readClientRequest(unsigned int index) {
 	memset(&buffer, 0, 10000);
 }
 
-// Todo: if forest alternative
+// Todo: if forest alternative -> map [string, function ptr]
 std::string Server::handleClientRequest(std::string rawString, int fd) {
 	Request request(rawString);
 	if (!request.isValid) {
