@@ -4,8 +4,9 @@
 
 #include "../inc/Client.hpp"
 
-Client::Client(): _socketFd(0) {
+Client::Client(): socketFd(0), isRegistered(false) {
 }
 
 Client::~Client() {
 }
+

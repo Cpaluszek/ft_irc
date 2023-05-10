@@ -120,13 +120,15 @@ void Server::readClientRequest(unsigned int index) {
 	}
 	else {
 		// Todo: Check for '\r\n'
-		// Find \r\n -> substr -> getResponse ...
 		std::string input(buffer);
 		size_t pos;
 		while ((pos = input.find("\r\n")) != std::string::npos) {
 			std::string current = input.substr(0, pos);
 			input.erase(0, pos + 2);
 			std::string response = handleClientRequest(current, this->_pollFds[index].fd);
+			if (response.length() == 0) {
+				continue ;
+			}
 			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {
 				std::cout << "send() error: " << strerror(errno) << std::endl;
 			}
@@ -135,18 +137,18 @@ void Server::readClientRequest(unsigned int index) {
 	memset(&buffer, 0, 10000);
 }
 
-std::string Server::handleClientRequest(std::string rawString, int index) {
-	// Generate response
+// Todo: if forest alternative
+std::string Server::handleClientRequest(std::string rawString, int fd) {
 	Request request(rawString);
 	if (!request.isValid) {
 		return "Invalid Message\n";
 	}
-	(void) index;
 	if (request.command == "CAP") {
-		return "CAP command\n";
+		// Note: ignore CAP ?
+		return NO_RESPONSE;
 	}
 	if (request.command == "PASS") {
-		return "PASSWORD command\n";
+		return passCmd(request, fd);
 	}
 	if (request.command == "NICK") {
 		return "NICK command\n";
@@ -156,3 +158,20 @@ std::string Server::handleClientRequest(std::string rawString, int index) {
 	}
 	return "Invalid command\n";
 }
+
+// --------------------------------------- COMMANDS -----------------------------------------------------------------//
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#pass-message)
+std::string Server::passCmd(const Request& request, int fd) {
+	if (this->_clients[fd].isRegistered) {
+		return ERR_ALREADYREGISTERED(this->_clients[fd].nickName);
+	}
+	if (request.args.empty()) {
+		return ERR_NEEDMOREPARAMS(this->_clients[fd].nickName, std::string("PASS"));
+	}
+	if (request.args.size() == 1 && request.args[0] == this->_password) {
+		this->_clients[fd].isRegistered = true;
+		return NO_RESPONSE;
+	}
+	return ERR_PASSWDMISMATCH(this->_clients[fd].nickName);
+}
+

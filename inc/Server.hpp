@@ -11,13 +11,16 @@
 #include <arpa/inet.h>
 #include <poll.h>
 #include <map>
+#include <string>
 
 #include "Client.hpp"
 #include "Utils.hpp"
 #include "Request.hpp"
+#include "NumericReplies.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
-#define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*%\n -----"
+#define SERVER_NAME std::string("FT.IRC")
+#define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*% -----\n"
 
 class Client;
 
@@ -35,7 +38,10 @@ private:
 	void SetupServerSocket(int port);
 	void registerNewClient();
 	void readClientRequest(unsigned int index);
-	std::string handleClientRequest(std::string request, int index);
+	std::string handleClientRequest(std::string request, int fd);
+
+	// Commands
+	std::string passCmd(const Request& request, int fd);
 
 	std::string 			_name;
 	std::string 			_password;

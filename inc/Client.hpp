@@ -2,13 +2,14 @@
 
 #include <iostream>
 
+// Note: should we use privates vars + getters and setters
 class Client {
 public:
 	Client();
 	~Client();
 
-private:
-	int _socketFd;
-	std::string _nickName;
-	std::string _userName;
+	int 		socketFd;
+	bool		isRegistered;
+	std::string nickName;
+	std::string userName;
 };
