@@ -22,7 +22,9 @@
 #define SERVER_NAME std::string("FT_IRC")
 #define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*% -----\n"
 
-#define DEBUG_RESPONSE 1
+#ifndef DEBUG_RESPONSE
+	#define DEBUG_RESPONSE
+#endif
 
 class Client;
 

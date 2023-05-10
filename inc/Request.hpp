@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 
-#define DEBUG_REQUEST 1
+#ifndef DEBUG_REQUEST
+# define DEBUG_REQUEST
+#endif
 
 class Request {
 public:

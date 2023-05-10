@@ -2,7 +2,6 @@
 #include "../inc/Server.hpp"
 
 Server::Server(std::string port, std::string password) {
-	std::cout << "Port: " << port << std::endl;
 	// Todo: how to detect port argument error ? numbers only - range [0, ???]
 	SetupServerSocket(atoi(port.c_str()));
 
@@ -128,9 +127,9 @@ void Server::readClientRequest(unsigned int index) {
 			if (response.length() == 0) {
 				continue ;
 			}
-			if (DEBUG_RESPONSE) {
+#ifdef DEBUG_RESPONSE
 				std::cout << "Response: " << response << std::endl;
-			}
+#endif
 
 			// Todo: create a while loop to make sure the full content is sent
 			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {

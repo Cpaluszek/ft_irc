@@ -9,9 +9,9 @@ Request::Request(std::string rawString) : isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-	if (DEBUG_REQUEST) {
-		std::cout << "## \"" << rawString << "\" ---> command:";
-	}
+#ifdef DEBUG_REQUEST
+	std::cout << "## \"" << rawString << "\" ---> command:";
+#endif
 	size_t pos;
 	while ((pos = rawString.find(' ')) != std::string::npos) {
 		this->args.push_back(rawString.substr(0, pos));
@@ -21,11 +21,11 @@ Request::Request(std::string rawString) : isValid(true) {
 	this->command = this->args[0];
 	this->args.erase(this->args.begin());
 			// ---- DEBUG ----
-	if (DEBUG_REQUEST) {
-		std::cout << this->command << " - args {";
-		for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
-			std::cout << *it << ".";
-		}
-		std::cout << "}" << std::endl;
+#ifdef DEBUG_REQUEST
+	std::cout << this->command << " - args {";
+	for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
+		std::cout << *it << ".";
 	}
+	std::cout << "}" << std::endl;
+#endif
 }

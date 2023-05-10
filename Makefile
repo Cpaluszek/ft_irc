@@ -38,6 +38,10 @@ _WHITE			:=	\x1b[37m
 
 all: banner $(NAME)
 
+debug: banner $(OBJS)
+	$(CC) $(CC_FLAGS) -D DEBUG_RESPONSE -D DEBUG_REQUEST $(OBJS) $(LIBS) -o $(NAME)
+
+
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
 
