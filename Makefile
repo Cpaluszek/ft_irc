@@ -64,8 +64,4 @@ banner:
 	@echo "(__)   (__)(____)(__)(__\_) \___)"
 	@echo ""	
 
-socket:
-	$(CC) $(CC_FLAGS) socket_example/server.cpp -o serv
-	$(CC) $(CC_FLAGS) socket_example/client.cpp -o client
-
-.PHONY: all clean fclean re banner socket debug
+.PHONY: all clean fclean re banner debug

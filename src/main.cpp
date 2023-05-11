@@ -1,8 +1,6 @@
 #include <iostream>
 #include "../inc/Server.hpp"
 
-// Todo: remove socket_example directory + makefile rule
-
 // Todo: do we need to manage signals ? SIQINT - SIQQUIT - SIGKILL ?
 
 int main(int argc, char **argv) {
