@@ -31,13 +31,14 @@ class Client;
 
 class Server {
 public:
+	typedef void (*CmdFunction)(Client, const Request &, Server*);
+	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
+	std::string 			password;
+
 	~Server();
 	Server(std::string port, std::string password);
 	void Update();
-
-	typedef std::string (*CmdFunction)(Client, const Request &, Server*);
-	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
-	std::string 			password;
+	static void sendToClient(int fd, const std::string &content);
 
 private:
 	std::string 			_name;
@@ -56,8 +57,5 @@ private:
 	void SetupServerSocket(int port);
 	void registerNewClient();
 	void readClientRequest(unsigned int index);
-	static void sendToClient(int fd, const std::string &content);
-	std::string handleClientRequest(Client& client, const std::string& content);
-
-	// Commands
+	void handleClientRequest(Client& client, const std::string& content);
 };

@@ -94,9 +94,7 @@ void Server::registerNewClient() {
 	this->_clients[clientFd].socketFd = clientFd;
 
 	// Send welcome message
-	if (send(clientFd, WELCOME_MSG, std::string(WELCOME_MSG).length(), 0) == -1) {
-		std::cout << "send() error: " << strerror(errno) << std::endl;
-	}
+	sendToClient(clientFd, WELCOME_MSG);
 	std::cout << "[" << Utils::getCurrentDateTime() << "]: new connection from " << inet_ntoa(((struct sockaddr_in *)&address)->sin_addr)
 			<< " on socket " << clientFd << std::endl;
 }
@@ -123,11 +121,7 @@ void Server::readClientRequest(unsigned int index) {
 			Client client = this->_clients[this->_pollFds[index].fd];
 			std::string current = input.substr(0, pos);
 			input.erase(0, pos + 2);
-			std::string response = handleClientRequest(client, current);
-			if (response.length() == 0) {
-				continue ;
-			}
-			sendToClient(client.socketFd, response);
+			handleClientRequest(client, current);
 		}
 	}
 	memset(&buffer, 0, 10000);
@@ -143,15 +137,16 @@ void Server::sendToClient(int fd, const std::string &content) {
 	}
 }
 
-std::string Server::handleClientRequest(Client& client, const std::string& content) {
+void Server::handleClientRequest(Client& client, const std::string& content) {
 	Request request(content);
 
 	if (!request.isValid) {
-		return "Invalid Message\n";
+		sendToClient(client.socketFd, "Invalid Message\n");
 	}
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {
-		return it->second(client, request, this);
+		it->second(client, request, this);
+	} else {
+		std::cout << "->Unknown command: " << content << std::endl;
 	}
-	return "";
 }

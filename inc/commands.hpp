@@ -4,4 +4,4 @@
 
 class Server;
 
-std::string passCmd(Client client, const Request &request, Server *server);
+void passCmd(Client client, const Request &request, Server *server);
