@@ -16,7 +16,8 @@
 #include "Client.hpp"
 #include "Utils.hpp"
 #include "Request.hpp"
-#include "NumericReplies.hpp"
+#include "numericReplies.hpp"
+#include "commands.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
@@ -34,24 +35,29 @@ public:
 	Server(std::string port, std::string password);
 	void Update();
 
+	typedef std::string (*CmdFunction)(Client, const Request &, Server*);
+	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
+	std::string 			password;
+
 private:
-	Server();
-	void SetupServerSocket(int port);
-	void registerNewClient();
-	void readClientRequest(unsigned int index);
-	void sendToClient(int fd, std::string content);
-	std::string handleClientRequest(std::string request, int fd);
-
-	// Commands
-	std::string passCmd(const Request& request, int fd);
-
 	std::string 			_name;
-	std::string 			_password;
 	int 					_serverSocketFd;
 	unsigned int			_connectionCount;
 	std::map<int, Client>	_clients;
 
+	std::map<std::string, CmdFunction> _commands;
+
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
 	// Todo: map ou list
 	struct pollfd	*_pollFds;
+
+	// Functions
+	Server();
+	void SetupServerSocket(int port);
+	void registerNewClient();
+	void readClientRequest(unsigned int index);
+	static void sendToClient(int fd, const std::string &content);
+	std::string handleClientRequest(Client& client, const std::string& content);
+
+	// Commands
 };

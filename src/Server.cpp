@@ -9,7 +9,7 @@ Server::Server(std::string port, std::string password) {
 	if (password.empty()) {
 		throw std::invalid_argument("Password cannot be empty");
 	}
-	this->_password = password;
+	this->password = password;
 
 	// Setup poll file descriptors
 	this->_pollFds = new struct pollfd[SOMAXCONN];
@@ -17,6 +17,9 @@ Server::Server(std::string port, std::string password) {
 	this->_pollFds[0].events = POLLIN;
 
 	this->_connectionCount = 1;
+
+	// Init Commands
+	this->_commands["PASS"] = &passCmd;
 }
 
 Server::~Server() {
@@ -88,6 +91,7 @@ void Server::registerNewClient() {
 
 	// Add client to map
 	this->_clients[clientFd];
+	this->_clients[clientFd].socketFd = clientFd;
 
 	// Send welcome message
 	if (send(clientFd, WELCOME_MSG, std::string(WELCOME_MSG).length(), 0) == -1) {
@@ -109,27 +113,27 @@ void Server::readClientRequest(unsigned int index) {
 		std::cout << "[" << Utils::getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
-		// TODO: attention au trash code
-		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
+		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];  // TODO: attention au trash code
 		this->_connectionCount -= 1;
 	}
 	else {
 		std::string input(buffer);
 		size_t pos;
 		while ((pos = input.find("\r\n")) != std::string::npos) {
+			Client client = this->_clients[this->_pollFds[index].fd];
 			std::string current = input.substr(0, pos);
 			input.erase(0, pos + 2);
-			std::string response = handleClientRequest(current, this->_pollFds[index].fd);
+			std::string response = handleClientRequest(client, current);
 			if (response.length() == 0) {
 				continue ;
 			}
-			sendToClient(this->_pollFds[index].fd, response);
+			sendToClient(client.socketFd, response);
 		}
 	}
 	memset(&buffer, 0, 10000);
 }
 
-void Server::sendToClient(int fd, std::string content) {
+void Server::sendToClient(int fd, const std::string &content) {
 #ifdef DEBUG_RESPONSE
 	std::cout << "->" << content << std::endl;
 #endif
@@ -139,43 +143,15 @@ void Server::sendToClient(int fd, std::string content) {
 	}
 }
 
-// Todo: if forest alternative -> map [string, function ptr]
-std::string Server::handleClientRequest(std::string rawString, int fd) {
-	Request request(rawString);
+std::string Server::handleClientRequest(Client& client, const std::string& content) {
+	Request request(content);
+
 	if (!request.isValid) {
 		return "Invalid Message\n";
 	}
-	if (request.command == "CAP") {
-		// Note: ignore CAP ?
-		return NO_RESPONSE;
+	cmdIt it = this->_commands.find(request.command);
+	if (it != this->_commands.end()) {
+		return it->second(client, request, this);
 	}
-	if (request.command == "PASS") {
-		return passCmd(request, fd);
-	}
-	if (request.command == "NICK") {
-		return "NICK command\n";
-	}
-	if (request.command == "USER") {
-		return "USER command\n";
-	}
-	return "Invalid command\n";
+	return "";
 }
-
-// --------------------------------------- COMMANDS -----------------------------------------------------------------//
-// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#pass-message)
-std::string Server::passCmd(const Request& request, int fd) {
-	if (this->_clients[fd].isRegistered) {
-		return ERR_ALREADYREGISTERED(this->_clients[fd].nickName);
-	}
-	if (request.args.empty() || request.args[0].length() == 0) {
-		return ERR_NEEDMOREPARAMS(this->_clients[fd].nickName, std::string("PASS"));
-	}
-	if (request.args.size() == 1 && request.args[0] == this->_password) {
-		this->_clients[fd].isRegistered = true;
-		return NO_RESPONSE;
-	}
-	// Todo: Disconnect client ? + send message to announce disconnection?
-	return ERR_PASSWDMISMATCH(std::string("Client"));
-}
-
-
