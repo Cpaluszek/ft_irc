@@ -123,16 +123,20 @@ void Server::readClientRequest(unsigned int index) {
 			if (response.length() == 0) {
 				continue ;
 			}
-#ifdef DEBUG_RESPONSE
-				std::cout << "Response: " << response << std::endl;
-#endif
-			// Todo: create a while loop to make sure the full content is sent
-			if (send(this->_pollFds[index].fd, response.c_str(), response.length(), 0) == -1) {
-				std::cout << "send() error: " << strerror(errno) << std::endl;
-			}
+			sendToClient(this->_pollFds[index].fd, response);
 		}
 	}
 	memset(&buffer, 0, 10000);
+}
+
+void Server::sendToClient(int fd, std::string content) {
+#ifdef DEBUG_RESPONSE
+	std::cout << "->" << content << std::endl;
+#endif
+	// Todo: create a while loop to make sure the full content is sent
+	if (send(fd, content.c_str(), content.length(), 0) == -1) {
+		std::cout << "send() error: " << strerror(errno) << std::endl;
+	}
 }
 
 // Todo: if forest alternative -> map [string, function ptr]
@@ -173,4 +177,5 @@ std::string Server::passCmd(const Request& request, int fd) {
 	// Todo: Disconnect client ? + send message to announce disconnection?
 	return ERR_PASSWDMISMATCH(std::string("Client"));
 }
+
 

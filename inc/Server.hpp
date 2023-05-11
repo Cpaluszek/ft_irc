@@ -39,6 +39,7 @@ private:
 	void SetupServerSocket(int port);
 	void registerNewClient();
 	void readClientRequest(unsigned int index);
+	void sendToClient(int fd, std::string content);
 	std::string handleClientRequest(std::string request, int fd);
 
 	// Commands
