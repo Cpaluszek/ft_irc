@@ -1,4 +1,4 @@
-#include "../inc/Utils.hpp"
+#include "Utils.hpp"
 
 std::string Utils::getCurrentDateTime() {
 	time_t     now = time(0);

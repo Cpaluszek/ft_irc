@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../inc/Server.hpp"
+#include "Server.hpp"
 
 // Todo: do we need to manage signals ? SIQINT - SIQQUIT - SIGKILL ?
 

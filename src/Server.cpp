@@ -1,11 +1,10 @@
 
-#include "../inc/Server.hpp"
+#include "Server.hpp"
 
 Server::Server(std::string port, std::string password) {
 	// Todo: how to detect port argument error ? numbers only - range [0, ???]
 	SetupServerSocket(atoi(port.c_str()));
 
-	// Todo: set server password
 	if (password.empty()) {
 		throw std::invalid_argument("Password cannot be empty");
 	}
@@ -143,6 +142,7 @@ void Server::handleClientRequest(Client& client, const std::string& content) {
 	Request request(content);
 
 	if (!request.isValid) {
+		// Note: how to manage invalid messages?
 		sendToClient(client.socketFd, "Invalid Message\n");
 	}
 	cmdIt it = this->_commands.find(request.command);
