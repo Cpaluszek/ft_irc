@@ -23,15 +23,11 @@
 #define SERVER_NAME std::string("FT_IRC")
 #define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*% -----\n"
 
-#ifndef DEBUG_RESPONSE
-	#define DEBUG_RESPONSE
-#endif
-
 class Client;
 
 class Server {
 public:
-	typedef void (*CmdFunction)(Client, const Request &, Server*);
+	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	std::string 			password;
 
@@ -39,12 +35,14 @@ public:
 	Server(std::string port, std::string password);
 	void Update();
 	static void sendToClient(int fd, const std::string &content);
+	bool isNickAlreadyUsed(const Client& client, std::string nick);
 
 private:
 	std::string 			_name;
 	int 					_serverSocketFd;
 	unsigned int			_connectionCount;
 	std::map<int, Client>	_clients;
+	// map channels
 
 	std::map<std::string, CmdFunction> _commands;
 
@@ -57,5 +55,5 @@ private:
 	void SetupServerSocket(int port);
 	void registerNewClient();
 	void readClientRequest(unsigned int index);
-	void handleClientRequest(Client& client, const std::string& content);
+	void handleClientRequest(Client *client, const std::string& content);
 };

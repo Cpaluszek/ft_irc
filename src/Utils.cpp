@@ -7,3 +7,9 @@ std::string Utils::getCurrentDateTime() {
 	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", localtime(&now));
 	return buf;
 }
+
+std::string Utils::copyToUpper(std::string src) {
+	std::string res = src;
+	std::transform(src.begin(), src.end(), src.begin(), toupper);
+	return res;
+}

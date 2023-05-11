@@ -95,7 +95,6 @@ void Server::registerNewClient() {
 	this->_clients[clientFd].socketFd = clientFd;
 
 	// Send welcome message
-	sendToClient(clientFd, WELCOME_MSG);
 	std::cout << "[" << Utils::getCurrentDateTime() << "]: new connection from " << inet_ntoa(((struct sockaddr_in *)&address)->sin_addr)
 			<< " on socket " << clientFd << std::endl;
 }
@@ -122,14 +121,14 @@ void Server::readClientRequest(unsigned int index) {
 			Client client = this->_clients[this->_pollFds[index].fd];
 			std::string current = input.substr(0, pos);
 			input.erase(0, pos + 2);
-			handleClientRequest(client, current);
+			handleClientRequest(&client, current);
 		}
 	}
 	memset(&buffer, 0, 10000);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
-#ifdef DEBUG_RESPONSE
+#ifdef DEBUG
 	std::cout << "->" << content << std::endl;
 #endif
 	// Todo: create a while loop to make sure the full content is sent
@@ -138,12 +137,12 @@ void Server::sendToClient(int fd, const std::string &content) {
 	}
 }
 
-void Server::handleClientRequest(Client& client, const std::string& content) {
+void Server::handleClientRequest(Client *client, const std::string& content) {
 	Request request(content);
 
 	if (!request.isValid) {
 		// Note: how to manage invalid messages?
-		sendToClient(client.socketFd, "Invalid Message\n");
+		sendToClient(client->socketFd, "Invalid Message\n");
 	}
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {
@@ -151,4 +150,16 @@ void Server::handleClientRequest(Client& client, const std::string& content) {
 	} else {
 		std::cout << "->Unknown command: " << content << std::endl;
 	}
+}
+
+bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
+	std::string upperNick = Utils::copyToUpper(nick);
+	std::transform(nick.begin(), nick.end(), nick.begin(), toupper);
+	std::map<int, Client>::iterator it;
+	for (it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.socketFd != client.socketFd && upperNick == Utils::copyToUpper(it->second.nickName)) {
+			return true;
+		}
+	}
+	return false;
 }

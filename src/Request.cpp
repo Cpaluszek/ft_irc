@@ -9,7 +9,7 @@ Request::Request(std::string rawString) : isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-#ifdef DEBUG_REQUEST
+#ifdef DEBUG
 	std::cout << "## \"" << rawString << "\" ---> command:";
 #endif
 	size_t pos;
@@ -20,7 +20,7 @@ Request::Request(std::string rawString) : isValid(true) {
 	this->args.push_back(rawString);
 	this->command = this->args[0];
 	this->args.erase(this->args.begin());
-#ifdef DEBUG_REQUEST
+#ifdef DEBUG
 	std::cout << this->command << " - args {";
 	for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
 		std::cout << *it << ".";

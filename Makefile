@@ -8,14 +8,18 @@ HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp Request.hpp numericReplies.hpp 
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
 SRC_DIR			:=	src
-SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp commands.cpp
+SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
+					cmds/pass.cpp \
+					cmds/nick.cpp \
+					cmds/user.cpp
+
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
 OBJS			:=	$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 
 CC				:=	c++
-DEBUG_FLAG		:=	-g3
+DEBUG_FLAG		:=	-g3 -D DEBUG
 CC_FLAGS		:=	-Wextra -Werror -Wall -std=c++98 $(DEBUG_FLAG)
 
 # define standard colors
@@ -37,9 +41,6 @@ _WHITE			:=	\x1b[37m
 #########################
 
 all: banner $(NAME)
-
-debug: banner $(OBJS)
-	$(CC) $(CC_FLAGS) -D DEBUG_RESPONSE -D DEBUG_REQUEST $(OBJS) $(LIBS) -o $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
@@ -64,4 +65,4 @@ banner:
 	@echo "(__)   (__)(____)(__)(__\_) \___)"
 	@echo ""	
 
-.PHONY: all clean fclean re banner debug
+.PHONY: all clean fclean re banner
