@@ -28,13 +28,11 @@
 
 class Client;
 
-// Note: use singleton pattern -> seems not useful
-
 class Server {
 public:
 	~Server();
 	Server(std::string port, std::string password);
-	void serverLoop();
+	void Update();
 
 private:
 	Server();

@@ -55,24 +55,21 @@ void Server::SetupServerSocket(int port) {
 	std::cout << "[" << Utils::getCurrentDateTime() << "]: Server started ready to accept connections" << std::endl;
 }
 
-void Server::serverLoop() {
-	int pollCount;
-	while (true) {
-		pollCount = poll(this->_pollFds, this->_connectionCount, -1);
-		if (pollCount == -1) {
-			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
-		}
+void Server::Update() {
+	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+	if (pollCount == -1) {
+		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
+	}
 
-		for (unsigned int i = 0; i < this->_connectionCount; i++) {
-			if ((this->_pollFds[i].revents & POLLIN) == 0) {
-				continue;
-			}
-			if (this->_pollFds[i].fd == this->_serverSocketFd) {
-				registerNewClient();
-			}
-			else {
-				readClientRequest(i);
-			}
+	for (unsigned int i = 0; i < this->_connectionCount; i++) {
+		if ((this->_pollFds[i].revents & POLLIN) == 0) {
+			continue;
+		}
+		if (this->_pollFds[i].fd == this->_serverSocketFd) {
+			registerNewClient();
+		}
+		else {
+			readClientRequest(i);
 		}
 	}
 }
@@ -117,7 +114,6 @@ void Server::readClientRequest(unsigned int index) {
 		this->_connectionCount -= 1;
 	}
 	else {
-		// Todo: Check for '\r\n'
 		std::string input(buffer);
 		size_t pos;
 		while ((pos = input.find("\r\n")) != std::string::npos) {

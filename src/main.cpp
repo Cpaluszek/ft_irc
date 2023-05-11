@@ -12,7 +12,9 @@ int main(int argc, char **argv) {
 	}
 	try {
 		Server serv(argv[1], argv[2]);
-		serv.serverLoop();
+		while (true) {
+			serv.Update();
+		}
 	}
 	catch (std::exception & e) {
 		std::cerr << e.what() << std::endl;
