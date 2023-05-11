@@ -14,3 +14,19 @@ void passCmd(Client client, const Request &request, Server *server) {
 	// Todo: Disconnect client ? + send message to announce disconnection?
 	Server::sendToClient(client.socketFd, ERR_PASSWDMISMATCH(std::string("Client")));
 }
+
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#nick-message)
+void nickCmd(Client client, const Request &request, Server *server) {
+	(void) client;
+	(void) request;
+	(void) server;
+	std::cout << "NICK not implemented" << std::endl;
+}
+
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#user-message)
+void userCmd(Client client, const Request &request, Server *server) {
+	(void) client;
+	(void) request;
+	(void) server;
+	std::cout << "USER not implemented" << std::endl;
+}

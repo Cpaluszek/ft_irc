@@ -20,6 +20,8 @@ Server::Server(std::string port, std::string password) {
 
 	// Init Commands
 	this->_commands["PASS"] = &passCmd;
+	this->_commands["NICK"] = &nickCmd;
+	this->_commands["USER"] = &userCmd;
 }
 
 Server::~Server() {
