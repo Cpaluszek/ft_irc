@@ -141,6 +141,10 @@ void Server::sendToClient(int fd, const std::string &content) {
 void Server::handleClientRequest(Client *client, const std::string& content) {
 	Request request(content);
 
+#ifdef DEBUG
+	std::cout << YELLOW << "# \"" << content << request;
+#endif
+
 	if (!request.isValid) {
 		// Note: how to manage invalid messages?
 		sendToClient(client->socketFd, "Invalid Message\n");
