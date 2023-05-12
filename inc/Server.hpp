@@ -22,7 +22,7 @@
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
-#define WELCOME_MSG "----- $%@^&*(#(_!(#*)&#))*% -----\n"
+#define WELCOME_MSG "----- Welcome to ft_irc server -----\r\n"
 
 class Client;
 

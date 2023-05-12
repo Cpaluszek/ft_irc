@@ -8,7 +8,6 @@ bool containsInvalidChars(std::string nick) {
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#nick-message)
 void nickCmd(Client *client, const Request &request, Server *server) {
 	if (!client->hasPassword) {
-		std::cout << "Nick: " << client->hasPassword << std::endl;
 		Server::sendToClient(client->socketFd, ERR_MSG(std::string("PASS is needed")));
 		return ;
 	}

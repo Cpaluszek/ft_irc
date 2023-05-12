@@ -13,13 +13,24 @@
 
 
 void userCmd(Client *client, const Request &request, Server *server) {
-	std::cout << "USER not implemented" << std::endl;
-//	if (request.args.empty() || request.args[0].length() < 1){
-//
-//	}
 	(void) server;
-	(void) request;
-	if (client->isRegistered) {
+	if (request.args.empty() || request.args.size() < 3){
+		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, std::string("USER")));
+	}
+	else if (!client->hasPassword) {
+		Server::sendToClient(client->socketFd, ERR_MSG(std::string("PASS is needed")));
+	}
+	else if (client->isRegistered) {
 		Server::sendToClient(client->socketFd, ERR_ALREADYREGISTERED(client->nickName));
+	}
+	else {
+		client->userName = request.args[0];
+		if (request.args.size() > 3) {
+			client->realName = request.args[3];
+		}
+		if (!client->nickName.empty()) {
+			client->isRegistered = true;
+			Server::sendToClient(client->socketFd, WELCOME_MSG);
+		}
 	}
 }
