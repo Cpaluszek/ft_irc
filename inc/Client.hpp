@@ -18,7 +18,7 @@ public:
 
 	Client();
 	~Client();
-	void updateNickname(std::string newNickname);
+	void updateNickname(const std::string& newNickname);
 };
 
 std::ostream &operator<<(std::ostream &out, const Client &src);

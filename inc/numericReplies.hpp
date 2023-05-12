@@ -6,6 +6,10 @@
 
 #define ERR_MSG(content) ("Error: " + content + "\r\n")
 
+// 001 - RPL_WELCOME
+#define RPL_WELCOME(nick, user ,host) ( ":" + SERVER_NAME + " 001 " + nick \
+		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + host + "\r\n")
+
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \
 		+ " :No nickname given\r\n")

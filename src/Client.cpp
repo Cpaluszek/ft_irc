@@ -6,7 +6,7 @@ Client::Client(): socketFd(0), isRegistered(false), hasPassword(false), socketBu
 Client::~Client() {
 }
 
-void Client::updateNickname(std::string newNickname) {
+void Client::updateNickname(const std::string& newNickname) {
 	this->previousNickname = this->nickName;
 	this->nickName = newNickname;
 }

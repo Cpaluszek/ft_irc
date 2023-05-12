@@ -178,3 +178,13 @@ bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
 	}
 	return false;
 }
+
+void Server::sendWelcome(Client *client) {
+	int fd = client->socketFd;
+	sendToClient(fd, RPL_WELCOME(client->nickName, client->userName, std::string(LOCAL_HOST_IP)));
+	// Todo: RPL_YOURHOST
+	// Todo: RPL_CREATED
+	// Todo: RPL_MYINFO
+	// Todo: RPL_ISSUPPORT ??
+	// Note: MOTD?
+}

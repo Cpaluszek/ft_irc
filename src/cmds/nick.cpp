@@ -29,7 +29,7 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 		client->updateNickname(nick);
 		if (!client->isRegistered && client->userName.length() != 0) {  // First nickname input
 			client->isRegistered = true;
-			Server::sendToClient(client->socketFd, WELCOME_MSG);
+			Server::sendWelcome(client);
 		}
 		else { // Update nickname
 			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName, std::string(LOCAL_HOST_IP)));
