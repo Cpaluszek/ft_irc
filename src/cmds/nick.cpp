@@ -36,9 +36,6 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName, std::string(LOCAL_HOST_IP)));
 			// TODO: update nick in each channel information
 				// find client.channels
-#ifdef DEBUG
-			std::cout << "Nickname update: " << client->previousNickname << "->" << client->nickName << std::endl;
-#endif
 		}
 	}
 }

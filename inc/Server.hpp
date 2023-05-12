@@ -18,6 +18,7 @@
 #include "Request.hpp"
 #include "numericReplies.hpp"
 #include "commands.hpp"
+#include "colors.hpp"
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")

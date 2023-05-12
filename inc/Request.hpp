@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include "colors.hpp"
 
 class Request {
 public:

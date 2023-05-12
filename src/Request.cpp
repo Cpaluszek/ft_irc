@@ -10,7 +10,7 @@ Request::Request(std::string rawString) : isValid(true) {
 		return ;
 	}
 #ifdef DEBUG
-	std::cout << "## \"" << rawString << "\" ---> command:";
+	std::cout << YELLOW << "# \"" << rawString << "\" ---> command:";
 #endif
 	size_t pos;
 	while ((pos = rawString.find(' ')) != std::string::npos) {
@@ -25,6 +25,6 @@ Request::Request(std::string rawString) : isValid(true) {
 	for (std::vector<std::string>::iterator it = this->args.begin(); it < this->args.end(); it++) {
 		std::cout << *it << ".";
 	}
-	std::cout << "}" << std::endl;
+	std::cout << "}" << RESET << std::endl;
 #endif
 }

@@ -4,7 +4,9 @@
 NAME			:=	ircserv
 
 HEADERS_DIR		:=	inc
-HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp Request.hpp numericReplies.hpp commands.hpp
+HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp Request.hpp \
+					numericReplies.hpp commands.hpp colors.hpp
+
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
 SRC_DIR			:=	src

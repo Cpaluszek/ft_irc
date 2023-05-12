@@ -15,7 +15,6 @@ void passCmd(Client *client, const Request &request, Server *server) {
 	else if (request.args.size() == 1 && request.args[0] == server->password) {
 		// Note: used for nick and user too?
 		client->hasPassword = true;
-		std::cout << "PASS OK " << client->hasPassword << std::endl;
 	}
 	else {
 		// Todo: Disconnect client ? + send message to announce disconnection?

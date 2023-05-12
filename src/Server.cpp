@@ -56,7 +56,8 @@ void Server::SetupServerSocket(int port) {
 	if (listen(this->_serverSocketFd, SOMAXCONN) < 0) {
 		throw std::runtime_error(std::string("listen() failed: ") + strerror(errno));
 	}
-	std::cout << "[" << Utils::getCurrentDateTime() << "]: Server started ready to accept connections" << std::endl;
+	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET \
+		<< GREEN << ": Server started ready to accept connections" << RESET << std::endl;
 }
 
 void Server::Update() {
@@ -94,9 +95,8 @@ void Server::registerNewClient() {
 	this->_clients[clientFd];
 	this->_clients[clientFd].socketFd = clientFd;
 
-	// Send welcome message
-	std::cout << "[" << Utils::getCurrentDateTime() << "]: new connection from " << inet_ntoa(((struct sockaddr_in *)&address)->sin_addr)
-			<< " on socket " << clientFd << std::endl;
+	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
+			<< ": Connection on socket " << clientFd << RESET << std::endl;
 }
 
 void Server::readClientRequest(unsigned int index) {
@@ -108,7 +108,8 @@ void Server::readClientRequest(unsigned int index) {
 		if (nBytes < 0) {
 			std::cout << "recv() error: " << strerror(errno) << std::endl;
 		}
-		std::cout << "[" << Utils::getCurrentDateTime() << "]: socket " << this->_pollFds[index].fd << " disconnected" << std::endl;
+		std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
+			<< ": Disconnection on socket " << this->_pollFds[index].fd << RESET << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
 		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];  // TODO: attention au trash code
@@ -129,7 +130,7 @@ void Server::readClientRequest(unsigned int index) {
 
 void Server::sendToClient(int fd, const std::string &content) {
 #ifdef DEBUG
-	std::cout << "->" << content << std::endl;
+	std::cout << CYAN << "->" << content << RESET << std::endl;
 #endif
 	// Todo: create a while loop to make sure the full content is sent
 	if (send(fd, content.c_str(), content.length(), 0) == -1) {
@@ -147,9 +148,12 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {
 		it->second(client, request, this);
-	} else {
-		std::cout << "->Unknown command: " << content << std::endl;
 	}
+#ifdef DEBUG
+	else {
+		std::cout << CYAN << "->Unknown command: " << content << RESET << std::endl;
+	}
+#endif
 }
 
 bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
