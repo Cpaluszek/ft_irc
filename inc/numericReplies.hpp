@@ -21,10 +21,9 @@
 #define RPL_NICK(oldNick, nick, user, host) ( ":" + oldNick + "!"  \
 	+ user + "@" + host + " NICK " + nick + "\r\n")
 
-// 436
-
-// 451 -
-// ERR_NOTREGISTERED
+// 451
+#define ERR_NOTREGISTERED(nick) (":" + SERVER_NAME + " 451 " + nick \
+		+  " :You have not registered\r\n")
 
 // 461
 #define ERR_NEEDMOREPARAMS(nick, command) (":" + SERVER_NAME + " 461 " + nick + " " \
