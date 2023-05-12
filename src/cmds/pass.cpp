@@ -2,10 +2,9 @@
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#pass-message)
 void passCmd(Client *client, const Request &request, Server *server) {
-//	if (client.hasPassword) {
-//		// Note: how to manage double password ?
-		// -> simply ignore ?
-//	}
+	if (client->hasPassword) {
+		return ;
+	}
 	if (client->isRegistered) {
 		Server::sendToClient(client->socketFd, ERR_ALREADYREGISTERED(client->nickName));
 	}
