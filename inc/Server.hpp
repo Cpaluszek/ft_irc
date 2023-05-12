@@ -22,6 +22,11 @@
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
+#define VERSION std::string("0.1")
+// Todo: USERMODE
+#define USERMODE std::string("???")
+// Todo: CHANMODE
+#define CHANMODE std::string("???")
 
 class Client;
 
@@ -35,7 +40,7 @@ public:
 	Server(std::string port, std::string password);
 	void Update();
 	static void sendToClient(int fd, const std::string &content);
-	static void sendWelcome(Client *client);
+	void sendWelcome(Client *client);
 	bool isNickAlreadyUsed(const Client& client, std::string nick);
 
 private:
@@ -43,6 +48,7 @@ private:
 	int 					_serverSocketFd;
 	unsigned int			_connectionCount;
 	std::map<int, Client>	_clients;
+	std::string 			_creationDate;
 	// map channels
 
 	std::map<std::string, CmdFunction> _commands;

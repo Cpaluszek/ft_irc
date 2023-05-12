@@ -27,7 +27,7 @@ void userCmd(Client *client, const Request &request, Server *server) {
 		}
 		if (!client->nickName.empty()) {
 			client->isRegistered = true;
-			Server::sendWelcome(client);
+			server->sendWelcome(client);
 		}
 	}
 }

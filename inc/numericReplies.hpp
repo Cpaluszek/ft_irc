@@ -1,4 +1,5 @@
 #pragma once
+#include "Server.hpp"
 
 // Numeric replies list: C for code - M for message
 
@@ -9,6 +10,18 @@
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user ,host) ( ":" + SERVER_NAME + " 001 " + nick \
 		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + host + "\r\n")
+
+// 002
+#define RPL_YOURHOST(nick) (":" + SERVER_NAME + " 002 " + nick \
+		+ " :Your host is " + SERVER_NAME + ", running version " + VERSION + "\r\n")
+
+// 003
+#define RPL_CREATED(nick, creationDate) (":" + SERVER_NAME + " 003 " + nick \
+		+ ":This server was created " + creationDate + "\r\n")
+
+// 004
+#define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
+		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \
