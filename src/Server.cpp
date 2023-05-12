@@ -118,10 +118,10 @@ void Server::readClientRequest(unsigned int index) {
 		std::string input(buffer);
 		size_t pos;
 		while ((pos = input.find("\r\n")) != std::string::npos) {
-			Client client = this->_clients[this->_pollFds[index].fd];
+			Client *client = &this->_clients[this->_pollFds[index].fd];
 			std::string current = input.substr(0, pos);
 			input.erase(0, pos + 2);
-			handleClientRequest(&client, current);
+			handleClientRequest(client, current);
 		}
 	}
 	memset(&buffer, 0, 10000);
