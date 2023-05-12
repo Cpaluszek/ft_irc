@@ -21,6 +21,7 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["PASS"] = &passCmd;
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
+	this->_commands["QUIT"] = &quitCmd;
 }
 
 Server::~Server() {
@@ -132,9 +133,14 @@ void Server::sendToClient(int fd, const std::string &content) {
 #ifdef DEBUG
 	std::cout << CYAN << "->" << content << RESET << std::endl;
 #endif
-	// Todo: create a while loop to make sure the full content is sent
-	if (send(fd, content.c_str(), content.length(), 0) == -1) {
-		std::cout << "send() error: " << strerror(errno) << std::endl;
+	size_t bytesSent = 0;
+	while (bytesSent < content.length()) {
+		ssize_t len = send(fd, content.c_str(), content.length(), 0);
+		if (len < 0) {
+			std::cout << "send() error: " << strerror(errno) << std::endl;
+			break ;
+		}
+		bytesSent += len;
 	}
 }
 

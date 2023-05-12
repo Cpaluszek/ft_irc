@@ -1,7 +1,6 @@
 #include "commands.hpp"
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#user-message)
-
 /**
  * Command: USER
  * 		Parameters: <username> 0 * <realname>
@@ -10,8 +9,6 @@
  * USER guest 0 * :Ronnie Reagan
  * 	- user get registered with username "guest" and real name "Ronnie Reagan"
  */
-
-
 void userCmd(Client *client, const Request &request, Server *server) {
 	(void) server;
 	if (request.args.empty() || request.args.size() < 3){

@@ -13,3 +13,5 @@ void nickCmd(Client *client, const Request &request, Server *server);
 // USER
 void userCmd(Client *client, const Request &request, Server *server);
 
+// QUIT
+void quitCmd(Client *client, const Request &request, Server *server);
