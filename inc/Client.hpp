@@ -13,6 +13,7 @@ public:
 	std::string userName;
 	std::string realName;
 	std::string previousNickname;
+	std::string socketBuffer;
 
 
 	Client();

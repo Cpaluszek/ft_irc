@@ -103,6 +103,7 @@ void Server::registerNewClient() {
 void Server::readClientRequest(unsigned int index) {
 	// Note: what size to use ?
 	char buffer[10000];
+	memset(&buffer, 0, 10000);
 	ssize_t nBytes = recv(this->_pollFds[index].fd, buffer, sizeof(buffer), 0);
 
 	if (nBytes <= 0) {
@@ -113,20 +114,20 @@ void Server::readClientRequest(unsigned int index) {
 			<< ": Disconnection on socket " << this->_pollFds[index].fd << RESET << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
-		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];  // TODO: attention au trash code
+		// TODO: attention au trash code
+			this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
 		this->_connectionCount -= 1;
 	}
 	else {
-		std::string input(buffer);
+		Client *client = &this->_clients[this->_pollFds[index].fd];
+		client->socketBuffer += std::string(buffer);
 		size_t pos;
-		while ((pos = input.find("\r\n")) != std::string::npos) {
-			Client *client = &this->_clients[this->_pollFds[index].fd];
-			std::string current = input.substr(0, pos);
-			input.erase(0, pos + 2);
+		while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
+			std::string current = client->socketBuffer.substr(0, pos);
+			client->socketBuffer.erase(0, pos + 2);
 			handleClientRequest(client, current);
 		}
 	}
-	memset(&buffer, 0, 10000);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
