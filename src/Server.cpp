@@ -122,29 +122,33 @@ void Server::readClientRequest(unsigned int index) {
 	// Note: what size to use ?
 	char buffer[10000];
 	memset(&buffer, 0, 10000);
-	ssize_t nBytes = recv(this->_pollFds[index].fd, buffer, sizeof(buffer), 0);
+	int clientFd = this->_pollFds[index].fd;
+	
+	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
 
 	if (nBytes <= 0) {
 		if (nBytes < 0) {
 			std::cout << "recv() error: " << strerror(errno) << std::endl;
 		}
 		std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
-			<< ": Disconnection on socket " << this->_pollFds[index].fd << RESET << std::endl;
+			<< ": Disconnection on socket " << clientFd << RESET << std::endl;
 
 		// Todo: If a connection is closed without the client issuing a QUIT
 		// the server MUST distribute a QUIT message to other clients to inform
 		// For instance, "Ping timeout: 120 seconds", "Excess Flood", and "Too many connections from this IP" are examples of relevant reasons for closing or for a connection with a client to have been closed.
 
-		disconnectClient(this->_pollFds[index].fd);
+		disconnectClient(clientFd);
+		return ;
 	}
-	else {
-		Client *client = &this->_clients[this->_pollFds[index].fd];
-		client->socketBuffer += std::string(buffer);
-		size_t pos;
-		while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
-			std::string current = client->socketBuffer.substr(0, pos);
-			client->socketBuffer.erase(0, pos + 2);
-			handleClientRequest(client, current);
+	Client *client = &this->_clients[clientFd];
+	client->socketBuffer += std::string(buffer);
+	size_t pos;
+	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
+		std::string current = client->socketBuffer.substr(0, pos);
+		client->socketBuffer.erase(0, pos + 2);
+		handleClientRequest(client, current);
+		if (this->_clients.find(clientFd) == this->_clients.end()) {
+			break ;
 		}
 	}
 }
