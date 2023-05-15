@@ -26,6 +26,7 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 	}
 	// Success
 	else {
+		// Todo: updateNickname should send the info to all the connected channels
 		client->updateNickname(nick);
 		if (!client->isRegistered && client->userName.length() != 0) {  // First nickname input
 			client->isRegistered = true;
