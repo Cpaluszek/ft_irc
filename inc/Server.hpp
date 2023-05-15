@@ -54,7 +54,6 @@ private:
 	std::map<std::string, CmdFunction> _commands;
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
-	// Todo: map ou list
 	struct pollfd	*_pollFds;
 
 	// Functions

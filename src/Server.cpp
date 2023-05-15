@@ -116,8 +116,7 @@ void Server::readClientRequest(unsigned int index) {
 			<< ": Disconnection on socket " << this->_pollFds[index].fd << RESET << std::endl;
 		this->_clients.erase(this->_pollFds[index].fd);
 		close(this->_pollFds[index].fd);
-		// TODO: attention au trash code
-			this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
+		this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
 		this->_connectionCount -= 1;
 	}
 	else {
@@ -157,6 +156,7 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	if (!request.isValid) {
 		// Note: how to manage invalid messages?
 		sendToClient(client->socketFd, "Invalid Message\n");
+		return ;
 	}
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {

@@ -49,3 +49,17 @@
 // 464
 #define ERR_PASSWDMISMATCH(nick) (":" + SERVER_NAME + " 464 " + nick \
 		+  " :Password incorrect\r\n")
+
+# define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " + nick + " " + target \
+		+ " :No such nick/channel:\r\n")
+
+# define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " + \
+		nick + " :No recipient given (command)\r\n")
+
+# define ERR_NOTEXTTOSEND(nick) (":" + SERVER_NAME + " 412 " + nick + " :No text to send\r\n")
+
+# define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick + " " + channel + " :No such channel\r\n")
+
+# define ERR_CANNOTSENDTOCHAN(nick, channel) (":" + SERVER_NAME + " 404 " + nick + " " + channel + " :Cannot send to channel\r\n")
+
+# define RPL_AWAY(nick, target) (":" + SERVER_NAME + " 301 " + nick + " " + target + " :awayMsg\r\n")

@@ -5,6 +5,7 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	(void) server;
 	(void) request;
 	(void) client;
+
 	// Todo: ERR_NORECIPIENT
 	// Todo: ERR_NOTEXTTOSEND
 	// Todo: ERR_NOSUCHNICK
