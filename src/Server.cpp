@@ -2,7 +2,7 @@
 #include "Server.hpp"
 
 Server::Server(std::string port, std::string password) {
-	// Todo: how to detect port argument error ? numbers only - range [0, ???]
+	// Todo: how to detect port argument error ? numbers only - range [0, 65535]
 	SetupServerSocket(atoi(port.c_str()));
 
 	if (password.empty()) {
