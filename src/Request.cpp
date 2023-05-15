@@ -3,7 +3,6 @@
 
 Request::~Request() {}
 
-// Todo: code a proper request parsing
 Request::Request(std::string message): isValid(true) {
 	if (message.length() == 0 || message[0] == ' ') {
 		this->isValid = false;
@@ -62,6 +61,9 @@ std::vector<std::string> Request::split(const std::string& source, const std::st
 			result.push_back(subStr);
 		}
 		prevPos = pos + 1;
+		if (source[prevPos] == ':') {
+			break ;
+		}
 	}
 	pos = source.find_first_of("\r\n");
 	subStr = source.substr(prevPos, pos - prevPos);
@@ -74,11 +76,11 @@ std::vector<std::string> Request::split(const std::string& source, const std::st
 std::ostream &operator<<(std::ostream &out, const Request &src) {
 	out << "\" ---> command:[" << src.command << "] - args {";
 	for (std::vector<std::string>::const_iterator it = src.args.begin(); it < src.args.end(); it++) {
-		out << *it << "_";
+		out << *it << ";";
 	}
 	out << "} - tags {";
 	for (std::vector<std::string>::const_iterator it = src.tags.begin(); it < src.tags.end(); it++) {
-		out << *it << "_";
+		out << *it << ";";
 	}
 	out << "} - source: " << src.source << RESET << std::endl;
 	return out;

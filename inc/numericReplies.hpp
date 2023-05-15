@@ -1,7 +1,7 @@
 #pragma once
 #include "Server.hpp"
 
-#define ERR_MSG(content) ("Error: " + content + "\r\n")
+#define ERR_MSG(content) ("Error :" + content + "\r\n")
 
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user ,host) ( ":" + SERVER_NAME + " 001 " + nick \
@@ -18,6 +18,10 @@
 // 004
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
+
+// 421
+#define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
+		+ " " + command + " :Unknown command\r\n")
 
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \

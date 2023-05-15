@@ -42,6 +42,7 @@ public:
 	static void sendToClient(int fd, const std::string &content);
 	void sendWelcome(Client *client);
 	bool isNickAlreadyUsed(const Client& client, std::string nick);
+	void disconnectClient(int fd);
 
 private:
 	std::string 			_name;
@@ -60,6 +61,7 @@ private:
 	Server();
 	void SetupServerSocket(int port);
 	void registerNewClient();
+
 	void readClientRequest(unsigned int index);
 	void handleClientRequest(Client *client, const std::string& content);
 };

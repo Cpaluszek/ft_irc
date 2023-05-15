@@ -13,6 +13,8 @@ public:
 	bool						isValid;
 	std::string					command;
 	std::vector<std::string> 	args;
+
+	// Note: remove tags and source ?
 	std::vector<std::string> 	tags;
 	std::string 				source;
 
