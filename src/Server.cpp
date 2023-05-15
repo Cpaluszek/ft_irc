@@ -174,9 +174,14 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	if (!request.isValid) {
 		// Note: how to manage invalid messages?
 		sendToClient(client->socketFd, "Invalid Message\n");
+		return ;
 	}
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {
+		if (!client->isRegistered && request.command != "PASS" && request.command != "USER" && request.command != "NICK") {
+			sendToClient(client->socketFd, ERR_NOTREGISTERED(client->nickName));
+			return ;
+		}
 		it->second(client, request, this);
 	}
 	else {
