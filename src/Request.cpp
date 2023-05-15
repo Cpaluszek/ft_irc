@@ -43,9 +43,9 @@ Request::Request(std::string message): isValid(true) {
 	// Parse parameters
 	std::vector<std::string>::iterator itVec;
 	for (itVec = vecStr.begin(); itVec != vecStr.end(); itVec++) {
-		if ((*itVec)[0] == ':') {
-			*itVec = (*itVec).erase(0, 1);
-		}
+//		if ((*itVec)[0] == ':') {
+//			*itVec = (*itVec).erase(0, 1);
+//		}
 		this->args.push_back(*itVec);
 	}
 }
@@ -76,11 +76,11 @@ std::vector<std::string> Request::split(const std::string& source, const std::st
 std::ostream &operator<<(std::ostream &out, const Request &src) {
 	out << "\" ---> command:[" << src.command << "] - args {";
 	for (std::vector<std::string>::const_iterator it = src.args.begin(); it < src.args.end(); it++) {
-		out << *it << "_";
+		out << *it << ";";
 	}
 	out << "} - tags {";
 	for (std::vector<std::string>::const_iterator it = src.tags.begin(); it < src.tags.end(); it++) {
-		out << *it << "_";
+		out << *it << ";";
 	}
 	out << "} - source: " << src.source << RESET << std::endl;
 	return out;
