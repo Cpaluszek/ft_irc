@@ -3,7 +3,6 @@
 
 Request::~Request() {}
 
-// Todo: code a proper request parsing
 Request::Request(std::string message): isValid(true) {
 	if (message.length() == 0 || message[0] == ' ') {
 		this->isValid = false;
@@ -15,19 +14,19 @@ Request::Request(std::string message): isValid(true) {
 		return ;
 	}
 
-	// Todo: check for tags - '@'
-	if (vecStr[0][0] == '@') {
-		this->tags = split(vecStr[0], ";");
-		this->tags[0].erase(0, 1);
-		vecStr.erase(vecStr.begin());
-	}
-
-	// Todo: check for source - ':'
-	if (vecStr[0][0] == ':') {
-		this->source = vecStr[0];
-		this->source.erase(0, 1);
-		vecStr.erase(vecStr.begin());
-	}
+//	// Todo: check for tags - '@'
+//	if (vecStr[0][0] == '@') {
+//		this->tags = split(vecStr[0], ";");
+//		this->tags[0].erase(0, 1);
+//		vecStr.erase(vecStr.begin());
+//	}
+//
+//	// Todo: check for source - ':'
+//	if (vecStr[0][0] == ':') {
+//		this->source = vecStr[0];
+//		this->source.erase(0, 1);
+//		vecStr.erase(vecStr.begin());
+//	}
 
 	// Parse commad
 	this->command = vecStr[0];
@@ -62,6 +61,9 @@ std::vector<std::string> Request::split(const std::string& source, const std::st
 			result.push_back(subStr);
 		}
 		prevPos = pos + 1;
+		if (source[prevPos] == ':') {
+			break ;
+		}
 	}
 	pos = source.find_first_of("\r\n");
 	subStr = source.substr(prevPos, pos - prevPos);
