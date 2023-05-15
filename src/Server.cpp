@@ -2,19 +2,24 @@
 #include "Server.hpp"
 
 Server::Server(std::string port, std::string password) {
-	// Todo: how to detect port argument error ? numbers only - range [0, 65535]
-	SetupServerSocket(atoi(port.c_str()));
-
+	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
+		throw std::invalid_argument("Error: Wrong port format");
+	}
+	int portNumber = atoi(port.c_str());
+	if (portNumber < 0 || portNumber > 65535) {
+		throw std::invalid_argument("Error: Wrong port format");
+	}
 	if (password.empty()) {
-		throw std::invalid_argument("Password cannot be empty");
+		throw std::invalid_argument("Error: Password cannot be empty");
 	}
 	this->password = password;
 
+
+	SetupServerSocket(portNumber);
 	// Setup poll file descriptors
 	this->_pollFds = new struct pollfd[SOMAXCONN];
 	this->_pollFds[0].fd = this->_serverSocketFd;
 	this->_pollFds[0].events = POLLIN;
-
 	this->_connectionCount = 1;
 
 	// Init Commands
