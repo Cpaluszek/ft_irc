@@ -18,6 +18,7 @@ Server::Server(std::string port, std::string password) {
 	this->_connectionCount = 1;
 
 	// Init Commands
+	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
@@ -152,10 +153,9 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 #ifdef DEBUG
 	std::cout << YELLOW << "# \"" << content << request;
 #endif
-
 	if (!request.isValid) {
 		// Note: how to manage invalid messages?
-		sendToClient(client->socketFd, "Invalid Message\n");
+		sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request->command));
 		return ;
 	}
 	cmdIt it = this->_commands.find(request.command);

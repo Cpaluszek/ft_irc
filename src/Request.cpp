@@ -15,19 +15,19 @@ Request::Request(std::string message): isValid(true) {
 		return ;
 	}
 
-	// Todo: check for tags - '@'
-	if (vecStr[0][0] == '@') {
-		this->tags = split(vecStr[0], ";");
-		this->tags[0].erase(0, 1);
-		vecStr.erase(vecStr.begin());
-	}
-
-	// Todo: check for source - ':'
-	if (vecStr[0][0] == ':') {
-		this->source = vecStr[0];
-		this->source.erase(0, 1);
-		vecStr.erase(vecStr.begin());
-	}
+//	// Todo: check for tags - '@'
+//	if (vecStr[0][0] == '@') {
+//		this->tags = split(vecStr[0], ";");
+//		this->tags[0].erase(0, 1);
+//		vecStr.erase(vecStr.begin());
+//	}
+//
+//	// Todo: check for source - ':'
+//	if (vecStr[0][0] == ':') {
+//		this->source = vecStr[0];
+//		this->source.erase(0, 1);
+//		vecStr.erase(vecStr.begin());
+//	}
 
 	// Parse commad
 	this->command = vecStr[0];
@@ -44,9 +44,9 @@ Request::Request(std::string message): isValid(true) {
 	// Parse parameters
 	std::vector<std::string>::iterator itVec;
 	for (itVec = vecStr.begin(); itVec != vecStr.end(); itVec++) {
-		if ((*itVec)[0] == ':') {
-			*itVec = (*itVec).erase(0, 1);
-		}
+//		if ((*itVec)[0] == ':') {
+//			*itVec = (*itVec).erase(0, 1);
+//		}
 		this->args.push_back(*itVec);
 	}
 }
