@@ -1,7 +1,7 @@
 #pragma once
 #include "Server.hpp"
 
-#define ERR_MSG(content) ("Error: " + content + "\r\n")
+#define ERR_MSG(content) ("Error :" + content + "\r\n")
 
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user ,host) ( ":" + SERVER_NAME + " 001 " + nick \

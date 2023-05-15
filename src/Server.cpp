@@ -106,6 +106,18 @@ void Server::registerNewClient() {
 			<< ": Connection on socket " << clientFd << RESET << std::endl;
 }
 
+void Server::disconnectClient(int fd) {
+	this->_clients.erase(fd);
+	close(fd);
+	for (unsigned int i = 0; i < this->_connectionCount; i++) {
+		if (this->_pollFds[i].fd == fd) {
+			this->_pollFds[i] = this->_pollFds[this->_connectionCount - 1];
+			break ;
+		}
+	}
+	this->_connectionCount -= 1;
+}
+
 void Server::readClientRequest(unsigned int index) {
 	// Note: what size to use ?
 	char buffer[10000];
@@ -118,11 +130,12 @@ void Server::readClientRequest(unsigned int index) {
 		}
 		std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
 			<< ": Disconnection on socket " << this->_pollFds[index].fd << RESET << std::endl;
-		this->_clients.erase(this->_pollFds[index].fd);
-		close(this->_pollFds[index].fd);
-		// TODO: attention au trash code
-			this->_pollFds[index] = this->_pollFds[this->_connectionCount - 1];
-		this->_connectionCount -= 1;
+
+		// Todo: If a connection is closed without the client issuing a QUIT
+		// the server MUST distribute a QUIT message to other clients to inform
+		// For instance, "Ping timeout: 120 seconds", "Excess Flood", and "Too many connections from this IP" are examples of relevant reasons for closing or for a connection with a client to have been closed.
+
+		disconnectClient(this->_pollFds[index].fd);
 	}
 	else {
 		Client *client = &this->_clients[this->_pollFds[index].fd];
@@ -195,3 +208,4 @@ void Server::sendWelcome(Client *client) {
 	// Note: MOTD?
 	// Note: mode?
 }
+
