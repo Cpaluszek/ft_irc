@@ -123,7 +123,7 @@ void Server::readClientRequest(unsigned int index) {
 	char buffer[10000];
 	memset(&buffer, 0, 10000);
 	int clientFd = this->_pollFds[index].fd;
-	
+
 	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
 
 	if (nBytes <= 0) {
