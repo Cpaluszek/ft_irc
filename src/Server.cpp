@@ -179,11 +179,9 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	if (it != this->_commands.end()) {
 		it->second(client, request, this);
 	}
-#ifdef DEBUG
 	else {
-		std::cout << CYAN << "->Unknown command: " << content << RESET << std::endl;
+		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
-#endif
 }
 
 bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {

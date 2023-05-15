@@ -19,6 +19,10 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 421
+#define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
+		+ " " + command + " :Unknown command\r\n")
+
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \
 		+ " :No nickname given\r\n")
