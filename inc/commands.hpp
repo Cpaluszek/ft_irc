@@ -15,3 +15,6 @@ void userCmd(Client *client, const Request &request, Server *server);
 
 // QUIT
 void quitCmd(Client *client, const Request &request, Server *server);
+
+// PRIVMSG
+void privmsgCmd(Client *client, const Request &request, Server *server);
