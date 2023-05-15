@@ -5,12 +5,14 @@ NAME			:=	ircserv
 
 HEADERS_DIR		:=	inc
 HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp Request.hpp \
+					Channel.hpp \
 					numericReplies.hpp commands.hpp colors.hpp
 
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
 SRC_DIR			:=	src
 SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
+					Channel.cpp \
 					cmds/pass.cpp \
 					cmds/nick.cpp \
 					cmds/user.cpp \
