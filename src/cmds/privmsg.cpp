@@ -1,9 +1,9 @@
 #include "commands.hpp"
 
-std::string parsPrivMsg( Client *client, const Request &request )
+std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 {
 	size_t pos = -1;
-	std::string user = "";
+	std::vector<std::string> userAndMessage;
 	std::vector<std::string>::const_iterator itArgs = request.args.begin();
 	std::vector<std::string>::const_iterator it = request.args.begin();
 
@@ -33,7 +33,7 @@ std::string parsPrivMsg( Client *client, const Request &request )
 			}
 			else if (pos != 0 && (itArgs - 1) == request.args.begin())
 			{
-				user = itArgs->substr(0, pos);
+				userAndMessage.push_back(itArgs->substr(0, pos));
 				break ;
 			}
 		}
@@ -43,7 +43,7 @@ std::string parsPrivMsg( Client *client, const Request &request )
 			break ;
 		}
 	}
-	return user;
+	return userAndMessage;
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
@@ -51,12 +51,9 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	(void) server;
 	(void) request;
 	(void) client;
-	std::string clientNickname;
-	std::string originalMessageToSend;
 
-
-	clientNickname = parsPrivMsg( client, request );
-	if (clientNickname.empty())
+	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
+	if (userAndMessage.empty())
 		return ;
 
 // Todo: ERR_NOTEXTTOSEND
