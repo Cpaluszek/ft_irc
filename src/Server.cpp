@@ -22,6 +22,7 @@ Server::Server(std::string port, std::string password) {
 	this->_connectionCount = 1;
 
 	// Init Commands
+	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
