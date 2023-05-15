@@ -6,15 +6,14 @@ Server::Server(std::string port, std::string password) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
 	int portNumber = atoi(port.c_str());
-	if (portNumber < 0 || portNumber > 65535) {
+	if (portNumber < 1 || portNumber > 65535) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
 	if (password.empty()) {
 		throw std::invalid_argument("Error: Password cannot be empty");
 	}
 	this->password = password;
-
-
+	
 	SetupServerSocket(portNumber);
 	// Setup poll file descriptors
 	this->_pollFds = new struct pollfd[SOMAXCONN];
