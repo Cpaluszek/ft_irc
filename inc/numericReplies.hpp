@@ -1,10 +1,6 @@
 #pragma once
 #include "Server.hpp"
 
-// Numeric replies list: C for code - M for message
-
-#define NO_RESPONSE ""
-
 #define ERR_MSG(content) ("Error: " + content + "\r\n")
 
 // 001 - RPL_WELCOME
