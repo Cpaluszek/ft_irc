@@ -8,7 +8,7 @@ Request::Request(std::string message): isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-	std::vector<std::string> vecStr = split(message, " ");
+	std::vector<std::string> vecStr = Utils::split(message, " ");
 	if (vecStr.empty()) {
 		this->isValid = false;
 		return ;
@@ -48,29 +48,6 @@ Request::Request(std::string message): isValid(true) {
 //		}
 		this->args.push_back(*itVec);
 	}
-}
-
-std::vector<std::string> Request::split(const std::string& source, const std::string& delimiter) {
-	std::vector<std::string> result;
-	std::string subStr;
-	size_t pos = -1;
-	size_t prevPos = 0;
-	while ((pos = source.find_first_of(delimiter, pos + 1)) != std::string::npos) {
-		subStr = source.substr(prevPos, pos - prevPos);
-		if (!subStr.empty()) {
-			result.push_back(subStr);
-		}
-		prevPos = pos + 1;
-		if (source[prevPos] == ':') {
-			break ;
-		}
-	}
-	pos = source.find_first_of("\r\n");
-	subStr = source.substr(prevPos, pos - prevPos);
-	if (!subStr.empty()) {
-		result.push_back(subStr);
-	}
-	return result;
 }
 
 std::ostream &operator<<(std::ostream &out, const Request &src) {
