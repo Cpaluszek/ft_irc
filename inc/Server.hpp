@@ -40,12 +40,10 @@ class Channel;
 
 class Server {
 public:
-	typedef void 											(*CmdFunction)(Client*, const Request &, Server*);
-	typedef std::map<std::string, CmdFunction>::iterator	cmdIt;
-	std::string 											password;
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	typedef std::map<std::string, Channel*>::iterator channelIt;
+	typedef std::map<int, Client>::iterator clientIt;
 	// Todo: typedef vecStr iterator
 
 	// Todo: Make password private with a getter and no setter
@@ -54,10 +52,12 @@ public:
 	~Server();
 	Server(std::string port, std::string password);
 	void 		Update();
-	static void sendToClient(int fd, const std::string &content);
 	void 		sendWelcome(Client *client);
 	bool 		isNickAlreadyUsed(const Client& client, std::string nick);
 	void 		disconnectClient(int fd);
+
+	clientIt getClientBeginIt();
+	clientIt getClientEndIt();
 
 	// Channel
 	channelIt	getChannelByName(const std::string& name);

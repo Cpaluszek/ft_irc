@@ -2,7 +2,7 @@
 
 std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 {
-	size_t pos = -1;
+	size_t pos;
 	std::vector<std::string> userAndMessage;
 	std::vector<std::string>::const_iterator itArgs = request.args.begin();
 	std::vector<std::string>::const_iterator itForUser = request.args.begin();
@@ -36,7 +36,7 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 					itForUser++;
 				}
 				if ( itArgs->length() != 1 )
-					userAndMessage.push_back(PRIVMSG_FORMAT(client->nickName, userAndMessage[0], client->userName, std::string(LOCAL_HOST_IP), itArgs->substr( pos + 1, itArgs->length() )));
+					userAndMessage.push_back(RPL_CMD(client->nickName, client->userName, "PRIVMSG", *itArgs));
 				else if ( (itArgs + 1) == request.args.end() )
 				{
 					Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
@@ -45,15 +45,12 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 				break;
 			}
 		}
-		else if ( pos != std::string::npos && pos != 0)
+		else if ( pos != std::string::npos)
 		{
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
 			break ;
 		}
-		else if (pos == std::string::npos)
-		{
-			std::cerr << "ok" <<std::endl;
-
+		else {
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 			break;
 		}
@@ -82,8 +79,10 @@ std::map<int, bool>	targetExist( Server *server, std::string target, Client *cli
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
-	if (request.args.empty())
+	if (request.args.empty()) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
+		return ;
+	}
 	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
 	if (userAndMessage.empty())
 		return ;
@@ -91,7 +90,7 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	std::vector<std::string>::iterator it = userAndMessage.begin();
 	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
 
-	if (clientFdAndExist.begin()->second == true)
+	if (clientFdAndExist.begin()->second)
 	{
 		int clientfd = clientFdAndExist.begin()->first;
 		Server::sendToClient(clientfd, userAndMessage[1]);
