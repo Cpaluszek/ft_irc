@@ -69,16 +69,17 @@ void Server::SetupServerSocket(int port) {
 }
 
 void Server::Update() {
-	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
-	if (pollCount == -1) {
+	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1); // avec l'option -1 la fonction poll est bloquante
+	if (pollCount == -1) {																// envisager l'utilisantion d'un timeout de 5 ou 10 ms?
 		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 	}
 
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
 		if ((this->_pollFds[i].revents & POLLIN) == 0) {
 			continue;
-		}
-		if (this->_pollFds[i].fd == this->_serverSocketFd) {
+		} // dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
+
+		if (this->_pollFds[i].fd == this->_serverSocketFd) { // if i == 0 && fd == serversocket plutot!
 			registerNewClient();
 		}
 		else {

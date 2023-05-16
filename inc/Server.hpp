@@ -32,20 +32,17 @@ class Client;
 
 class Server {
 public:
-	typedef void (*CmdFunction)(Client*, const Request &, Server*);
-	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
-	typedef std::map<int, Client>::iterator clientIt;
-	std::string 			password;
+	typedef void 											(*CmdFunction)(Client*, const Request &, Server*);
+	typedef std::map<std::string, CmdFunction>::iterator	cmdIt;
+	std::string 											password;
 
 	~Server();
 	Server(std::string port, std::string password);
-	void Update();
+	void 		Update();
 	static void sendToClient(int fd, const std::string &content);
-	void sendWelcome(Client *client);
-	bool isNickAlreadyUsed(const Client& client, std::string nick);
-	void disconnectClient(int fd);
-	clientIt getClientBeginIt();
-	clientIt getClientEndIt();
+	void 		sendWelcome(Client *client);
+	bool 		isNickAlreadyUsed(const Client& client, std::string nick);
+	void 		disconnectClient(int fd);
 
 private:
 	std::string 			_name;
@@ -58,6 +55,7 @@ private:
 	std::map<std::string, CmdFunction> _commands;
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
+	// Todo: map ou list
 	struct pollfd	*_pollFds;
 
 	// Functions
