@@ -52,8 +52,6 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 		}
 		else if (pos == std::string::npos)
 		{
-			std::cerr << "ok" <<std::endl;
-
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 			break;
 		}
@@ -79,7 +77,6 @@ std::map<int, bool>	targetExist( Server *server, std::string target, Client *cli
 	return existAndClientFd;
 }
 
-// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
 	if (request.args.empty())
@@ -91,9 +88,10 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	std::vector<std::string>::iterator it = userAndMessage.begin();
 	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
 
-	if (clientFdAndExist.begin()->second == true)
+	if (clientFdAndExist.begin()->second)
 	{
 		int clientfd = clientFdAndExist.begin()->first;
 		Server::sendToClient(clientfd, userAndMessage[1]);
 	}
 }
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
