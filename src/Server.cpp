@@ -27,6 +27,7 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
 	this->_commands["QUIT"] = &quitCmd;
+	this->_commands["JOIN"] = &joinCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -209,7 +210,7 @@ bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
 
 void Server::sendWelcome(Client *client) {
 	int fd = client->socketFd;
-	sendToClient(fd, RPL_WELCOME(client->nickName, client->userName, std::string(LOCAL_HOST_IP)));
+	sendToClient(fd, RPL_WELCOME(client->nickName, client->userName));
 	sendToClient(fd, RPL_YOURHOST(client->nickName));
 	sendToClient(fd, RPL_CREATED(client->nickName, _creationDate));
 	sendToClient(fd, RPL_MYINFO(client->nickName));
@@ -229,4 +230,17 @@ Server::clientIt Server::getClientEndIt() {
 //std::map<int, Client> Server::getMapClients() {
 //	return _clients;
 //}
+
+typedef std::map<std::string, Channel*>::iterator channelIt;
+channelIt Server::getChannelByName(const std::string& name) {
+	return this->_channels.find(name);
+}
+
+channelIt Server::getChannelEnd() {
+	return this->_channels.end();
+}
+
+void Server::addChannel(Channel *newChannel) {
+	this->_channels[newChannel->name] = newChannel;
+}
 

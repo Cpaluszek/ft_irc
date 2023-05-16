@@ -18,3 +18,6 @@ void quitCmd(Client *client, const Request &request, Server *server);
 
 // PRIVMSG
 void privmsgCmd(Client *client, const Request &request, Server *server);
+
+// JOIN
+void joinCmd(Client *client, const Request &request, Server *server);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "colors.hpp"
+#include "Utils.hpp"
 
 class Request {
 public:
@@ -17,9 +18,6 @@ public:
 	// Note: remove tags and source ?
 	std::vector<std::string> 	tags;
 	std::string 				source;
-
-private:
-	static std::vector<std::string> split(const std::string& source, const std::string& delimiter);
 };
 
 std::ostream &operator<<(std::ostream &out, const Request &src);
