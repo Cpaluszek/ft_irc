@@ -36,7 +36,7 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 					itForUser++;
 				}
 				if ( itArgs->length() != 1 )
-					userAndMessage.push_back( itArgs->substr( pos + 1, itArgs->length() ));
+					userAndMessage.push_back(PRIVMSG_FORMAT(client->nickName, userAndMessage[0], client->userName, std::string(LOCAL_HOST_IP), itArgs->substr( pos + 1, itArgs->length() )));
 				else if ( (itArgs + 1) == request.args.end() )
 				{
 					Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));

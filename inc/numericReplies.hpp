@@ -1,6 +1,8 @@
 #pragma once
 #include "Server.hpp"
 
+#define PRIVMSG_FORMAT(nick, target, user, host, message) (SERVER_NAME + " " + nick + "!" + user + "@" + host + " PRIVMSG " + nick + " :" + message + "\r\n")
+
 #define ERR_MSG(content) ("Error :" + content + "\r\n")
 
 // 001 - RPL_WELCOME
