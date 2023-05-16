@@ -5,42 +5,55 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 	size_t pos = -1;
 	std::vector<std::string> userAndMessage;
 	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	std::vector<std::string>::const_iterator it = request.args.begin();
 
-
-	for (; it != request.args.end(); ++it) {
-		std::cerr << *it << std::endl;
-	}
 	for (; itArgs != request.args.end(); ++itArgs) {
 		pos = itArgs->find(":");
-		if (pos != std::string::npos)
-		{
-			if (itArgs != request.args.begin() && (itArgs - 1) != request.args.begin() && pos != 0)
-			{
-				Server::sendToClient(client->socketFd, ERR_TOOMANYTARGETS);
-				break;
-			}
-			else if ((itArgs - 1) != request.args.begin() && pos == 0)
-			{
-				Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request->command));
-				break;
-			}
-			else if ((pos == 0 && (itArgs + 1) == request.args.end() && request.args.size() == 0) || \
-					(pos == itArgs->length() - 1 && (itArgs + 1) == request.args.end()))
-			{
-				Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
-				break ;
-			}
-			else if (pos != 0 && (itArgs - 1) == request.args.begin())
-			{
-				userAndMessage.push_back(itArgs->substr(0, pos));
-				break ;
-			}
-		}
-		else if ((itArgs - 1) != request.args.begin())
+		if (pos == std::string::npos && (itArgs) == request.args.begin())
+			continue ;
+		else if (pos == std::string::npos && (itArgs - 1) == request.args.begin())
 		{
 			Server::sendToClient(client->socketFd, ERR_TOOMANYTARGETS);
+			break;
+		}
+		if (pos != std::string::npos && pos == 0)
+		{
+			if ((itArgs) == request.args.begin())
+			{
+				Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
+				break;
+			}
+			else if ( (itArgs - 1 ) == request.args.begin() )
+			{
+				userAndMessage.push_back( *(itArgs) );
+				break;
+			}
+		}
+		else if ( pos != std::string::npos && pos != 0)
+		{
+			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
 			break ;
+		}
+		else if (pos == std::string::npos)
+		{
+			std::cerr << "ok" <<std::endl;
+
+			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
+			break;
+		}
+	}
+	if (!userAndMessage.empty())
+	{
+		if ( itArgs->length() != 1 )
+			userAndMessage.push_back( itArgs->substr( pos, itArgs->length() - pos ));
+		else if ( (itArgs + 1) == request.args.end() )
+		{
+			Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
+			return userAndMessage ;
+		}
+		while (++itArgs != request.args.end())
+		{
+			userAndMessage.push_back( *itArgs );
+			itArgs++;
 		}
 	}
 	return userAndMessage;
