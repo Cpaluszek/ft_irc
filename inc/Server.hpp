@@ -14,6 +14,7 @@
 #include <string>
 
 #include "Client.hpp"
+#include "Channel.hpp"
 #include "Utils.hpp"
 #include "Request.hpp"
 #include "numericReplies.hpp"
@@ -28,28 +29,47 @@
 // Todo: CHANMODE
 #define CHANMODE std::string("???")
 
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
+#define CHANLIMIT 10
+
+// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
+#define CHANNELLEN 32
+
 class Client;
+class Channel;
 
 class Server {
 public:
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
+	typedef std::map<std::string, Channel*>::iterator channelIt;
+	// Todo: typedef vecStr iterator
+
+	// Todo: Make password private with a getter and no setter
 	std::string 			password;
 
 	~Server();
 	Server(std::string port, std::string password);
 	void Update();
-	static void sendToClient(int fd, const std::string &content);
 	void sendWelcome(Client *client);
 	bool isNickAlreadyUsed(const Client& client, std::string nick);
 	void disconnectClient(int fd);
 
+	// Channel
+	channelIt	getChannelByName(const std::string& name);
+	channelIt	getChannelEnd();
+	void		addChannel(Channel *newChannel);
+	// Todo: remove channel
+
+	static void sendToClient(int fd, const std::string &content);
+
 private:
-	std::string 			_name;
-	int 					_serverSocketFd;
-	unsigned int			_connectionCount;
-	std::map<int, Client>	_clients;
-	std::string 			_creationDate;
+	std::string 				_name;
+	int 						_serverSocketFd;		// Note: create a class module for socket management?
+	unsigned int				_connectionCount;
+	std::map<int, Client>		_clients;	// Note: convert to map<int, Client*> ????
+	std::string 				_creationDate;
+	std::map<std::string, Channel*> _channels;
 	// map channels
 
 	std::map<std::string, CmdFunction> _commands;
