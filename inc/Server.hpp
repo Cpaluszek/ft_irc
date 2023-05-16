@@ -44,9 +44,8 @@ public:
 	void sendWelcome(Client *client);
 	bool isNickAlreadyUsed(const Client& client, std::string nick);
 	void disconnectClient(int fd);
-	static clientIt getClientBeginIt();
-	static clientIt getClientEndIt();
-	static std::map<int, Client> getMapClients();
+	clientIt getClientBeginIt();
+	clientIt getClientEndIt();
 
 private:
 	std::string 			_name;

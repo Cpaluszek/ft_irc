@@ -218,14 +218,14 @@ void Server::sendWelcome(Client *client) {
 }
 
 Server::clientIt Server::getClientBeginIt() {
-	return this->_clients.begin();
+	return _clients.begin();
 }
 
 Server::clientIt Server::getClientEndIt() {
-	return this->_clients.end();
+	return _clients.end();
 }
-
-std::map<int, Client> Server::getMapClients() {
-	return this->_clients;
-}
+//
+//std::map<int, Client> Server::getMapClients() {
+//	return _clients;
+//}
 

@@ -55,7 +55,7 @@
 		+  " :Password incorrect\r\n")
 
 // 401
-# define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " + nick + " " + target \
+# define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " + nick + " '" + target + "'" \
 		+ " :No such nick/channel:\r\n")
 
 //411

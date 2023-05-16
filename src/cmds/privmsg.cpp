@@ -9,7 +9,12 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 
 	for (; itArgs != request.args.end(); ++itArgs) {
 		pos = itArgs->find(":");
-		if (pos == std::string::npos && (itArgs) == request.args.begin())
+		if (pos == std::string::npos && (itArgs) == request.args.begin() && (itArgs + 1) == request.args.end())
+		{
+			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
+			break;
+		}
+		else if (pos == std::string::npos && (itArgs) == request.args.begin())
 			continue ;
 		else if (pos == std::string::npos && (itArgs - 1) == request.args.begin())
 		{
@@ -25,17 +30,17 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 			}
 			else if ( (itArgs - 1 ) == request.args.begin() )
 			{
+				while ( itForUser != request.args.end() && itForUser->find(":") == std::string::npos )
+				{
+					userAndMessage.push_back( *itForUser );
+					itForUser++;
+				}
 				if ( itArgs->length() != 1 )
 					userAndMessage.push_back( itArgs->substr( pos + 1, itArgs->length() ));
 				else if ( (itArgs + 1) == request.args.end() )
 				{
 					Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
 					return userAndMessage ;
-				}
-				while ( itForUser != request.args.end() && itForUser->find(":") == std::string::npos )
-				{
-					userAndMessage.push_back( *itForUser );
-					itForUser++;
 				}
 				break;
 			}
@@ -56,33 +61,39 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 	return userAndMessage;
 }
 
-bool	targetExist( std::string target, std::string nickname )
+std::map<int, bool>	targetExist( Server *server, std::string target, Client *client )
 {
-	Server::clientIt it = Server::getClientBeginIt();
-	Server::clientIt itEnd = Server::getClientBeginIt();
+	Server::clientIt it = server->getClientBeginIt();
+	Server::clientIt itEnd = server->getClientEndIt();
+	std::map<int, bool> existAndClientFd;
+
 	for (; it != itEnd ; it++) {
 		if ( it->second.nickName == target )
-			return true;
+		{
+			existAndClientFd[ it->second.socketFd ] = true;
+			return (existAndClientFd);
+		}
 	}
-	Server::sendToClient(ERR_NOSUCHNICK( , target ))
-	return false;
+	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK( client->nickName , target ));
+	existAndClientFd[ -1 ] = false;
+	return existAndClientFd;
 }
+
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
 void privmsgCmd(Client *client, const Request &request, Server *server) {
-	(void) server;
-	(void) request;
-	(void) client;
 
+	if (request.args.empty())
+		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
 	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
 	if (userAndMessage.empty())
 		return ;
+
 	std::vector<std::string>::iterator it = userAndMessage.begin();
-	if (targetExist( it[0] , client->nickName ))
+	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
+
+	if (clientFdAndExist.begin()->second == true)
 	{
-		Server::sendToClient()
+		int clientfd = clientFdAndExist.begin()->first;
+		Server::sendToClient(clientfd, userAndMessage[1]);
 	}
-
-
-
-	std::cout << "PRIVMSG not implemented" << std::endl;
 }
