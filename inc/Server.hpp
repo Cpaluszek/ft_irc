@@ -34,6 +34,7 @@ class Server {
 public:
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
+	typedef std::map<int, Client>::iterator clientIt;
 	std::string 			password;
 
 	~Server();
@@ -43,6 +44,9 @@ public:
 	void sendWelcome(Client *client);
 	bool isNickAlreadyUsed(const Client& client, std::string nick);
 	void disconnectClient(int fd);
+	static clientIt getClientBeginIt();
+	static clientIt getClientEndIt();
+	static std::map<int, Client> getMapClients();
 
 private:
 	std::string 			_name;

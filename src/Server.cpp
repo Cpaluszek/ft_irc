@@ -217,3 +217,15 @@ void Server::sendWelcome(Client *client) {
 	// Note: mode?
 }
 
+Server::clientIt Server::getClientBeginIt() {
+	return this->_clients.begin();
+}
+
+Server::clientIt Server::getClientEndIt() {
+	return this->_clients.end();
+}
+
+std::map<int, Client> Server::getMapClients() {
+	return this->_clients;
+}
+
