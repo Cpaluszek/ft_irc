@@ -1,5 +1,17 @@
 #include "commands.hpp"
 
+bool	targetIsChannel( std::string target )
+{
+	if ( target[0] == '#')
+		return true;
+	return false;
+}
+
+bool channelExist( std::string channel )
+{
+	if ()
+}
+
 std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 {
 	size_t pos;
@@ -36,7 +48,10 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 					itForUser++;
 				}
 				if ( itArgs->length() != 1 )
-					userAndMessage.push_back(RPL_CMD(client->nickName, client->userName, "PRIVMSG", *itArgs));
+				{
+					userAndMessage.push_back(RPL_CMD(client->nickName, client->userName, "PRIVMSG", ": " + itArgs->substr(pos + 1, itArgs->length())));
+					std::cerr << userAndMessage[1];
+				}
 				else if ( (itArgs + 1) == request.args.end() )
 				{
 					Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
@@ -88,6 +103,10 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		return ;
 
 	std::vector<std::string>::iterator it = userAndMessage.begin();
+	if (targetIsChannel && channelExist)
+	{
+		sendMessageToAllChannelUsers();
+	}
 	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
 
 	if (clientFdAndExist.begin()->second)
