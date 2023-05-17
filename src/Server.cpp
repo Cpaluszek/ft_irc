@@ -27,6 +27,7 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
 	this->_commands["QUIT"] = &quitCmd;
+	this->_commands["JOIN"] = &joinCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -69,16 +70,17 @@ void Server::SetupServerSocket(int port) {
 }
 
 void Server::Update() {
-	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
-	if (pollCount == -1) {
+	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1); // avec l'option -1 la fonction poll est bloquante
+	if (pollCount == -1) {																// envisager l'utilisantion d'un timeout de 5 ou 10 ms?
 		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 	}
 
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
 		if ((this->_pollFds[i].revents & POLLIN) == 0) {
 			continue;
-		}
-		if (this->_pollFds[i].fd == this->_serverSocketFd) {
+		} // dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
+
+		if (this->_pollFds[i].fd == this->_serverSocketFd) { // if i == 0 && fd == serversocket plutot!
 			registerNewClient();
 		}
 		else {
@@ -208,7 +210,7 @@ bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
 
 void Server::sendWelcome(Client *client) {
 	int fd = client->socketFd;
-	sendToClient(fd, RPL_WELCOME(client->nickName, client->userName, std::string(LOCAL_HOST_IP)));
+	sendToClient(fd, RPL_WELCOME(client->nickName, client->userName));
 	sendToClient(fd, RPL_YOURHOST(client->nickName));
 	sendToClient(fd, RPL_CREATED(client->nickName, _creationDate));
 	sendToClient(fd, RPL_MYINFO(client->nickName));
@@ -228,4 +230,17 @@ Server::clientIt Server::getClientEndIt() {
 //std::map<int, Client> Server::getMapClients() {
 //	return _clients;
 //}
+
+typedef std::map<std::string, Channel*>::iterator channelIt;
+channelIt Server::getChannelByName(const std::string& name) {
+	return this->_channels.find(name);
+}
+
+channelIt Server::getChannelEnd() {
+	return this->_channels.end();
+}
+
+void Server::addChannel(Channel *newChannel) {
+	this->_channels[newChannel->name] = newChannel;
+}
 

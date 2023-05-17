@@ -1,13 +1,14 @@
 #pragma once
 #include "Server.hpp"
 
-#define PRIVMSG_FORMAT(nick, target, user, host, message) (SERVER_NAME + " " + nick + "!" + user + "@" + host + " PRIVMSG " + nick + " :" + message + "\r\n")
-
 #define ERR_MSG(content) ("Error :" + content + "\r\n")
 
+#define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@" + LOCAL_HOST_IP + " " + cmd \
+		+ " " + reply + "\r\n")
+
 // 001 - RPL_WELCOME
-#define RPL_WELCOME(nick, user ,host) ( ":" + SERVER_NAME + " 001 " + nick \
-		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + host + "\r\n")
+#define RPL_WELCOME(nick, user) ( ":" + SERVER_NAME + " 001 " + nick \
+		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + LOCAL_HOST_IP + "\r\n")
 
 // 002
 #define RPL_YOURHOST(nick) (":" + SERVER_NAME + " 002 " + nick \
@@ -20,6 +21,22 @@
 // 004
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
+
+// 353
+#define RPL_NAMREPLY(nick, symbol, channel, names) (":" + SERVER_NAME + " 353 " + nick + \
+		+ " " + symbol + " " + channel + " " + names + "\r\n")
+
+// 366
+#define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " + nick + \
+		+ " " + channel + " :End of /NAMES list\r\n")
+
+// 403
+#define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
+		+ " " + channel + " :No such channel\r\n")
+
+// 405
+#define ERR_TOOMANYCHANNELS
+
 
 // 421
 #define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
@@ -78,3 +95,18 @@
 
 // 407
 # define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
+// 471
+#define ERR_CHANNELISFULL
+
+// 473
+#define ERR_INVITEONLYCHAN
+
+// 474
+#define ERR_BANNEDFROMCHAN
+
+// 475
+#define ERR_BADCHANNELKEY(nick, channel) (":" + SERVER_NAME + " 475 " + nick \
+		+ " " + channel + " :Cannot join channel (+k)\r\n")
+
+// 476
+#define ERR_BADCHANMASK(channel) (":" + SERVER_NAME + " 476 " + channel + " :Bad Channel Mask\r\n")

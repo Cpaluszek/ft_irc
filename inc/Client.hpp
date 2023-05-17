@@ -1,12 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <map>
+#include "Channel.hpp"
+
+class Channel;
 
 // Note: should we use privates vars + getters and setters
 class Client {
 public:
 	int 		socketFd;
-	// If any command is executed and client is not registered -> send 462
 	bool		isRegistered;
 	bool		hasPassword;
 	std::string nickName;
@@ -18,7 +21,12 @@ public:
 
 	Client();
 	~Client();
-	void updateNickname(const std::string& newNickname);
+	void	updateNickname(const std::string& newNickname);
+	void	addChannel(Channel *newChannel);
+	// Todo: remove channel
+
+private:
+	std::map<std::string, Channel*> _channels;
 };
 
 std::ostream &operator<<(std::ostream &out, const Client &src);
