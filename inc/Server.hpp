@@ -46,16 +46,14 @@ public:
 	typedef std::map<int, Client>::iterator clientIt;
 	// Todo: typedef vecStr iterator
 
-	// Todo: Make password private with a getter and no setter
-	std::string 			password;
-
 	~Server();
-	Server(std::string port, std::string password);
+	Server(const std::string& port, const std::string& password);
 	void 		Update();
 	void 		sendWelcome(Client *client);
 	bool 		isNickAlreadyUsed(const Client& client, std::string nick);
 	void 		disconnectClient(int fd);
 
+	std::string getPassword() const;
 	clientIt getClientBeginIt();
 	clientIt getClientEndIt();
 
@@ -69,6 +67,7 @@ public:
 
 private:
 	std::string 				_name;
+	std::string 				_password;
 	int 						_serverSocketFd;		// Note: create a class module for socket management?
 	unsigned int				_connectionCount;
 	std::map<int, Client>		_clients;	// Note: convert to map<int, Client*> ????

@@ -1,7 +1,7 @@
 
 #include "Server.hpp"
 
-Server::Server(std::string port, std::string password) {
+Server::Server(const std::string& port, const std::string& password) {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
@@ -12,7 +12,7 @@ Server::Server(std::string port, std::string password) {
 	if (password.empty()) {
 		throw std::invalid_argument("Error: Password cannot be empty");
 	}
-	this->password = password;
+	this->_password = password;
 	
 	SetupServerSocket(portNumber);
 	// Setup poll file descriptors
@@ -22,12 +22,12 @@ Server::Server(std::string port, std::string password) {
 	this->_connectionCount = 1;
 
 	// Init Commands
-	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
 	this->_commands["NICK"] = &nickCmd;
 	this->_commands["USER"] = &userCmd;
 	this->_commands["QUIT"] = &quitCmd;
 	this->_commands["JOIN"] = &joinCmd;
+	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["WHO"] = &whoCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
@@ -243,5 +243,9 @@ channelIt Server::getChannelEnd() {
 
 void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
+}
+
+std::string Server::getPassword() const {
+	return this->_password;
 }
 
