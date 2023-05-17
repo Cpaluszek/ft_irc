@@ -21,3 +21,6 @@ void privmsgCmd(Client *client, const Request &request, Server *server);
 
 // JOIN
 void joinCmd(Client *client, const Request &request, Server *server);
+
+// WHO
+void whoCmd(Client *client, const Request &request, Server *server);

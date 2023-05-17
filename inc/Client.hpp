@@ -9,6 +9,8 @@ class Channel;
 // Note: should we use privates vars + getters and setters
 class Client {
 public:
+	typedef std::map<std::string, Channel*> channelMap;
+
 	int 		socketFd;
 	bool		isRegistered;
 	bool		hasPassword;
@@ -24,9 +26,13 @@ public:
 	void	updateNickname(const std::string& newNickname);
 	void	addChannel(Channel *newChannel);
 	// Todo: remove channel
+	size_t getNumberOfChannelsJoined() const;
+	channelMap getChannels() const;
+	std::string getMode() const;
 
 private:
-	std::map<std::string, Channel*> _channels;
+	channelMap _channels;
+	std::string _mode;
 };
 
 std::ostream &operator<<(std::ostream &out, const Client &src);

@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, Client *client): name(name), topic(""), symbol('=') {
-	connectedClient newClient;
+Channel::Channel(const std::string& name, Client *client): name(name), symbol('='), _topic("") {
+	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
 	newClient.userMode = "o";
@@ -10,8 +10,7 @@ Channel::Channel(const std::string& name, Client *client): name(name), topic("")
 	_creationTime = Utils::getCurrentDateTime();
 }
 
-Channel::Channel() {
-}
+Channel::Channel() {}
 
 std::string Channel::getPrefix(const std::string& clientName) {
 	mapClientsIt it;
@@ -27,8 +26,24 @@ std::string Channel::getKey() const {
 	return this->_key;
 }
 
+Channel::mapClients Channel::getClients() const {
+	return this->_mapClients;
+}
+
+std::string Channel::getTopic() const {
+	return this->_topic;
+}
+
+std::string Channel::getTopicUser() const {
+	return this->_topicSetBy;
+}
+
+std::string Channel::getTopicTime() const {
+	return this->_topicSetTime;
+}
+
 void Channel::addClient(Client *client) {
-	connectedClient newClient;
+	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "";
 	newClient.userMode = "";
@@ -43,6 +58,13 @@ void Channel::removeClient(Client *client) {
 	}
 }
 
-Channel::mapClients Channel::getClients() const {
-	return this->_mapClients;
+void Channel::setTopic(const std::string &newTopic, const std::string &nick) {
+	this->_topic = newTopic;
+	this->_topicSetBy = nick;
+	this->_topicSetTime = Utils::getCurrentDateTime();
 }
+
+bool Channel::isClientConnected(const std::string& nickName) const {
+	return this->_mapClients.find(nickName) != this->_mapClients.end();
+}
+
