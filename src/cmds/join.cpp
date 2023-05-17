@@ -68,7 +68,6 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 		// If the client follows to many channels
-		std::cout << "Joined " << client->getNumberOfChannelsJoined() << " channels" << std::endl;
 		if (client->getNumberOfChannelsJoined() >= CHANLIMIT) {
 			Server::sendToClient(client->socketFd, ERR_TOOMANYCHANNELS(client->nickName, *nameIt));
 			continue ;

@@ -39,23 +39,19 @@ public:
 
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
+
 	mapClients getClients() const;
+	bool isClientConnected(const std::string& nickName) const;
+
 	void addClient(Client *client);
 	void removeClient(Client *client);
-	// Todo: removeClient
 
 private:
-	// Todo: instead of Client - use a struct with joinTime userMode prefix
 	mapClients _mapClients;
 	std::string _creationTime;
 	std::string _key;
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-
-	// Functions:
-		// Connect client
-		// Disconnect client
-
 };
 

@@ -64,3 +64,7 @@ void Channel::setTopic(const std::string &newTopic, const std::string &nick) {
 	this->_topicSetTime = Utils::getCurrentDateTime();
 }
 
+bool Channel::isClientConnected(const std::string& nickName) const {
+	return this->_mapClients.find(nickName) != this->_mapClients.end();
+}
+

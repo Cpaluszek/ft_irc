@@ -28,6 +28,7 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["USER"] = &userCmd;
 	this->_commands["QUIT"] = &quitCmd;
 	this->_commands["JOIN"] = &joinCmd;
+	this->_commands["WHO"] = &whoCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }

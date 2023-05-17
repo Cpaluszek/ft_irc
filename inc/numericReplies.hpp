@@ -22,6 +22,10 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 315
+#define RPL_ENDOFWHO(nick, maks) (":" + SERVER_NAME + " 315 " + nick \
+		+ " " + mask + " :End of WHO list\r\n")
+
 // 332
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :" + topic + "\r\n")
@@ -29,6 +33,11 @@
 // 333
 #define RPL_TOPICWHOTIME(nick, channel, who, time) (":" + SERVER_NAME + " 333 " + nick + \
 		+ " " + channel + " " + who + " " + time + "\r\n")
+
+// 352
+#define RPL_WHOREPLY(client, channel, user, nick, flag, realname) (":" + SERVER_NAME + " 352 " + client \
+		+ " " + channel + " " + user + " " + LOCAL_HOST_IP + " " + SERVER_NAME + " " + nick + " " + flag \
+		+ " :0 " + realname + "\r\n")
 
 // 353
 #define RPL_NAMREPLY(nick, symbol, channel, names) (":" + SERVER_NAME + " 353 " + nick + \

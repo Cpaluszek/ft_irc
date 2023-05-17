@@ -18,7 +18,8 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/user.cpp \
 					cmds/quit.cpp \
 					cmds/privmsg.cpp \
-					cmds/join.cpp
+					cmds/join.cpp \
+					cmds/who.cpp
 
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
