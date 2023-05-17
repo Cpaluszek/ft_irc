@@ -35,10 +35,7 @@ Server::Server(const std::string& port, const std::string& password) {
 
 Server::~Server() {
 	close(this->_serverSocketFd);
-	// Note: unnecessary delete protection?
-	if (this->_pollFds) {
-		delete [] this->_pollFds;
-	}
+	delete [] this->_pollFds;
 }
 
 void Server::SetupServerSocket(int port) {

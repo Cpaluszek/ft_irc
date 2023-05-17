@@ -12,7 +12,6 @@ void passCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, std::string("PASS")));
 	}
 	else if (request.args.size() == 1 && request.args[0] == server->getPassword()) {
-		// Note: used for nick and user too?
 		client->hasPassword = true;
 	}
 	else {
