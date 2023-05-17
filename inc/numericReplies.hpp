@@ -43,7 +43,8 @@
 		+ " " + channel + " :No such channel\r\n")
 
 // 405
-#define ERR_TOOMANYCHANNELS
+#define ERR_TOOMANYCHANNELS(nick, channel) (":" + SERVER_NAME + " 405 " + nick \
+		+ " " + channel + " :You have joined too many channel\r\n")
 
 
 // 421

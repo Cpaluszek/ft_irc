@@ -67,9 +67,12 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *nameIt));
 			continue ;
 		}
-
-		// Todo: check channel limit
 		// If the client follows to many channels
+		std::cout << "Joined " << client->getNumberOfChannelsJoined() << " channels" << std::endl;
+		if (client->getNumberOfChannelsJoined() >= CHANLIMIT) {
+			Server::sendToClient(client->socketFd, ERR_TOOMANYCHANNELS(client->nickName, *nameIt));
+			continue ;
+		}
 
 		Server::channelIt existingChannelIt = server->getChannelByName(*nameIt);
 		if (existingChannelIt == server->getChannelEnd()) {

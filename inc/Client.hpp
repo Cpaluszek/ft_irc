@@ -24,6 +24,7 @@ public:
 	void	updateNickname(const std::string& newNickname);
 	void	addChannel(Channel *newChannel);
 	// Todo: remove channel
+	size_t getNumberOfChannelsJoined() const;
 
 private:
 	std::map<std::string, Channel*> _channels;
