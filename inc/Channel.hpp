@@ -9,23 +9,22 @@
 
 class Client;
 
-typedef struct t_connectedClient
+typedef struct t_channelUser
 {
 	Client *client;
 	std::string prefix;
 	std::string joinTime;
 	std::string userMode;
-} connectedClient;
+} channelUser;
 
 // Todo: founder + operator
 class Channel {
 public:
-	typedef std::map<std::string, connectedClient> mapClients;
-	typedef std::map<std::string, connectedClient>::iterator mapClientsIt;
+	typedef std::map<std::string, channelUser> mapClients;
+	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
 	// Todo: use getters and setters  + private vars
 	std::string name;
-	std::string topic;
 	std::string mode;
 	char symbol;
 
@@ -34,9 +33,12 @@ public:
 
 	std::string getPrefix(const std::string& clientName);
 	std::string getKey() const;
+	std::string getTopic() const;
+	std::string getTopicUser() const;
+	std::string getTopicTime() const;
 
-	// Todo: addClient
 
+	void setTopic(const std::string &newTopic, const std::string &nick);
 	mapClients getClients() const;
 	void addClient(Client *client);
 	void removeClient(Client *client);
@@ -47,6 +49,9 @@ private:
 	mapClients _mapClients;
 	std::string _creationTime;
 	std::string _key;
+	std::string _topic;
+	std::string _topicSetBy;
+	std::string _topicSetTime;
 
 	// Functions:
 		// Connect client

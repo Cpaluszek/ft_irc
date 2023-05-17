@@ -13,8 +13,8 @@ void connectClientToChannel(Client *client, Channel *channel) {
 	Channel::mapClients clients = channel->getClients();
 	std::string names;
 
+	// Send JOIN to all clients in the channel
 	for (Channel::mapClientsIt it = clients.begin(); it != clients.end(); it++) {
-		// Todo: send JOIN to all clients in the channel
 		Server::sendToClient(it->second.client->socketFd, RPL_CMD(client->nickName, client->userName, "JOIN", channel->name));
 		if (it != clients.begin()) {
 			names.append(" ");
@@ -22,10 +22,13 @@ void connectClientToChannel(Client *client, Channel *channel) {
 		names.append(channel->getPrefix(it->first) + it->second.client->nickName);
 	}
 
+	// Send channel _topic
+	if (channel->getTopic().length() > 0) {
+		Server::sendToClient(client->socketFd, RPL_TOPIC(client->nickName, channel->name, channel->getTopic()));
+		Server::sendToClient(client->socketFd, RPL_TOPICWHOTIME(client->nickName, channel->name, channel->getTopicUser(), channel->getTopicTime()));
+	}
 
-	// Todo: send channel topic
-
-	// Todo: send list of names
+	// Send list of names
 	Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, channel->symbol, channel->name, names));
 	Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, channel->name));
 }

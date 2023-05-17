@@ -22,6 +22,14 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 332
+#define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
+		+ " " + channel + " :" + topic + "\r\n")
+
+// 333
+#define RPL_TOPICWHOTIME(nick, channel, who, time) (":" + SERVER_NAME + " 333 " + nick + \
+		+ " " + channel + " " + who + " " + time + "\r\n")
+
 // 353
 #define RPL_NAMREPLY(nick, symbol, channel, names) (":" + SERVER_NAME + " 353 " + nick + \
 		+ " " + symbol + " " + channel + " " + names + "\r\n")
