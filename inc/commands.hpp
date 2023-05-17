@@ -24,3 +24,6 @@ void joinCmd(Client *client, const Request &request, Server *server);
 
 // WHO
 void whoCmd(Client *client, const Request &request, Server *server);
+
+// PART
+void partCmd(Client *client, const Request &request, Server *server);
