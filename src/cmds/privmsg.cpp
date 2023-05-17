@@ -1,5 +1,13 @@
 #include "commands.hpp"
 
+void	sendMessageToAllChannelUsers( std::string message, std::string channel, Client *client)
+{
+	(void) message;
+	std::map<std::string, Channel*> channelsMap= client->getChannels();
+	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
+	std::cerr << it->second->getClients().begin()->first << std::endl;
+}
+
 bool	targetIsChannel( std::string target )
 {
 	if ( target[0] == '#')
@@ -7,9 +15,13 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool channelExist( std::string channel )
+bool	channelExist( Client *client , std::string channel )
 {
-	if ()
+	std::map<std::string, Channel*> channelsMap= client->getChannels();
+	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
+	if (it == client->getChannels().end())
+		return false;
+	return true;
 }
 
 std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
@@ -103,9 +115,10 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		return ;
 
 	std::vector<std::string>::iterator it = userAndMessage.begin();
-	if (targetIsChannel && channelExist)
+	if (targetIsChannel( userAndMessage[0] ) && channelExist( client, userAndMessage[0].substr(1, userAndMessage[0].length())))
 	{
-		sendMessageToAllChannelUsers();
+		sendMessageToAllChannelUsers( userAndMessage[1], userAndMessage[0], client);
+		return ;
 	}
 	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
 
