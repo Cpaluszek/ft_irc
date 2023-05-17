@@ -29,6 +29,7 @@ Server::Server(const std::string& port, const std::string& password) {
 	this->_commands["JOIN"] = &joinCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["WHO"] = &whoCmd;
+	this->_commands["MOTD"] = &motdCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }

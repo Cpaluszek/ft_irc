@@ -24,6 +24,7 @@
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
 #define VERSION std::string("0.1")
+#define MOTD_FILE "config/motd.txt"
 // Todo: USERMODE
 #define USERMODE std::string("???")
 // Todo: CHANMODE

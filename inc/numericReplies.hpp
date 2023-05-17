@@ -47,6 +47,18 @@
 #define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " + nick + \
 		+ " " + channel + " :End of /NAMES list\r\n")
 
+// 372
+#define RPL_MOTD(nick, line) (":" + SERVER_NAME + " 372 " + nick + \
+		+ " :" + line + "\r\n")
+
+// 375
+#define RPL_MOTDSTART(nick) (":" + SERVER_NAME + " 375 " + nick + \
+		+ " :- " + SERVER_NAME + " Message of the day - \r\n")
+
+// 376
+#define RPL_ENDOFMOTD(nick) (":" + SERVER_NAME + " 376 " + nick + \
+		+ " :End of /MOTD command.\r\n")
+
 // 403
 #define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
 		+ " " + channel + " :No such channel\r\n")
@@ -59,6 +71,10 @@
 // 421
 #define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
 		+ " " + command + " :Unknown command\r\n")
+
+// 422
+#define ERR_NOMOTD(nick) (":" + SERVER_NAME + " 422 " + nick + \
+		+ " :MOTD File is missing\r\n")
 
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \
