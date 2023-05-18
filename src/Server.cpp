@@ -29,7 +29,9 @@ Server::Server(const std::string& port, const std::string& password) {
 	this->_commands["JOIN"] = &joinCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["WHO"] = &whoCmd;
+	this->_commands["WHOIS"] = &whoisCmd;
 	this->_commands["MOTD"] = &motdCmd;
+	this->_commands["PING"] = &pingCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -50,7 +52,7 @@ void Server::SetupServerSocket(int port) {
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
-	address.sin_addr.s_addr = inet_addr(LOCAL_HOST_IP);
+	address.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	int opt = 1;
 	if (setsockopt(this->_serverSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
@@ -101,8 +103,8 @@ void Server::registerNewClient() {
 	this->_connectionCount += 1;
 
 	// Add client to map
-	this->_clients[clientFd];
-	this->_clients[clientFd].socketFd = clientFd;
+	this->_clients[clientFd] = new Client();
+	this->_clients[clientFd]->socketFd = clientFd;
 
 	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
 			<< ": Connection on socket " << clientFd << RESET << std::endl;
@@ -142,7 +144,7 @@ void Server::readClientRequest(unsigned int index) {
 		disconnectClient(clientFd);
 		return ;
 	}
-	Client *client = &this->_clients[clientFd];
+	Client *client = this->_clients[clientFd];
 	client->socketBuffer += std::string(buffer);
 	size_t pos;
 	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
@@ -195,12 +197,12 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	}
 }
 
-bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
+bool Server::isNickAlreadyUsed(std::string nick) {
 	std::string upperNick = Utils::copyToUpper(nick);
 	std::transform(nick.begin(), nick.end(), nick.begin(), toupper);
-	std::map<int, Client>::iterator it;
+	clientIt it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); it++) {
-		if (it->second.socketFd != client.socketFd && upperNick == Utils::copyToUpper(it->second.nickName)) {
+		if (upperNick == Utils::copyToUpper(it->second->nickName)) {
 			return true;
 		}
 	}
@@ -245,5 +247,14 @@ void Server::addChannel(Channel *newChannel) {
 
 std::string Server::getPassword() const {
 	return this->_password;
+}
+
+Client *Server::getClientByNick(const std::string &nick) {
+	for (clientIt it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (Utils::copyToUpper(nick) == Utils::copyToUpper(it->second->nickName)) {
+			return it->second;
+		}
+	}
+	return NULL;
 }
 

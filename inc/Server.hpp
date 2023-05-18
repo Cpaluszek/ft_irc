@@ -21,8 +21,9 @@
 #include "commands.hpp"
 #include "colors.hpp"
 
-#define LOCAL_HOST_IP "127.0.0.1"
+#define SERVER_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
+#define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
 #define MOTD_FILE "config/motd.txt"
 // Todo: USERMODE
@@ -44,21 +45,23 @@ public:
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	typedef std::map<std::string, Channel*>::iterator channelIt;
-	typedef std::map<int, Client>::iterator clientIt;
+	typedef std::map<int, Client*>::iterator clientIt;
 	// Todo: typedef vecStr iterator
 
 	~Server();
 	Server(const std::string& port, const std::string& password);
 	void 		Update();
 	void 		sendWelcome(Client *client);
-	bool 		isNickAlreadyUsed(const Client& client, std::string nick);
+	bool 		isNickAlreadyUsed(std::string nick);
 	void 		disconnectClient(int fd);
 
 	std::string getPassword() const;
-	clientIt getClientBeginIt();
-	clientIt getClientEndIt();
+	clientIt 	getClientBeginIt();
+	clientIt 	getClientEndIt();
+	Client		*getClientByNick(const std::string& nick);
 
 	// Channel
+	// Todo: return a Channel* instead of an iterator?
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd();
 	void		addChannel(Channel *newChannel);
@@ -71,7 +74,7 @@ private:
 	std::string 				_password;
 	int 						_serverSocketFd;		// Note: create a class module for socket management?
 	unsigned int				_connectionCount;
-	std::map<int, Client>		_clients;	// Note: convert to map<int, Client*> ????
+	std::map<int, Client*>		_clients;	// Note: convert to map<int, Client*> ????
 	std::string 				_creationDate;
 	std::map<std::string, Channel*> _channels;
 	// map channels
