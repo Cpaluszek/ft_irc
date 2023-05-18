@@ -192,7 +192,7 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 		}
 		it->second(client, request, this);
 	}
-	else {
+	else if (request.command != "PONG") {
 		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
 }
