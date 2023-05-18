@@ -1,11 +1,21 @@
 #include "commands.hpp"
 
+//send to all users in channel except source client
 void	sendMessageToAllChannelUsers( std::string message, std::string channel, Client *client)
 {
 	(void) message;
 	std::map<std::string, Channel*> channelsMap= client->getChannels();
 	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
-	std::cerr << it->second->getClients().begin()->first << std::endl;
+	if (it != channelsMap.end())
+		std::cerr << it->second->getClients().begin()->first << std::endl;
+	std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
+	std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
+	for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
+		{
+			if ( itMapChannelUsers->second.client->nickName != client->nickName)
+				Server::sendToClient(itMapChannelUsers->second.client->socketFd, message);
+		}
+	}
 }
 
 bool	targetIsChannel( std::string target )
@@ -15,13 +25,13 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Client *client , std::string channel )
+bool	channelExist( Server *server , Client *client, std::string channel )
 {
-	std::map<std::string, Channel*> channelsMap= client->getChannels();
-	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
-	if (it == client->getChannels().end())
-		return false;
-	return true;
+	std::map<std::string, Channel*>::iterator channelsMapIt = server->getChannelByName( channel );
+	if (channelsMapIt != server->getChannelEnd())
+		return true;
+	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, channel));
+	return false;
 }
 
 std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
@@ -111,20 +121,25 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	}
 	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
-	if (userAndMessage.empty())
+	if (userAndMessage.empty() || userAndMessage.size() != 2)
 		return ;
 
-	std::vector<std::string>::iterator it = userAndMessage.begin();
-	if (targetIsChannel( userAndMessage[0] ) && channelExist( client, userAndMessage[0].substr(1, userAndMessage[0].length())))
+	if (targetIsChannel( userAndMessage[0] ))
 	{
-		sendMessageToAllChannelUsers( userAndMessage[1], userAndMessage[0], client);
+		std::string channel = userAndMessage[0].substr(1, userAndMessage[0].length());
+		if (channelExist( server, client, channel))
+			sendMessageToAllChannelUsers( userAndMessage[1], userAndMessage[0], client);
 		return ;
 	}
-	std::map<int, bool> clientFdAndExist = targetExist( server, it[0], client);
-
-	if (clientFdAndExist.begin()->second)
+	else
 	{
-		int clientfd = clientFdAndExist.begin()->first;
-		Server::sendToClient(clientfd, userAndMessage[1]);
+		std::map<int, bool> clientFdAndExist = targetExist( server, userAndMessage[0], client);
+
+		if (clientFdAndExist.begin()->second)
+		{
+			int clientfd = clientFdAndExist.begin()->first;
+			Server::sendToClient(clientfd, userAndMessage[1]);
+		}
 	}
+
 }
