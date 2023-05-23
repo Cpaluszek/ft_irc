@@ -63,7 +63,8 @@ public:
 	// Channel
 	// Todo: return a Channel* instead of an iterator?
 	channelIt	getChannelByName(const std::string& name);
-	channelIt	getChannelEnd();
+	channelIt	getChannelEnd(); // a remove?
+	bool		isAChannel() const;
 	void		addChannel(Channel *newChannel);
 	// Todo: remove channel
 

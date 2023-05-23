@@ -29,6 +29,7 @@ public:
 	// Todo: remove channel
 	size_t 		getNumberOfChannelsJoined() const;
 	channelMap	getChannels() const;
+	bool 		isOnChannel(std::string channel) const;
 	std::string getMode() const;
 
 private:

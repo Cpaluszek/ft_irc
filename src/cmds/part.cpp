@@ -22,12 +22,12 @@ void	partCmd(Client *client, const Request &request, Server *server)
 	for (it = request.args.begin(); it != request.args.end(); it++)
 	{
 		std::map<std::string, Channel*>::iterator channelIt = server->getChannelByName(*it);
-		if (isAChannel(*it, server) == false)
+		if (channelIt == server->getChannelEnd())
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
-		else if (isOnChannel == false)
+		else if (client->isOnChannel(*it) == false)
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
-		else
-			quitChannel(client, server, *it);
+//		else
+//			quitChannel(client, server, *it);
 	}
 
 }

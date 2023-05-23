@@ -23,6 +23,12 @@ Client::channelMap Client::getChannels() const {
 	return this->_channels;
 }
 
+bool Client::isOnChannel(std::string channel) const {
+	if (_channels.find(channel) == _channels.end())
+		return false;
+	return true;
+}
+
 std::string Client::getMode() const {
 	return this->_mode;
 }

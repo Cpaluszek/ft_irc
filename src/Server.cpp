@@ -245,6 +245,12 @@ channelIt Server::getChannelEnd() {
 	return this->_channels.end();
 }
 
+bool Server::isAChannel(std::string channel) const {
+	if (_channels.find(channel) == _channels.end())
+		return false;
+	return true;
+}
+
 void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
 }
