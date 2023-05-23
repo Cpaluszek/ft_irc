@@ -60,6 +60,7 @@ public:
 	clientIt getClientEndIt();
 
 	// Channel
+	bool		isAChannel( const std::string& channel );
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd();
 	void		addChannel(Channel *newChannel);

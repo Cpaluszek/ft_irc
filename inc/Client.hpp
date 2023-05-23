@@ -27,6 +27,7 @@ public:
 	void	addChannel(Channel *newChannel);
 	// Todo: remove channel
 	size_t getNumberOfChannelsJoined() const;
+	bool		isOnChannel( const std::string &channel );
 	channelMap getChannels() const;
 	std::string getMode() const;
 
