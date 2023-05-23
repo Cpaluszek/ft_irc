@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Server.hpp"
-#include <fstream>
 
 class Server;
 
@@ -23,14 +22,5 @@ void privmsgCmd(Client *client, const Request &request, Server *server);
 // JOIN
 void joinCmd(Client *client, const Request &request, Server *server);
 
-// WHOIS
-void whoisCmd(Client *client, const Request &request, Server *server);
-
 // WHO
 void whoCmd(Client *client, const Request &request, Server *server);
-
-// MOTD
-void motdCmd(Client *client, const Request &request, Server *server);
-
-// PING
-void pingCmd(Client *client, const Request &request, Server *server);

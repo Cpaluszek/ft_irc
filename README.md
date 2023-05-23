@@ -13,7 +13,7 @@ IRC clients connect to IRC servers in order to join channels. IRC servers are co
 Develop an IRC server in C++ 98.
 
 Executable will be run as follows:
-`./ircserv <port> <_password>`
+`./ircserv <port> <password>`
 
 ### Requirements
 - The server must be capable of handling multiple clients at the same time and never hang.
