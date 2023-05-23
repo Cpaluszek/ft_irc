@@ -237,10 +237,6 @@ channelIt Server::getChannelByName(const std::string& name) {
 	return this->_channels.find(name);
 }
 
-Server::channelMap Server::getChannels() {
-	return this->_channels;
-}
-
 channelIt Server::getChannelEnd() {
 	return this->_channels.end();
 }

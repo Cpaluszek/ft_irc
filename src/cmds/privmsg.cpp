@@ -25,10 +25,10 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Server *server , Client *client, std::string &channel )
+bool	channelExist( Server *server , Client *client, std::string channel )
 {
-//	std::map<std::string, Channel*>::iterator channelsMapIt = server->getChannelByName( channel );
-	if (server->getChannels().find( channel ) != server->getChannelEnd())
+	std::map<std::string, Channel*>::iterator channelsMapIt = server->getChannelByName( channel );
+	if (channelsMapIt != server->getChannelEnd())
 		return true;
 	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, channel));
 	return false;

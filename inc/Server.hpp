@@ -42,7 +42,6 @@ class Server {
 public:
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
-	typedef std::map<std::string, Channel*> channelMap;
 	typedef std::map<std::string, Channel*>::iterator channelIt;
 	typedef std::map<int, Client>::iterator clientIt;
 	// Todo: typedef vecStr iterator
@@ -61,7 +60,6 @@ public:
 	clientIt getClientEndIt();
 
 	// Channel
-	channelMap getChannels();
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd();
 	void		addChannel(Channel *newChannel);
