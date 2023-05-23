@@ -10,6 +10,7 @@ class Channel;
 class Client {
 public:
 	typedef std::map<std::string, Channel*> channelMap;
+	typedef std::map<std::string, Channel*>::iterator channelMapIt;
 
 	int 		socketFd;
 	bool		isRegistered;
@@ -23,11 +24,11 @@ public:
 
 	Client();
 	~Client();
-	void	updateNickname(const std::string& newNickname);
-	void	addChannel(Channel *newChannel);
+	void		updateNickname(const std::string& newNickname);
+	void		addChannel(Channel *newChannel);
 	// Todo: remove channel
-	size_t getNumberOfChannelsJoined() const;
-	channelMap getChannels() const;
+	size_t 		getNumberOfChannelsJoined() const;
+	channelMap	getChannels() const;
 	std::string getMode() const;
 
 private:
