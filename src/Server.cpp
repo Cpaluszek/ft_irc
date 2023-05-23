@@ -245,9 +245,13 @@ void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
 }
 
-bool Server::isAChannel(const std::string &channel) {
+bool Server::isAChannel(std::string channel) {
 	if (this->_channels.find( channel ) == this->_channels.end())
 		return false;
 	return true;
+}
+
+Server::channelMap Server::getChannels() {
+	return this->_channels;
 }
 

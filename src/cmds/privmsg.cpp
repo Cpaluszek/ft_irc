@@ -8,6 +8,8 @@ void	sendMessageToAllChannelUsers( std::string message, std::string channel, Cli
 	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
 	if (it != channelsMap.end())
 		std::cerr << it->second->getClients().begin()->first << std::endl;
+	else
+		return ;
 	std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
 	std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
 	for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
@@ -27,9 +29,9 @@ bool	targetIsChannel( std::string target )
 
 bool	channelExist( Server *server , Client *client, std::string channel )
 {
-	std::map<std::string, Channel*>::iterator channelsMapIt = server->getChannelByName( channel );
-	if (channelsMapIt != server->getChannelEnd())
+	if (server->isAChannel( channel ))
 		return true;
+	std::cerr << channel << std::endl;
 	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, channel));
 	return false;
 }
