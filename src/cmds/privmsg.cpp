@@ -60,14 +60,15 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 
 std::map<int, bool>	targetExist( Server *server, std::string target, Client *client )
 {
+	// Todo: use server->isNickAlreadyUsed() instead
 	Server::clientIt it = server->getClientBeginIt();
 	Server::clientIt itEnd = server->getClientEndIt();
 	std::map<int, bool> existAndClientFd;
 
 	for (; it != itEnd ; it++) {
-		if ( it->second.nickName == target )
+		if ( it->second->nickName == target )
 		{
-			existAndClientFd[ it->second.socketFd ] = true;
+			existAndClientFd[ it->second->socketFd ] = true;
 			return (existAndClientFd);
 		}
 	}

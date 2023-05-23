@@ -21,7 +21,7 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, ERR_ERRONEUSNICKNAME(nick));
 	}
 	// Nickname already used
-	else if (server->isNickAlreadyUsed(*client, nick)) {
+	else if (server->isNickAlreadyUsed(nick)) {
 		Server::sendToClient(client->socketFd, ERR_NICKNAMEINUSE(nick));
 	}
 	// Success
@@ -33,7 +33,7 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 			server->sendWelcome(client);
 		}
 		else { // Update nickname
-			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName, std::string(LOCAL_HOST_IP)));
+			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName, std::string(SERVER_IP)));
 			// TODO: update nick in each channel information
 				// find client.channels
 		}

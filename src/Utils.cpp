@@ -25,6 +25,7 @@ std::vector<std::string> Utils::split(const std::string& source, const std::stri
 			result.push_back(subStr);
 		}
 		prevPos = pos + 1;
+		// TODO: split will now stop on ':' -> use a boolean to control this behaviour
 		if (source[prevPos] == ':') {
 			break ;
 		}
