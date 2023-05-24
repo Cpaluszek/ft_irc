@@ -61,7 +61,7 @@ public:
 	clientIt getClientEndIt();
 
 	// Channel
-	bool		isAChannel(std::string channel);
+	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd();

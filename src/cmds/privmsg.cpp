@@ -27,10 +27,14 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Server *server , Client *client, std::string channel )
+bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
 	if (server->isAChannel( channel ))
+	{
+		std::cerr << "3" << std::endl;
 		return true;
+	}
+	std::cerr << "4" << std::endl;
 	std::cerr << channel << std::endl;
 	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, channel));
 	return false;
@@ -122,25 +126,25 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
 		return ;
 	}
-	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
-	if (userAndMessage.empty() || userAndMessage.size() != 2)
+	std::vector<std::string> targetAndMessage = parsPrivMsg(client, request );
+	if (targetAndMessage.empty() || targetAndMessage.size() != 2)
 		return ;
-
-	if (targetIsChannel( userAndMessage[0] ))
+	std::string message = targetAndMessage[1];
+	if (targetIsChannel(targetAndMessage[0] ))
 	{
-		std::string channel = userAndMessage[0].substr(1, userAndMessage[0].length());
+		std::string channel = targetAndMessage[0];
 		if (channelExist( server, client, channel))
-			sendMessageToAllChannelUsers( userAndMessage[1], userAndMessage[0], client);
+			sendMessageToAllChannelUsers( message, channel, client);
 		return ;
 	}
 	else
 	{
-		std::map<int, bool> clientFdAndExist = targetExist( server, userAndMessage[0], client);
-
+		std::string targetUser = targetAndMessage[0];
+		std::map<int, bool> clientFdAndExist = targetExist( server, targetUser, client);
 		if (clientFdAndExist.begin()->second)
 		{
 			int clientfd = clientFdAndExist.begin()->first;
-			Server::sendToClient(clientfd, userAndMessage[1]);
+			Server::sendToClient(clientfd, message);
 		}
 	}
 
