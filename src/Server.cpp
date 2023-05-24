@@ -245,11 +245,35 @@ void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
 }
 
+//this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;
 	if (channels.find( channel ) == channels.end())
 		return false;
 	return true;
+}
+
+bool Server::isUser( const std::string& user )
+{
+	clientIt it = this->getClientBeginIt();
+	clientIt itEnd = this->getClientEndIt();
+	for (; it != itEnd ; it++) {
+		if ( it->second.nickName == user )
+			return true;
+	}
+	return false;
+}
+
+//return -1 if not a valid user, maybe delete "isUser"
+int Server::findUserSocketFd( const std::string& user )
+{
+	clientIt it = this->getClientBeginIt();
+	clientIt itEnd = this->getClientEndIt();
+	for (; it != itEnd ; it++) {
+		if ( it->second.nickName == user )
+			return it->second.socketFd;
+	}
+	return -1;
 }
 
 Server::channelMap Server::getChannels() {
