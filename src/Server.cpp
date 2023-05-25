@@ -242,7 +242,7 @@ channelIt Server::getChannelEnd() {
 	return this->_channels.end();
 }
 
-bool Server::isAChannel(std::string channel) const {
+bool Server::isAChannel(const std::string &channel) const {
 	if (_channels.find(channel) == _channels.end())
 		return false;
 	return true;
