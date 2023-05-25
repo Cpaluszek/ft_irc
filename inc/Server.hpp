@@ -59,9 +59,10 @@ public:
 
 	clientIt getClientBeginIt();
 	clientIt getClientEndIt();
-
+//// findUser and channel could be only in client class or server class ?
 	// Channel
-	channelMap getChannels();
+	bool		isAChannel(const std::string& channel);
+	channelMap	getChannels();
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd(); // a remove?
 	bool		isAChannel() const;
@@ -69,6 +70,8 @@ public:
 	// Todo: remove channel
 
 	static void sendToClient(int fd, const std::string &content);
+	int			findUserSocketFd(const std::string &user);
+	bool		isUser(const std::string &user);
 
 private:
 	std::string 				_name;
@@ -92,4 +95,5 @@ private:
 
 	void readClientRequest(unsigned int index);
 	void handleClientRequest(Client *client, const std::string& content);
+
 };

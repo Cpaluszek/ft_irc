@@ -3,12 +3,12 @@
 
 #define ERR_MSG(content) ("Error :" + content + "\r\n")
 
-#define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@" + SERVER_IP + " " + cmd \
+#define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@" + LOCAL_HOST_IP + " " + cmd \
 		+ " " + reply + "\r\n")
 
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user) ( ":" + SERVER_NAME + " 001 " + nick \
-		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + SERVER_IP + "\r\n")
+		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + LOCAL_HOST_IP + "\r\n")
 
 // 002
 #define RPL_YOURHOST(nick) (":" + SERVER_NAME + " 002 " + nick \
@@ -16,39 +16,15 @@
 
 // 003
 #define RPL_CREATED(nick, creationDate) (":" + SERVER_NAME + " 003 " + nick \
-		+ " :This server was created " + creationDate + "\r\n")
+		+ ":This server was created " + creationDate + "\r\n")
 
 // 004
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
-// 307
-#define RPL_WHOISREGNICK(client, nick) (":" + SERVER_NAME + " 307 " + client + " " \
-		+ nick + " :has identified for this nick\r\n")
-
-// 311
-#define RPL_WHOISUSER(client, nick, user, realname) (":" + SERVER_NAME + " 311 " + client \
-		+ " " + nick + " " + user + " " + SERVER_IP + " * :" + realname + "\r\n")
-
-// 312
-#define RPL_WHOISSERVER(client, nick, serverInfo) (":" + SERVER_NAME + " 312 " + client \
-		+ " " + nick + " " + SERVER_NAME + " :" + serverInfo + "\r\n")
-
-// 313
-#define RPL_WHOISOPERATOR(client, nick) (":" + SERVER_NAME + " 313 " + client \
-		+ " " + nick + " :is an IRC operator\r\n")
-
 // 315
 #define RPL_ENDOFWHO(nick, maks) (":" + SERVER_NAME + " 315 " + nick \
 		+ " " + mask + " :End of WHO list\r\n")
-
-// 318
-#define RPL_ENDOFWHOIS(client, nick) (":" + SERVER_NAME + " 318 " + client \
-		+ " " + nick + " :End of WHOIS list\r\n")
-
-// 319
-#define RPL_WHOISCHANNEL(client, nick, list) (":" + SERVER_NAME + " 319 " + client \
-		+ " " + nick + " :" + list + "\r\n")
 
 // 332
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
@@ -60,7 +36,7 @@
 
 // 352
 #define RPL_WHOREPLY(client, channel, user, nick, flag, realname) (":" + SERVER_NAME + " 352 " + client \
-		+ " " + channel + " " + user + " " + SERVER_IP + " " + SERVER_NAME + " " + nick + " " + flag \
+		+ " " + channel + " " + user + " " + LOCAL_HOST_IP + " " + SERVER_NAME + " " + nick + " " + flag \
 		+ " :0 " + realname + "\r\n")
 
 // 353
@@ -71,26 +47,6 @@
 #define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " + nick + \
 		+ " " + channel + " :End of /NAMES list\r\n")
 
-// 372
-#define RPL_MOTD(nick, line) (":" + SERVER_NAME + " 372 " + nick + \
-		+ " :" + line + "\r\n")
-
-// 375
-#define RPL_MOTDSTART(nick) (":" + SERVER_NAME + " 375 " + nick + \
-		+ " :- " + SERVER_NAME + " Message of the day - \r\n")
-
-// 376
-#define RPL_ENDOFMOTD(nick) (":" + SERVER_NAME + " 376 " + nick + \
-		+ " :End of /MOTD command.\r\n")
-
-// 378
-#define RPL_WHOISHOST(client, nick) (":" + SERVER_NAME + " 378 " + client \
-		+ " " + nick + " :is connecting from *@localhost 127.0.0.1\r\n")
-
-// 379
-#define RPL_WHOISMODES(client, nick, modes) (":" + SERVER_NAME + " 379 " + client \
-		+ " " + nick + " :is using modes " + modes + "\r\n")
-
 // 403
 #define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
 		+ " " + channel + " :No such channel\r\n")
@@ -99,13 +55,10 @@
 #define ERR_TOOMANYCHANNELS(nick, channel) (":" + SERVER_NAME + " 405 " + nick \
 		+ " " + channel + " :You have joined too many channel\r\n")
 
+
 // 421
 #define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
 		+ " " + command + " :Unknown command\r\n")
-
-// 422
-#define ERR_NOMOTD(nick) (":" + SERVER_NAME + " 422 " + nick + \
-		+ " :MOTD File is missing\r\n")
 
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \

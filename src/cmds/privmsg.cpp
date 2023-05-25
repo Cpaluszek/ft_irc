@@ -3,17 +3,17 @@
 //send to all users in channel except source client
 void	sendMessageToAllChannelUsers( std::string message, std::string channel, Client *client)
 {
-	(void) message;
 	std::map<std::string, Channel*> channelsMap= client->getChannels();
 	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
 	if (it != channelsMap.end())
-		std::cerr << it->second->getClients().begin()->first << std::endl;
-	std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
-	std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
-	for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
-		{
-			if ( itMapChannelUsers->second.client->nickName != client->nickName)
-				Server::sendToClient(itMapChannelUsers->second.client->socketFd, message);
+	{
+		std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
+		std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
+		for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
+			{
+				if ( itMapChannelUsers->second.client->nickName != client->nickName)
+					Server::sendToClient(itMapChannelUsers->second.client->socketFd, message);
+			}
 		}
 	}
 }
@@ -25,10 +25,9 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Server *server , Client *client, std::string &channel )
+bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
-//	std::map<std::string, Channel*>::iterator channelsMapIt = server->getChannelByName( channel );
-	if (server->getChannels().find( channel ) != server->getChannelEnd())
+	if (server->isAChannel( channel ))
 		return true;
 	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, channel));
 	return false;
@@ -95,25 +94,6 @@ std::vector<std::string> parsPrivMsg( Client *client, const Request &request )
 	return userAndMessage;
 }
 
-std::map<int, bool>	targetExist( Server *server, std::string target, Client *client )
-{
-	// Todo: use server->isNickAlreadyUsed() instead
-	Server::clientIt it = server->getClientBeginIt();
-	Server::clientIt itEnd = server->getClientEndIt();
-	std::map<int, bool> existAndClientFd;
-
-	for (; it != itEnd ; it++) {
-		if ( it->second->nickName == target )
-		{
-			existAndClientFd[ it->second->socketFd ] = true;
-			return (existAndClientFd);
-		}
-	}
-	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK( client->nickName , target ));
-	existAndClientFd[ -1 ] = false;
-	return existAndClientFd;
-}
-
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
@@ -121,26 +101,23 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
 		return ;
 	}
-	std::vector<std::string> userAndMessage = parsPrivMsg( client, request );
-	if (userAndMessage.empty() || userAndMessage.size() != 2)
+	std::vector<std::string> targetAndMessage = parsPrivMsg(client, request );
+	if (targetAndMessage.empty() || targetAndMessage.size() != 2)
 		return ;
-
-	if (targetIsChannel( userAndMessage[0] ))
+	std::string message = targetAndMessage[1];
+	if (targetIsChannel(targetAndMessage[0] ))
 	{
-		std::string channel = userAndMessage[0].substr(1, userAndMessage[0].length());
+		std::string channel = targetAndMessage[0];
 		if (channelExist( server, client, channel))
-			sendMessageToAllChannelUsers( userAndMessage[1], userAndMessage[0], client);
+			sendMessageToAllChannelUsers( message, channel, client);
 		return ;
 	}
-	else
+	else if ( server->isUser( targetAndMessage[0] ))
 	{
-		std::map<int, bool> clientFdAndExist = targetExist( server, userAndMessage[0], client);
-
-		if (clientFdAndExist.begin()->second)
-		{
-			int clientfd = clientFdAndExist.begin()->first;
-			Server::sendToClient(clientfd, userAndMessage[1]);
-		}
+		std::string targetUser = targetAndMessage[0];
+		int clientFd = server->findUserSocketFd( targetUser );
+		Server::sendToClient(clientFd, message);
+		return ;
 	}
-
+	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK( client->nickName , targetAndMessage[0] ));
 }
