@@ -29,6 +29,7 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["QUIT"] = &quitCmd;
 	this->_commands["JOIN"] = &joinCmd;
 	this->_commands["WHO"] = &whoCmd;
+	this->_commands["PART"] = &partCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -240,12 +241,6 @@ channelIt Server::getChannelByName(const std::string& name) {
 
 channelIt Server::getChannelEnd() {
 	return this->_channels.end();
-}
-
-bool Server::isAChannel(std::string channel) const {
-	if (_channels.find(channel) == _channels.end())
-		return false;
-	return true;
 }
 
 void Server::addChannel(Channel *newChannel) {

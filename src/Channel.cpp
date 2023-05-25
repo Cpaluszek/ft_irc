@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+#include "numericReplies.hpp"
 
 Channel::Channel(const std::string& name, Client *client): name(name), symbol('='), _topic("") {
 	channelUser newClient;
@@ -70,5 +71,14 @@ bool Channel::isClientConnected(const std::string& nickName) const {
 
 void Channel::eraseClient(std::string client) {
 	this->_mapClients.erase(client);
+}
+
+void Channel::sendToAllclient(std::string message) {
+	mapClientsIt it;
+
+	it = this->_mapClients.begin();
+	for (; it != this->_mapClients.end(); it++){
+		Server::sendToClient(it->second.client->socketFd,message);
+	}
 }
 

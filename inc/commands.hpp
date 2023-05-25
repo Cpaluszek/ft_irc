@@ -4,6 +4,7 @@
 #include <fstream>
 
 class Server;
+class Client;
 
 // PASS
 void passCmd(Client *client, const Request &request, Server *server);

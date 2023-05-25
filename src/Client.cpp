@@ -37,6 +37,17 @@ void Client::eraseChannel(std::string channel) {
 	this->_channels.erase(channel);
 }
 
+void	Client::quit() {
+
+	channelMapIt it = this->_channels.begin();
+	for(; it != this->_channels.end(); it++){
+	Channel *channel = it->second;
+	channel->eraseClient(this->nickName);
+	channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (channel->name + " has quit")));
+}
+
+}
+
 std::ostream &operator<<(std::ostream &out, const Client &src) {
 	out << "Client: socket(" << src.socketFd << ") - nickname(" << src.nickName <<") - username(" << src.userName \
 		<< ") - isRegistered(" << src.isRegistered <<") - hasPassword(" << src.hasPassword <<")" <<std::endl;

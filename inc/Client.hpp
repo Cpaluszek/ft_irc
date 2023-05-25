@@ -31,6 +31,7 @@ public:
 	channelMap	getChannels() const;
 	void 		eraseChannel(std::string channel);
 	bool 		isOnChannel(std::string channel) const;
+	void		quit();
 	std::string getMode() const;
 
 private:
