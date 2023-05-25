@@ -16,8 +16,7 @@
 *  LIST T<60                       ; Command to list all channels with
 *                                  a topic changed within the last 60 minutes
 */
-// Note: do we have to manage ELIST ? Conditions for LIST -> [IRC Client Protocol Specification](https://modern.ircdocs.horse/#elist-parameter)
-
+// Note: We do not manage ELIST!
 void sendChannelInformation(Client *client, Channel *channel) {
 	std::string channelName = channel->name;
 	size_t clientCount = channel->getClientCount();
@@ -25,6 +24,7 @@ void sendChannelInformation(Client *client, Channel *channel) {
 	s << clientCount;
 	std::string clientCountStr = s.str();
 	std::string channelTopic = channel->getTopic();
+	// Note: if clientCount is 0
 	Server::sendToClient(client->socketFd, RPL_LIST(client->nickName, channelName, clientCountStr, channelTopic));
 }
 
@@ -35,7 +35,10 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		// List all channels
 		Server::sendToClient(client->socketFd, RPL_LISTSTART(client->nickName));
 		for (it = channels.begin(); it != channels.end(); it++) {
-			sendChannelInformation(client, it->second);
+			// If the channel is not secret 's'
+			if (it->second->mode.find('s') == std::string::npos) {
+				sendChannelInformation(client, it->second);
+			}
 		}
 		Server::sendToClient(client->socketFd, RPL_LISTEND(client->nickName));
 	}
@@ -47,7 +50,5 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		catch (std::exception &e){
 			std::cerr << "No such channel: " << request.args[0] << ". " << e.what() << std::endl;
 		}
-		// Find the requested channel
-
 	}
 }
