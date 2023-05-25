@@ -69,7 +69,7 @@ public:
 	channelIt	getChannelEnd(); // a remove?
 	bool		isAChannel( const std::string &channel ) const;
 	void		addChannel(Channel *newChannel);
-	// Todo: remove channel
+	void 		removeChannel(const std::string &channelName);
 
 	static void sendToClient(int fd, const std::string &content);
 	Client *getClientByNick(const std::string &nick);

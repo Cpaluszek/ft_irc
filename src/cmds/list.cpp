@@ -1,21 +1,6 @@
 #include "commands.hpp"
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#list-message)
-
-/*   LIST                            ; Command to list all channels
-*
-*  LIST #twilight_zone,#42         ; Command to list the channels
-*                                  "#twilight_zone" and "#42".
-*
-*  LIST >3                         ; Command to list all channels with
-*                                  more than three users.
-*
-*  LIST C>60                       ; Command to list all channels with
-*                                  created at least 60 minutes ago
-*
-*  LIST T<60                       ; Command to list all channels with
-*                                  a topic changed within the last 60 minutes
-*/
 // Note: We do not manage ELIST!
 void sendChannelInformation(Client *client, Channel *channel) {
 	std::string channelName = channel->name;

@@ -75,7 +75,7 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 
 		Server::channelIt existingChannelIt = server->getChannelByName(*nameIt);
 		if (existingChannelIt == server->getChannelEnd()) {
-			Channel *newChannel = new Channel(*nameIt, client);
+			Channel *newChannel = new Channel(*nameIt, client, server);
 
 			server->addChannel(newChannel);
 			client->addChannel(newChannel);

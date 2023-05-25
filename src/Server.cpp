@@ -252,6 +252,16 @@ void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
 }
 
+void Server::removeChannel(const std::string &channelName) {
+	Server::channelIt it = this->_channels.find(channelName);
+	if (it == this->_channels.end()) {
+		std::cerr << RED << "Error: Channel not found" << RESET << std::endl;
+		return ;
+	}
+	delete it->second;
+	this->_channels.erase(it);
+}
+
 //this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;

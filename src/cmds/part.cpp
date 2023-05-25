@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jlitaudo <jlitaudo@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 14:44:02 by jlitaudo          #+#    #+#             */
-/*   Updated: 2023/05/17 15:18:59 by jlitaudo         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:11:13 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ void	partCmd(Client *client, const Request &request, Server *server)
 void	quitChannel(Client *client, Channel *channel)
 {
 	client->eraseChannel(channel->name);
+	size_t channelUserCount = channel->getClientCount();
 	channel->eraseClient(client->nickName);
-	channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has quit")));;
+	if (channelUserCount > 1) {
+		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has quit")));;
+	}
 }

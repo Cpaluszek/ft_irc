@@ -33,7 +33,7 @@ std::string Client::getMode() const {
 	return this->_mode;
 }
 
-void Client::eraseChannel(std::string channel) {
+void Client::eraseChannel(const std::string& channel) {
 	this->_channels.erase(channel);
 }
 
