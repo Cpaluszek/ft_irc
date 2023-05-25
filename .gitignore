@@ -3,4 +3,4 @@ build/
 ircserv
 client
 serv
-.nfs
+*.nfs
