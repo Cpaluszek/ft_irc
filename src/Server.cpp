@@ -100,6 +100,7 @@ void Server::registerNewClient() {
 	// Add new client to poll
 	this->_pollFds[this->_connectionCount].fd = clientFd;
 	this->_pollFds[this->_connectionCount].events = POLLIN;
+	this->_pollFds[this->_connectionCount].revents = 0;
 	this->_connectionCount += 1;
 
 	// Add client to map
@@ -192,7 +193,7 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 		}
 		it->second(client, request, this);
 	}
-	else {
+	else if (request.command != "PONG") {
 		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
 }
@@ -239,6 +240,12 @@ channelIt Server::getChannelByName(const std::string& name) {
 
 channelIt Server::getChannelEnd() {
 	return this->_channels.end();
+}
+
+bool Server::isAChannel(std::string channel) const {
+	if (_channels.find(channel) == _channels.end())
+		return false;
+	return true;
 }
 
 void Server::addChannel(Channel *newChannel) {

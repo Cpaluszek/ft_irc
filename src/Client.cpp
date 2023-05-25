@@ -23,14 +23,18 @@ Client::channelMap Client::getChannels() const {
 	return this->_channels;
 }
 
+bool Client::isOnChannel(std::string channel) const {
+	if (_channels.find(channel) == _channels.end())
+		return false;
+	return true;
+}
+
 std::string Client::getMode() const {
 	return this->_mode;
 }
 
-bool Client::isOnChannel(const std::string &channel) {
-	if ( this->_channels.find( channel ) == this->_channels.end() )
-		return false;
-	return true;
+void Client::eraseChannel(std::string channel) {
+	this->_channels.erase(channel);
 }
 
 std::ostream &operator<<(std::ostream &out, const Client &src) {

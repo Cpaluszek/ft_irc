@@ -68,3 +68,7 @@ bool Channel::isClientConnected(const std::string& nickName) const {
 	return this->_mapClients.find(nickName) != this->_mapClients.end();
 }
 
+void Channel::eraseClient(std::string client) {
+	this->_mapClients.erase(client);
+}
+
