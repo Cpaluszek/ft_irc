@@ -20,7 +20,7 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/privmsg.cpp \
 					cmds/join.cpp \
 					cmds/who.cpp \
-					cmds/part.cpp
+					cmds/part.cpp \
 					cmds/who.cpp \
 					cmds/whois.cpp \
 					cmds/motd.cpp \

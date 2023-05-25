@@ -41,6 +41,7 @@ public:
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
 	mapClients getClients() const;
+	void eraseClient(std::string client);
 	bool isClientConnected(const std::string& nickName) const;
 
 	void addClient(Client *client);

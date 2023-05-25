@@ -12,6 +12,8 @@
 
 #include "commands.hpp"
 
+void	quitChannel(Client *client, Channel *channel);
+
 void	partCmd(Client *client, const Request &request, Server *server)
 {
 	if (request.args.empty()){
@@ -26,13 +28,16 @@ void	partCmd(Client *client, const Request &request, Server *server)
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
 		else if (client->isOnChannel(*it) == false)
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
-//		else
-//			quitChannel(client, server, *it);
+		else
+			quitChannel(client, channelIt->second);
 	}
 
 }
 
-bool	isAChannel(std::string channelName, Server *server)
+void	quitChannel(Client *client, Channel *channel)
 {
-	server->
+	client->eraseChannel(channel->name);
+	channel->eraseClient(client->nickName);
+	Server::sendToClient(client->socketFd, ("You have quit channel " + channel->name + "\n"));
+	//message sur le channel
 }

@@ -33,6 +33,10 @@ std::string Client::getMode() const {
 	return this->_mode;
 }
 
+void Client::eraseChannel(std::string channel) {
+	this->_channels.erase(channel);
+}
+
 std::ostream &operator<<(std::ostream &out, const Client &src) {
 	out << "Client: socket(" << src.socketFd << ") - nickname(" << src.nickName <<") - username(" << src.userName \
 		<< ") - isRegistered(" << src.isRegistered <<") - hasPassword(" << src.hasPassword <<")" <<std::endl;
