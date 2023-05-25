@@ -5,19 +5,19 @@ void whoWithoutMask(const Client *client, Server *server) {
 	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
 		std::string channelName;
 		std::string flags = "H";
-		Client currentClient = it->second;
+		Client *currentClient = it->second;
 
-		Client::channelMap channels = it->second.getChannels();
+		Client::channelMap channels = it->second->getChannels();
 		if (channels.empty()) {
 			channelName = "*";
 		}
 		else {
 			channelName = channels.begin()->second->name;
 			// Todo: check operator grade for it->second
-			flags.append(channels.begin()->second->getPrefix(currentClient.nickName));
+			flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 		}
-		Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient.nickName, currentClient.userName \
-			, currentClient.realName, channelName, flags));
+		Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
+			, currentClient->realName, channelName, flags));
 	}
 }
 
@@ -47,27 +47,27 @@ void whoMask(const Client *client, Server *server, const std::string& mask, bool
 	// Get all clients from the server
 	Server::clientIt it;
 	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
-		Client currentClient = it->second;
-		if (operatorOnly && currentClient.getMode().find('o') == std::string::npos) {
+		Client *currentClient = it->second;
+		if (operatorOnly && currentClient->getMode().find('o') == std::string::npos) {
 			continue ;
 		}
 
 		// MASK
-		if (mask == currentClient.nickName || mask == currentClient.userName || mask == currentClient.realName ||\
+		if (mask == currentClient->nickName || mask == currentClient->userName || mask == currentClient->realName ||\
 			mask == SERVER_NAME || mask == LOCAL_HOST_IP) {
 			std::string channelName;
 			std::string flags = "H";
-		 	Client::channelMap channels = currentClient.getChannels();
+		 	Client::channelMap channels = currentClient->getChannels();
 			 if (channels.empty()) {
 				 channelName = "*";
 			 }
 			 else {
 				 channelName = channels.begin()->second->name;
 				 // Todo: check operator grade for client
-				 flags.append(channels.begin()->second->getPrefix(currentClient.nickName));
+				 flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 			 }
-			 Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient.nickName, currentClient.userName, \
-			 		currentClient.realName, channelName, flags));
+			 Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName, \
+			 		currentClient->realName, channelName, flags));
 		}
 	}
 }

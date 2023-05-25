@@ -10,6 +10,7 @@ class Channel;
 class Client {
 public:
 	typedef std::map<std::string, Channel*> channelMap;
+	typedef std::map<std::string, Channel*>::iterator channelMapIt;
 
 	int 		socketFd;
 	bool		isRegistered;

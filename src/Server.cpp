@@ -1,7 +1,7 @@
 
 #include "Server.hpp"
 
-Server::Server(std::string port, std::string password) {
+Server::Server(std::string port, const std::string& password) {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
@@ -12,7 +12,7 @@ Server::Server(std::string port, std::string password) {
 	if (password.empty()) {
 		throw std::invalid_argument("Error: Password cannot be empty");
 	}
-	this->password = password;
+	this->_password = password;
 	
 	SetupServerSocket(portNumber);
 	// Setup poll file descriptors
@@ -29,6 +29,10 @@ Server::Server(std::string port, std::string password) {
 	this->_commands["QUIT"] = &quitCmd;
 	this->_commands["JOIN"] = &joinCmd;
 	this->_commands["WHO"] = &whoCmd;
+	this->_commands["LIST"] = &listCmd;
+	this->_commands["WHOIS"] = &whoisCmd;
+	this->_commands["MOTD"] = &motdCmd;
+	this->_commands["PING"] = &pingCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -77,9 +81,11 @@ void Server::Update() {
 	}
 
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
+
+
 		if ((this->_pollFds[i].revents & POLLIN) == 0) {
 			continue;
-		} // dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
+		} // Note: dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
 
 		if (this->_pollFds[i].fd == this->_serverSocketFd) { // if i == 0 && fd == serversocket plutot!
 			registerNewClient();
@@ -104,8 +110,8 @@ void Server::registerNewClient() {
 	this->_connectionCount += 1;
 
 	// Add client to map
-	this->_clients[clientFd];
-	this->_clients[clientFd].socketFd = clientFd;
+	this->_clients[clientFd] = new Client();
+	this->_clients[clientFd]->socketFd = clientFd;
 
 	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
 			<< ": Connection on socket " << clientFd << RESET << std::endl;
@@ -145,7 +151,7 @@ void Server::readClientRequest(unsigned int index) {
 		disconnectClient(clientFd);
 		return ;
 	}
-	Client *client = &this->_clients[clientFd];
+	Client *client = this->_clients[clientFd];
 	client->socketBuffer += std::string(buffer);
 	size_t pos;
 	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
@@ -201,9 +207,9 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 bool Server::isNickAlreadyUsed(const Client& client, std::string nick) {
 	std::string upperNick = Utils::copyToUpper(nick);
 	std::transform(nick.begin(), nick.end(), nick.begin(), toupper);
-	std::map<int, Client>::iterator it;
+	Server::clientIt it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); it++) {
-		if (it->second.socketFd != client.socketFd && upperNick == Utils::copyToUpper(it->second.nickName)) {
+		if (it->second->socketFd != client.socketFd && upperNick == Utils::copyToUpper(it->second->nickName)) {
 			return true;
 		}
 	}
@@ -259,7 +265,7 @@ bool Server::isUser( const std::string& user )
 	clientIt it = this->getClientBeginIt();
 	clientIt itEnd = this->getClientEndIt();
 	for (; it != itEnd ; it++) {
-		if ( it->second.nickName == user )
+		if ( it->second->nickName == user )
 			return true;
 	}
 	return false;
@@ -271,13 +277,26 @@ int Server::findUserSocketFd( const std::string& user )
 	clientIt it = this->getClientBeginIt();
 	clientIt itEnd = this->getClientEndIt();
 	for (; it != itEnd ; it++) {
-		if ( it->second.nickName == user )
-			return it->second.socketFd;
+		if ( it->second->nickName == user )
+			return it->second->socketFd;
 	}
 	return -1;
 }
 
 Server::channelMap Server::getChannels() {
 	return this->_channels;
+}
+
+std::string Server::getPassword() const {
+	return this->_password;
+}
+
+Client *Server::getClientByNick(const std::string &nick) {
+	for (clientIt it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (Utils::copyToUpper(nick) == Utils::copyToUpper(it->second->nickName)) {
+			return it->second;
+		}
+	}
+	return NULL;
 }
 
