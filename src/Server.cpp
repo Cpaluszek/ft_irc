@@ -118,7 +118,13 @@ void Server::registerNewClient() {
 }
 
 void Server::disconnectClient(int fd) {
-	this->_clients.erase(fd);
+	Server::clientIt it = this->_clients.find(fd);
+	if (it == this->_clients.end()) {
+		std::cerr << RED << "Error: Channel not found" << RESET << std::endl;
+		return ;
+	}
+	delete it->second;
+	this->_clients.erase(it);
 	close(fd);
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
 		if (this->_pollFds[i].fd == fd) {
