@@ -59,7 +59,6 @@ public:
 
 	clientIt getClientBeginIt();
 	clientIt getClientEndIt();
-//// findUser and channel could be only in client class or server class ?
 	// Channel
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
