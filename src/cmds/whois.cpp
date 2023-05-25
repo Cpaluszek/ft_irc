@@ -28,7 +28,7 @@ void whoisCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	}
 	std::string targetNick = request.args[0];
-	if (!server->isNickAlreadyUsed(*client, targetNick)) {
+	if (server->getClientByNick(targetNick) == NULL) {
 		Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, targetNick));
 		return ;
 	}
