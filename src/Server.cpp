@@ -29,6 +29,7 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["QUIT"] = &quitCmd;
 	this->_commands["JOIN"] = &joinCmd;
 	this->_commands["WHO"] = &whoCmd;
+	this->_commands["PART"] = &partCmd;
 	this->_commands["LIST"] = &listCmd;
 	this->_commands["WHOIS"] = &whoisCmd;
 	this->_commands["MOTD"] = &motdCmd;
@@ -82,8 +83,6 @@ void Server::Update() {
 	}
 
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
-
-
 		if ((this->_pollFds[i].revents & POLLIN) == 0) {
 			continue;
 		} // Note: dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
@@ -247,12 +246,6 @@ channelIt Server::getChannelByName(const std::string& name) {
 
 channelIt Server::getChannelEnd() {
 	return this->_channels.end();
-}
-
-bool Server::isAChannel(const std::string &channel) const {
-	if (_channels.find(channel) == _channels.end())
-		return false;
-	return true;
 }
 
 void Server::addChannel(Channel *newChannel) {

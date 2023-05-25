@@ -40,10 +40,11 @@ public:
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
-	mapClients getClients() const;
-	void eraseClient(std::string client);
-	size_t getClientCount() const;
-	bool isClientConnected(const std::string& nickName) const;
+	mapClients	getClients() const;
+	void		eraseClient(std::string client);
+	size_t		getClientCount() const;
+	bool 		isClientConnected(const std::string& nickName) const;
+	void		sendToAllclient(std::string message);
 
 	void addClient(Client *client);
 	void removeClient(Client *client);
