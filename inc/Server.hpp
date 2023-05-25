@@ -23,11 +23,14 @@
 
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
+#define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
 // Todo: USERMODE
 #define USERMODE std::string("???")
 // Todo: CHANMODE
 #define CHANMODE std::string("???")
+
+#define MOTD_FILE "config/motd.txt"
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
 #define CHANLIMIT 10
@@ -44,19 +47,19 @@ public:
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	typedef std::map<std::string, Channel*> channelMap;
 	typedef std::map<std::string, Channel*>::iterator channelIt;
-	typedef std::map<int, Client>::iterator clientIt;
+	typedef std::map<int, Client*>::iterator clientIt;
 	// Todo: typedef vecStr iterator
 
 	// Todo: Make password private with a getter and no setter
-	std::string 			password;
 
 	~Server();
-	Server(std::string port, std::string password);
+	Server(std::string port, const std::string& password);
 	void 		Update();
 	void 		sendWelcome(Client *client);
-	bool 		isNickAlreadyUsed(const Client& client, std::string nick);
+	bool 		isNickAlreadyUsed(const Client &client, std::string nick);
 	void 		disconnectClient(int fd);
 
+	std::string getPassword() const;
 	clientIt getClientBeginIt();
 	clientIt getClientEndIt();
 	// Channel
@@ -69,14 +72,16 @@ public:
 	// Todo: remove channel
 
 	static void sendToClient(int fd, const std::string &content);
+	Client *getClientByNick(const std::string &nick);
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
 private:
+	std::string 				_password;
 	std::string 				_name;
 	int 						_serverSocketFd;		// Note: create a class module for socket management?
 	unsigned int				_connectionCount;
-	std::map<int, Client>		_clients;	// Note: convert to map<int, Client*> ????
+	std::map<int, Client*>		_clients;
 	std::string 				_creationDate;
 	std::map<std::string, Channel*> _channels;
 	// map channels
@@ -85,7 +90,7 @@ private:
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
 	// Todo: map ou list
-	struct pollfd	*_pollFds;
+	pollfd	*_pollFds;
 
 	// Functions
 	Server();

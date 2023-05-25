@@ -20,10 +20,10 @@ void	partCmd(Client *client, const Request &request, Server *server)
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, request.command));
 		return ;
 	}
-	std::vector<std::string>::iterator it;
+	std::vector<std::string>::const_iterator it;
 	for (it = request.args.begin(); it != request.args.end(); it++)
 	{
-		std::map<std::string, Channel*>::iterator channelIt = server->getChannelByName(*it);
+		Server::channelIt channelIt = server->getChannelByName(*it);
 		if (channelIt == server->getChannelEnd())
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
 		else if (client->isOnChannel(*it) == false)

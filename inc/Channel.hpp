@@ -42,6 +42,7 @@ public:
 
 	mapClients getClients() const;
 	void eraseClient(std::string client);
+	size_t getClientCount() const;
 	bool isClientConnected(const std::string& nickName) const;
 
 	void addClient(Client *client);
