@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include "Channel.hpp"
+#include "commands.hpp"
 
 class Channel;
 

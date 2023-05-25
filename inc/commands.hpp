@@ -6,6 +6,7 @@
 
 class Server;
 class Client;
+class Request;
 
 // PASS
 void passCmd(Client *client, const Request &request, Server *server);
