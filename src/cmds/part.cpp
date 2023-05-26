@@ -26,7 +26,7 @@ void	partCmd(Client *client, const Request &request, Server *server)
 		std::map<std::string, Channel*>::const_iterator channelIt = server->getChannelByName(*it);
 		if (channelIt == server->getChannelEnd())
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
-		else if (client->isOnChannel(*it) == false)
+		else if (!client->isOnChannel(*it))
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
 		else
 		{
@@ -43,6 +43,6 @@ void	quitChannel(Client *client, Channel *channel)
 	size_t channelUserCount = channel->getClientCount();
 	channel->eraseClient(client->nickName);
 	if (channelUserCount > 1) {
-		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has quit")));;
+		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has quit")));
 	}
 }

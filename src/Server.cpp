@@ -322,3 +322,5 @@ Server::clientMap Server::getClients() {
 	return this->_clients;
 }
 
+Server::Server() {}
+

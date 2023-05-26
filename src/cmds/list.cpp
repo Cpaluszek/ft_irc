@@ -28,9 +28,10 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, RPL_LISTEND(client->nickName));
 	}
 	else {
+		// Todo: try catch -> map.at instead of find?
 		try {
-			Server::channelIt it = channels.find(request.args[0]);
-			sendChannelInformation(client, it->second);
+			Server::channelIt channelIt = channels.find(request.args[0]);
+			sendChannelInformation(client, channelIt->second);
 		}
 		catch (std::exception &e){
 			std::cerr << "No such channel: " << request.args[0] << ". " << e.what() << std::endl;

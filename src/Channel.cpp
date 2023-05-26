@@ -1,5 +1,4 @@
 #include "Channel.hpp"
-#include "numericReplies.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
 	channelUser newClient;
@@ -81,4 +80,3 @@ void Channel::sendToAllclient(std::string message) {
 		Server::sendToClient(it->second.client->socketFd,message);
 	}
 }
-
