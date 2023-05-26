@@ -93,7 +93,7 @@
 
 // 376
 #define RPL_ENDOFMOTD(nick) (":" + SERVER_NAME + " 376 " + nick + \
-		+ " :End of /MOTD command.\r\n")
+		+ " :End of MOTD.\r\n")
 
 // 378
 #define RPL_WHOISHOST(client, nick) (":" + SERVER_NAME + " 378 " + client \
