@@ -47,8 +47,11 @@ public:
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	typedef std::map<std::string, Channel*> channelMap;
 	typedef std::map<std::string, Channel*>::iterator channelIt;
+	typedef std::map<int, Client*> clientMap;
 	typedef std::map<int, Client*>::iterator clientIt;
-	// Todo: typedef vecStr iterator
+	// Todo: Check for usage
+	typedef std::vector<std::string> vecStr;
+	typedef std::vector<std::string>::iterator vecStrIt;
 
 	// Todo: Make password private with a getter and no setter
 
@@ -62,6 +65,7 @@ public:
 	std::string getPassword() const;
 	clientIt getClientBeginIt();
 	clientIt getClientEndIt();
+	clientMap getClients();
 	// Channel
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
@@ -72,18 +76,18 @@ public:
 	void 		removeChannel(const std::string &channelName);
 
 	static void sendToClient(int fd, const std::string &content);
-	Client *getClientByNick(const std::string &nick);
+	Client 		*getClientByNick(const std::string &nick);
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
 private:
-	std::string 				_password;
-	std::string 				_name;
-	int 						_serverSocketFd;		// Note: create a class module for socket management?
-	unsigned int				_connectionCount;
-	std::map<int, Client*>		_clients;
-	std::string 				_creationDate;
-	std::map<std::string, Channel*> _channels;
+	std::string 	_password;
+	std::string 	_name;
+	std::string 	_creationDate;
+	int 			_serverSocketFd;		// Note: create a class module for socket management?
+	unsigned int	_connectionCount;
+	clientMap 		_clients;
+	channelMap 		_channels;
 	// map channels
 
 	std::map<std::string, CmdFunction> _commands;

@@ -81,7 +81,7 @@
 
 // 366
 #define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " + nick + \
-		+ " " + channel + " :End of /NAMES list\r\n")
+		+ " " + channel + " :End of NAMES list\r\n")
 
 // 372
 #define RPL_MOTD(nick, line) (":" + SERVER_NAME + " 372 " + nick + \

@@ -14,6 +14,7 @@ std::string Utils::copyToUpper(std::string src) {
 	return res;
 }
 
+// Todo: add a boolean for the semicolon stop
 std::vector<std::string> Utils::split(const std::string& source, const std::string& delimiter) {
 	std::vector<std::string> result;
 	std::string subStr;

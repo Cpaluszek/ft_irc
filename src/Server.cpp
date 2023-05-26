@@ -35,6 +35,7 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["MOTD"] = &motdCmd;
 	this->_commands["PING"] = &pingCmd;
 	this->_commands["PART"] = &partCmd;
+	this->_commands["NAMES"] = &namesCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }
@@ -205,7 +206,8 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 		}
 		it->second(client, request, this);
 	}
-	else if (request.command != "PONG") {
+	// Todo: make a list of ignored cmds
+	else if (request.command != "PONG" && request.command != "CAP") {
 		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
 }
@@ -240,12 +242,11 @@ Server::clientIt Server::getClientBeginIt() {
 Server::clientIt Server::getClientEndIt() {
 	return _clients.end();
 }
-//
-//std::map<int, Client> Server::getMapClients() {
-//	return _clients;
-//}
 
+// Todo: remove typedef
 typedef std::map<std::string, Channel*>::iterator channelIt;
+
+// Todo: return a ptr
 channelIt Server::getChannelByName(const std::string& name) {
 	return this->_channels.find(name);
 }
@@ -314,5 +315,9 @@ Client *Server::getClientByNick(const std::string &nick) {
 		}
 	}
 	return NULL;
+}
+
+Server::clientMap Server::getClients() {
+	return this->_clients;
 }
 

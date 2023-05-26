@@ -43,3 +43,6 @@ void pingCmd(Client *client, const Request &request, Server *server);
 
 // PART
 void	partCmd(Client *client, const Request &request, Server *server);
+
+// NAMES
+void namesCmd(Client *client, const Request &request, Server *server);
