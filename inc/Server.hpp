@@ -40,6 +40,7 @@
 
 class Client;
 class Channel;
+class Request;
 
 class Server {
 public:

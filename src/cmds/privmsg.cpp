@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include "Utils.hpp"
 
 bool	targetIsChannel( std::string target )
 {
@@ -45,21 +46,15 @@ void	sendMessageToAllChannelUsers( std::string message, std::string channel, Cli
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
-size_t 	containSemicol( std::string arg )
+bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &request
 {
-	size_t pos = arg.find( ':' );
-	return pos;
-}
-
-bool	requestIsValid( Client *client, const Request &request )
-{
-	if (request.args.empty()) {
+	if (this->args.empty()) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
 		return false;
 	}
 	size_t pos;
-	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	if ( (pos = containSemicol( *itArgs )) != std::string::npos ) // If ":" is in first arg
+	std::vector<std::string>::const_iterator itArgs = this->args.begin();
+	if ( (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos ) // If ":" is in first arg
 	{
 		if ( pos == 0 )
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
@@ -68,17 +63,17 @@ bool	requestIsValid( Client *client, const Request &request )
 	}
 	else //If ":" is not in first arg
 	{
-		if ( (++itArgs) != request.args.end() && (pos = containSemicol( *itArgs )) != std::string::npos )
+		if ( (++itArgs) != this->args.end() && (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos )
 		{
 			if ( pos == 0 )
 			{
-				if ( itArgs->length() > 1 || ++itArgs != request.args.end() )
+				if ( itArgs->length() > 1 || ++itArgs != this->args.end() )
 					return true;
 				Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
 			}
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
 		}
-		else if ( (++itArgs) != request.args.end() && (--request.args.end())->find(':') != 0)
+		else if ( (++itArgs) != this->args.end() && (--this->args.end())->find(':') != 0)
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 		else
 			Server::sendToClient(client->socketFd, ERR_TOOMANYTARGETS);
@@ -88,7 +83,7 @@ bool	requestIsValid( Client *client, const Request &request )
 
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
-	if ( !requestIsValid( client, request ) )
+	if ( !request.requestPrivMsgIsValid( client ) )
 		return ;
 	std::string target = extractTarget( request );
 	std::string messageToSend = extractMessage( request );

@@ -12,4 +12,7 @@ public:
 
 	static std::vector<std::string> split(const std::string& source, const std::string& delimiter);
 
+	static size_t 	getSemicolPos( const std::string &arg );
+
+
 };
