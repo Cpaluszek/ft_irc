@@ -36,6 +36,7 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["PING"] = &pingCmd;
 	this->_commands["PART"] = &partCmd;
 	this->_commands["NAMES"] = &namesCmd;
+	this->_commands["AWAY"] = &awayCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }

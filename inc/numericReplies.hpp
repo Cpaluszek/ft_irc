@@ -22,6 +22,18 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 301
+#define RPL_AWAY(nick, target, message) (":" + SERVER_NAME + " 301 " + nick \
+		+ " " + target + " :" + message + "\r\n")
+
+// 305
+#define RPL_UNAWAY(nick) (":" + SERVER_NAME + " 305 " + nick \
+		+ " :You are no longer marked as being away\r\n")
+
+//306
+#define RPL_NOWAWAY(nick) (":" + SERVER_NAME + " 306 " + nick \
+		+ " :You are marked as being away\r\n")
+
 // 307
 #define RPL_WHOISREGNICK(client, nick) (":" + SERVER_NAME + " 307 " + client + " " \
 		+ nick + " :has identified for this nick\r\n")
@@ -103,7 +115,6 @@
 #define RPL_WHOISMODES(client, nick, modes) (":" + SERVER_NAME + " 379 " + client \
 		+ " " + nick + " :is using modes " + modes + "\r\n")
 
-
 // 403
 #define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
 		+ " " + channel + " :No such channel\r\n")
@@ -168,8 +179,6 @@
 //404
 # define ERR_CANNOTSENDTOCHAN(nick, channel) (":" + SERVER_NAME + " 404 " + nick + " " + channel + " :Cannot send to channel\r\n")
 
-//301
-# define RPL_AWAY(nick, target, awayMsg) (":" + SERVER_NAME + " 301 " + nick + " " + target + " :awayMsg\r\n")
 
 // 407
 # define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
