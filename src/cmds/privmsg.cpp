@@ -65,16 +65,18 @@ bool	requestIsValid( Client *client, const Request &request )
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 		else
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
-		return false;
 	}
 	else //If ":" is not in first arg
 	{
 		if ( (++itArgs) != request.args.end() && (pos = containSemicol( *itArgs )) != std::string::npos )
 		{
 			if ( pos == 0 )
-				return true;
+			{
+				if ( itArgs->length() > 1 || ++itArgs != request.args.end() )
+					return true;
+				Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
+			}
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
-			return false;
 		}
 		else if ( (++itArgs) != request.args.end() && (--request.args.end())->find(':') != 0)
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));

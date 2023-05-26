@@ -72,3 +72,10 @@ void Channel::eraseClient(std::string client) {
 	this->_mapClients.erase(client);
 }
 
+void Channel::updateTopic( const std::string &newTopic, const std::string &setBy ) {
+	if (newTopic.empty())
+		this->_topic.clear();
+	else
+		setTopic(newTopic, setBy);
+}
+

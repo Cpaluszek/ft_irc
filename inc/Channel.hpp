@@ -38,6 +38,8 @@ public:
 	std::string getTopicTime() const;
 
 
+	void updateTopic( const std::string &newTopic, const std::string &setBy );
+
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
 	mapClients getClients() const;

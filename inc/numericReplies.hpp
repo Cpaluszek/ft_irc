@@ -26,7 +26,7 @@
 #define RPL_ENDOFWHO(nick, maks) (":" + SERVER_NAME + " 315 " + nick \
 		+ " " + mask + " :End of WHO list\r\n")
 
-// 332
+// 332 : Sent to a client when joining the channel to inform of the current topic
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :" + topic + "\r\n")
 
@@ -114,7 +114,7 @@
 // 407
 # define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
 
-// 442
+// 442 : when client isn't part of the channel
 # define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :No such channel\r\n")
 
 // 471

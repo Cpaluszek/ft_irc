@@ -37,3 +37,6 @@ void pingCmd(Client *client, const Request &request, Server *server);
 
 // PART
 void partCmd(Client *client, const Request &request, Server *server);
+
+// TOPIC
+void	topicCmd( Client *client, const Request &request, Server *server);
