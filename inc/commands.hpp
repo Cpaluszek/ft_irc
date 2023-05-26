@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Server.hpp"
+#include <sstream>
 #include <fstream>
 
 class Server;
+class Client;
+class Request;
 
 // PASS
 void passCmd(Client *client, const Request &request, Server *server);
@@ -28,6 +31,9 @@ void whoisCmd(Client *client, const Request &request, Server *server);
 
 // WHO
 void whoCmd(Client *client, const Request &request, Server *server);
+
+// LIST
+void listCmd(Client *client, const Request &request, Server *server);
 
 // MOTD
 void motdCmd(Client *client, const Request &request, Server *server);

@@ -8,6 +8,7 @@
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channels)
 
 class Client;
+class Server;
 
 typedef struct t_channelUser
 {
@@ -28,7 +29,7 @@ public:
 	std::string mode;
 	char symbol;
 
-	Channel(const std::string& name, Client *client);
+	Channel(const std::string& name, Client *client, Server *server);
 	Channel();
 
 	std::string getPrefix(const std::string& clientName);
@@ -42,14 +43,16 @@ public:
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
-	mapClients getClients() const;
-	void eraseClient(std::string client);
-	bool isClientConnected(const std::string& nickName) const;
+	mapClients	getClients() const;
+	size_t		getClientCount() const;
+	bool 		isClientConnected(const std::string& nickName) const;
+	void		sendToAllclient(std::string message);
 
 	void addClient(Client *client);
-	void removeClient(Client *client);
+	void eraseClient(const std::string& client);
 
 private:
+	Server *_server;
 	mapClients _mapClients;
 	std::string _creationTime;
 	std::string _key;

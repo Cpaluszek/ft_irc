@@ -22,9 +22,45 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 307
+#define RPL_WHOISREGNICK(client, nick) (":" + SERVER_NAME + " 307 " + client + " " \
+		+ nick + " :has identified for this nick\r\n")
+
+// 311
+#define RPL_WHOISUSER(client, nick, user, realname) (":" + SERVER_NAME + " 311 " + client \
+		+ " " + nick + " " + user + " " + LOCAL_HOST_IP + " * :" + realname + "\r\n")
+
+// 312
+#define RPL_WHOISSERVER(client, nick, serverInfo) (":" + SERVER_NAME + " 312 " + client \
+		+ " " + nick + " " + SERVER_NAME + " :" + serverInfo + "\r\n")
+
+// 313
+#define RPL_WHOISOPERATOR(client, nick) (":" + SERVER_NAME + " 313 " + client \
+		+ " " + nick + " :is an IRC operator\r\n")
+
 // 315
 #define RPL_ENDOFWHO(nick, maks) (":" + SERVER_NAME + " 315 " + nick \
 		+ " " + mask + " :End of WHO list\r\n")
+
+// 318
+#define RPL_ENDOFWHOIS(client, nick) (":" + SERVER_NAME + " 318 " + client \
+		+ " " + nick + " :End of WHOIS list\r\n")
+
+// 319
+#define RPL_WHOISCHANNEL(client, nick, list) (":" + SERVER_NAME + " 319 " + client \
+		+ " " + nick + " :" + list + "\r\n")
+
+// 321
+#define RPL_LISTSTART(client) (":" + SERVER_NAME + " 321 " + client \
+		+ " Channel: Users Name\r\n")
+
+// 322
+#define RPL_LIST(client, channel, count, topic) (":" + SERVER_NAME + " 322 " + client \
+		+ " " + channel + " " + count + " :" + topic + "\r\n")
+
+// 323
+#define RPL_LISTEND(client) (":" + SERVER_NAME + " 323 " + client \
+		+ " :End of /LIST\r\n")
 
 // 332 : Sent to a client when joining the channel to inform of the current topic
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
@@ -47,6 +83,27 @@
 #define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " + nick + \
 		+ " " + channel + " :End of /NAMES list\r\n")
 
+// 372
+#define RPL_MOTD(nick, line) (":" + SERVER_NAME + " 372 " + nick + \
+		+ " :" + line + "\r\n")
+
+// 375
+#define RPL_MOTDSTART(nick) (":" + SERVER_NAME + " 375 " + nick + \
+		+ " :- " + SERVER_NAME + " Message of the day - \r\n")
+
+// 376
+#define RPL_ENDOFMOTD(nick) (":" + SERVER_NAME + " 376 " + nick + \
+		+ " :End of /MOTD command.\r\n")
+
+// 378
+#define RPL_WHOISHOST(client, nick) (":" + SERVER_NAME + " 378 " + client \
+		+ " " + nick + " :is connecting from *@localhost 127.0.0.1\r\n")
+
+// 379
+#define RPL_WHOISMODES(client, nick, modes) (":" + SERVER_NAME + " 379 " + client \
+		+ " " + nick + " :is using modes " + modes + "\r\n")
+
+
 // 403
 #define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
 		+ " " + channel + " :No such channel\r\n")
@@ -59,6 +116,10 @@
 // 421
 #define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
 		+ " " + command + " :Unknown command\r\n")
+
+// 422
+#define ERR_NOMOTD(nick) (":" + SERVER_NAME + " 422 " + nick + \
+		+ " :MOTD File is missing\r\n")
 
 // 431
 #define ERR_NONICKNAMEGIVEN(client) (":" + SERVER_NAME + " 431 " + client \

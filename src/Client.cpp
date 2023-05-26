@@ -33,8 +33,19 @@ std::string Client::getMode() const {
 	return this->_mode;
 }
 
-void Client::eraseChannel(std::string channel) {
+void Client::eraseChannel(const std::string& channel) {
 	this->_channels.erase(channel);
+}
+
+void	Client::quit() {
+
+	channelMapIt it = this->_channels.begin();
+	for(; it != this->_channels.end(); it++){
+	Channel *channel = it->second;
+	channel->eraseClient(this->nickName);
+	channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (channel->name + " has quit")));
+}
+
 }
 
 std::ostream &operator<<(std::ostream &out, const Client &src) {

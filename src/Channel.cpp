@@ -1,6 +1,7 @@
 #include "Channel.hpp"
+#include "numericReplies.hpp"
 
-Channel::Channel(const std::string& name, Client *client): name(name), symbol('='), _topic("") {
+Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
@@ -51,13 +52,6 @@ void Channel::addClient(Client *client) {
 	this->_mapClients[client->nickName] = newClient;
 }
 
-void Channel::removeClient(Client *client) {
-	mapClientsIt it = this->_mapClients.find(client->nickName);
-	if (it != this->_mapClients.end()) {
-		this->_mapClients.erase(it);
-	}
-}
-
 void Channel::setTopic(const std::string &newTopic, const std::string &nick) {
 	this->_topic = newTopic;
 	this->_topicSetBy = nick;
@@ -68,8 +62,24 @@ bool Channel::isClientConnected(const std::string& nickName) const {
 	return this->_mapClients.find(nickName) != this->_mapClients.end();
 }
 
-void Channel::eraseClient(std::string client) {
+size_t Channel::getClientCount() const {
+	return this->_mapClients.size();
+}
+
+void Channel::eraseClient(const std::string& client) {
 	this->_mapClients.erase(client);
+	if (this->getClientCount() == 0) {
+		_server->removeChannel(this->name);
+	}
+}
+
+void Channel::sendToAllclient(std::string message) {
+	mapClientsIt it;
+
+	it = this->_mapClients.begin();
+	for (; it != this->_mapClients.end(); it++){
+		Server::sendToClient(it->second.client->socketFd,message);
+	}
 }
 
 void Channel::updateTopic( const std::string &newTopic, const std::string &setBy ) {
