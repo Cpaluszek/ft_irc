@@ -16,12 +16,13 @@ public:
 	int 		socketFd;
 	bool		isRegistered;
 	bool		hasPassword;
+	bool		isAway;
 	std::string nickName;
 	std::string userName;
 	std::string realName;
 	std::string previousNickname;
 	std::string socketBuffer;
-
+	std::string awayMessage;
 
 	Client();
 	~Client();

@@ -46,3 +46,8 @@ void partCmd(Client *client, const Request &request, Server *server);
 
 // TOPIC
 void	topicCmd( Client *client, const Request &request, Server *server);
+// NAMES
+void namesCmd(Client *client, const Request &request, Server *server);
+
+// AWAY
+void awayCmd(Client *client, const Request &request, Server *server);

@@ -96,6 +96,5 @@ void whoCmd(Client *client, const Request &request, Server *server) {
 			whoMask(client, server, mask, operatorOnly);
 		}
 	}
-	// Send RPL_ENDOFWHO
 	Server::sendToClient(client->socketFd, RPL_ENDOFWHO(client->nickName, mask));
 }
