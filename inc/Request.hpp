@@ -20,6 +20,13 @@ public:
 	// Note: remove tags and source ?
 	std::vector<std::string> 	tags;
 	std::string 				source;
+<<<<<<< HEAD
+=======
+
+	bool				requestPrivMsgIsValid( Client *client ) const;
+	bool				requestTopicIsValid( Client *client ) const;
+
+>>>>>>> parent of a2e1325 (commit before creating command class)
 };
 
 std::ostream &operator<<(std::ostream &out, const Request &src);

@@ -8,6 +8,7 @@ class Server;
 class Client;
 class Request;
 
+<<<<<<< HEAD
 class Commands : Request, Server
 {
 public:
@@ -20,6 +21,8 @@ private:
 	static bool				requestTopicIsValid( Client *client ) const;
 
 };
+=======
+>>>>>>> parent of a2e1325 (commit before creating command class)
 // PASS
 void passCmd(Client *client, const Request &request, Server *server);
 
