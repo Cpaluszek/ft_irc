@@ -4,7 +4,7 @@
 #include "commands.hpp"
 #include "Utils.hpp"
 
-bool Request::requestTopicIsValid( Client *client ) const
+bool Commands::requestTopicIsValid( Client *client )
 {
 	std::vector<std::string>::const_iterator itArgs = this->args.begin();
 	if ( (itArgs)->find('#', 0) == std::string::npos || itArgs->length() == 1 ) {
@@ -14,11 +14,10 @@ bool Request::requestTopicIsValid( Client *client ) const
 	return true;
 }
 
-void topicCmd( Client *client, const Request &request, Server *server )
+void Commands::topicCmd( Client *client )
 {
-	(void) server;
-	if ( !request.requestTopicIsValid( client ) )
+	if ( !requestTopicIsValid( client ) )
 		return ;
-	std::vector<std::string>::const_iterator itArgs = request.args.begin();
+	std::vector<std::string>::const_iterator itArgs = );
 
 }

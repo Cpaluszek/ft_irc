@@ -20,11 +20,6 @@ public:
 	// Note: remove tags and source ?
 	std::vector<std::string> 	tags;
 	std::string 				source;
-
-	bool req
-	bool				requestPrivMsgIsValid( Client *client ) const;
-	bool				requestTopicIsValid( Client *client ) const;
-
 };
 
 std::ostream &operator<<(std::ostream &out, const Request &src);

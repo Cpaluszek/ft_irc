@@ -77,7 +77,7 @@ public:
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
-private:
+protected:
 	std::string 				_password;
 	std::string 				_name;
 	int 						_serverSocketFd;		// Note: create a class module for socket management?
