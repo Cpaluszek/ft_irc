@@ -8,7 +8,7 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Server *server , Client *client, const std::string& channel )
+static bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
 	if (server->isAChannel( channel ))
 		return true;
@@ -25,24 +25,6 @@ std::string extractMessage( const Request &request )
 {
 	std::string message = *(++request.args.begin());
 	return (message.substr(1, message.length()));
-}
-
-//send to all users in channel except source client, TODO : class method
-void	sendMessageToAllChannelUsers( std::string message, std::string channel, Client *client)
-{
-	std::map<std::string, Channel*> channelsMap= client->getChannels();
-	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
-	if (it != channelsMap.end())
-	{
-		std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
-		std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
-		for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
-			{
-				if ( itMapChannelUsers->second.client->nickName != client->nickName)
-					Server::sendToClient(itMapChannelUsers->second.client->socketFd, message);
-			}
-		}
-	}
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
@@ -91,9 +73,13 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 //	std::cerr << "mesage: '" << messageToSend << "'" << std::endl;
 	if (targetIsChannel( target ))
 	{
-		messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
 		if (channelExist( server, client, target))
-			sendMessageToAllChannelUsers( messageToSend, target, client);
+		{
+			Channel *specificChannel = server->getChannelByName( target )->second;
+			messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
+
+			specificChannel->sendToAllclientExceptSender( messageToSend, client );
+		}
 		return ;
 	}
 	else if ( server->isUser( target ))

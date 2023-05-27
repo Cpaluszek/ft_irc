@@ -47,9 +47,10 @@ public:
 	size_t		getClientCount() const;
 	bool 		isClientConnected(const std::string& nickName) const;
 	void		sendToAllclient(std::string message);
+	void		sendToAllclientExceptSender(std::string message, Client *client);
 
-	void addClient(Client *client);
-	void eraseClient(const std::string& client);
+	void		addClient(Client *client);
+	void		eraseClient(const std::string& client);
 
 private:
 	Server *_server;
@@ -59,5 +60,6 @@ private:
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
+
 };
 

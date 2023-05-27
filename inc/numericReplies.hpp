@@ -62,6 +62,13 @@
 #define RPL_LISTEND(client) (":" + SERVER_NAME + " 323 " + client \
 		+ " :End of /LIST\r\n")
 
+// 331 : topic is not set yet on channel
+#define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
+		+ " " + channel + " :No topic is set\r\n")
+
+//TOPIC command to send to all user when change/cleared topic
+#define TOPIC(channel, newTopic) ("TOPIC " + channel + " :" + newTopic + "\r\n")
+
 // 332 : Sent to a client when joining the channel to inform of the current topic
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :" + topic + "\r\n")
