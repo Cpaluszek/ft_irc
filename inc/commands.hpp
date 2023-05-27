@@ -8,6 +8,10 @@ class Server;
 class Client;
 class Request;
 
+class Commands : Request
+{
+
+};
 // PASS
 void passCmd(Client *client, const Request &request, Server *server);
 

@@ -6,26 +6,12 @@
 
 bool Request::requestTopicIsValid( Client *client ) const
 {
-	if (this->args.empty()) {
+	std::vector<std::string>::const_iterator itArgs = this->args.begin();
+	if ( (itArgs)->find('#', 0) == std::string::npos || itArgs->length() == 1 ) {
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command));
 		return false;
 	}
-	size_t pos;
-	std::vector<std::string>::const_iterator itArgs = this->args.begin();
-	if ( (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos )
-	{
-		if ( pos == 0 )
-			Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, this->command));
-		else
-			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *itArgs));
-	}
-	else
-	{
-		if ( (++itArgs) != this->args.end() && (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos && pos == 0 )
-			return true;
-		Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *itArgs));
-	}
-	return false;
+	return true;
 }
 
 void topicCmd( Client *client, const Request &request, Server *server )
@@ -33,5 +19,6 @@ void topicCmd( Client *client, const Request &request, Server *server )
 	(void) server;
 	if ( !request.requestTopicIsValid( client ) )
 		return ;
-	std::cerr << "ok" << std::endl;
+	std::vector<std::string>::const_iterator itArgs = request.args.begin();
+
 }

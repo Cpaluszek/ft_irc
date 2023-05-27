@@ -21,6 +21,7 @@ public:
 	std::vector<std::string> 	tags;
 	std::string 				source;
 
+	bool req
 	bool				requestPrivMsgIsValid( Client *client ) const;
 	bool				requestTopicIsValid( Client *client ) const;
 
