@@ -46,6 +46,7 @@ void	Client::quit() {
 std::string Client::getMode() const {
 	return this->_mode;
 }
+
 bool Client::hasMode(char c) const {
 	return this->_mode.find(c) != std::string::npos;
 }
