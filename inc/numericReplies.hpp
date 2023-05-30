@@ -22,6 +22,10 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 005
+#define RPL_ISUPPORT(nick, tokens) (":" + SERVER_NAME + " 005 " + nick \
+		+ " " + tokens + " :are supported by this server\r\n")
+
 // 301
 #define RPL_AWAY(nick, target, message) (":" + SERVER_NAME + " 301 " + nick \
 		+ " " + target + " :" + message + "\r\n")

@@ -224,8 +224,9 @@ void Server::sendWelcome(Client *client) {
 	sendToClient(fd, RPL_YOURHOST(client->nickName));
 	sendToClient(fd, RPL_CREATED(client->nickName, _creationDate));
 	sendToClient(fd, RPL_MYINFO(client->nickName));
-	// Note: RPL_ISSUPPORT ?? -> OSKOUR
-	// Note: MOTD?
+	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN));
+	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN2));
+	motdCmd(client, Request(), this);
 	// Note: mode?
 }
 

@@ -51,6 +51,8 @@ Request::Request(std::string message): isValid(true) {
 	}
 }
 
+Request::Request() {}
+
 std::ostream &operator<<(std::ostream &out, const Request &src) {
 	out << "\" ---> command:[" << src.command << "] - args {";
 	for (std::vector<std::string>::const_iterator it = src.args.begin(); it < src.args.end(); it++) {

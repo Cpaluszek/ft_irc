@@ -11,6 +11,7 @@ class Client;
 class Request {
 public:
 	Request(std::string message);
+	Request();
 	~Request();
 
 	bool						isValid;
