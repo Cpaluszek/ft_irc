@@ -28,7 +28,6 @@
 
 // Note: do we need to add 'w' - wallops
 // USERMODE: invisible(i) - oper(o) - registered(r)
-// Todo: use usermode 'r' for register instead of bool
 #define USERMODE std::string("iorw")
 // Todo: CHANMODE
 #define CHANMODE std::string("???")
@@ -57,10 +56,9 @@ public:
 	typedef std::vector<std::string> vecStr;
 	typedef std::vector<std::string>::iterator vecStrIt;
 
-	// Todo: Make password private with a getter and no setter
-
 	~Server();
 	Server(std::string port, const std::string& password);
+
 	void 		Update();
 	void 		sendWelcome(Client *client);
 	bool 		isNickAlreadyUsed(const Client &client, std::string nick);

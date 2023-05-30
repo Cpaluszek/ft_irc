@@ -44,10 +44,7 @@ Server::Server(std::string port, const std::string& password) {
 
 Server::~Server() {
 	close(this->_serverSocketFd);
-	// Note: unnecessary delete protection?
-	if (this->_pollFds) {
-		delete [] this->_pollFds;
-	}
+	delete [] this->_pollFds;
 }
 
 void Server::SetupServerSocket(int port) {
@@ -80,22 +77,19 @@ void Server::SetupServerSocket(int port) {
 }
 
 void Server::Update() {
-	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1); // avec l'option -1 la fonction poll est bloquante
-	if (pollCount == -1) {																// envisager l'utilisantion d'un timeout de 5 ou 10 ms?
+	// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
+	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+	if (pollCount == -1) {
 		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 	}
 
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
 		if ((this->_pollFds[i].revents & POLLIN) == 0) {
 			continue;
-		} // Note: dispensable cette condition il me semble : o peut direct checker si c'est superieur a 0 non?
+		}
 
-		if (this->_pollFds[i].fd == this->_serverSocketFd) { // if i == 0 && fd == serversocket plutot!
-			registerNewClient();
-		}
-		else {
-			readClientRequest(i);
-		}
+		bool requestOnServerSocket = i == 0;
+		requestOnServerSocket ? registerNewClient() : readClientRequest(i);
 	}
 }
 
