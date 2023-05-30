@@ -15,14 +15,14 @@ Request::Request(std::string message): isValid(true) {
 		return ;
 	}
 
-//	// Todo: check for tags - '@'
+// Todo: check for tags - '@'
 //	if (vecStr[0][0] == '@') {
 //		this->tags = split(vecStr[0], ";");
 //		this->tags[0].erase(0, 1);
 //		vecStr.erase(vecStr.begin());
 //	}
 //
-//	// Todo: check for source - ':'
+// Todo: check for source - ':'
 //	if (vecStr[0][0] == ':') {
 //		this->source = vecStr[0];
 //		this->source.erase(0, 1);

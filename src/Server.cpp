@@ -15,13 +15,8 @@ Server::Server(std::string port, const std::string& password) {
 	this->_password = password;
 	
 	SetupServerSocket(portNumber);
-	// Setup poll file descriptors
-	this->_pollFds = new struct pollfd[SOMAXCONN];
-	this->_pollFds[0].fd = this->_serverSocketFd;
-	this->_pollFds[0].events = POLLIN;
-	this->_connectionCount = 1;
 
-	// Init Commands
+	// Todo: create a function for Init Commands
 	this->_commands["TOPIC"] = &topicCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
@@ -49,7 +44,6 @@ Server::~Server() {
 
 void Server::SetupServerSocket(int port) {
 	// Todo: should we use getaddrinfo ? -> https://github.dev/barimehdi77/ft_irc/tree/main/srcs
-
 	this->_serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_serverSocketFd == -1) {
 		throw std::runtime_error(std::string("Socket creation failed: ") + strerror(errno));
@@ -72,6 +66,10 @@ void Server::SetupServerSocket(int port) {
 	if (listen(this->_serverSocketFd, SOMAXCONN) < 0) {
 		throw std::runtime_error(std::string("listen() failed: ") + strerror(errno));
 	}
+	this->_pollFds = new struct pollfd[SOMAXCONN];
+	this->_pollFds[0].fd = this->_serverSocketFd;
+	this->_pollFds[0].events = POLLIN;
+	this->_connectionCount = 1;
 	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET \
 		<< GREEN << ": Server started ready to accept connections" << RESET << std::endl;
 }
@@ -262,7 +260,7 @@ void Server::removeChannel(const std::string &channelName) {
 	this->_channels.erase(it);
 }
 
-//this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
+// Note : this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;
 	if (channels.find( channel ) == channels.end())
@@ -281,7 +279,7 @@ bool Server::isUser( const std::string& user )
 	return false;
 }
 
-//return -1 if not a valid user, maybe delete "isUser"
+// Note: return -1 if not a valid user, maybe delete "isUser"
 int Server::findUserSocketFd( const std::string& user )
 {
 	clientIt it = this->getClientBeginIt();
