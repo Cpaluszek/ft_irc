@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include "Utils.hpp"
 
 bool	targetIsChannel( std::string target )
 {
@@ -7,7 +8,7 @@ bool	targetIsChannel( std::string target )
 	return false;
 }
 
-bool	channelExist( Server *server , Client *client, const std::string& channel )
+static bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
 	if (server->isAChannel( channel ))
 		return true;
@@ -26,57 +27,35 @@ std::string extractMessage( const Request &request )
 	return (message.substr(1, message.length()));
 }
 
-//send to all users in channel except source client, TODO : class method
-void	sendMessageToAllChannelUsers( std::string message, std::string channel, Client *client)
-{
-	std::map<std::string, Channel*> channelsMap= client->getChannels();
-	std::map<std::string, Channel*>::iterator it = channelsMap.find( channel );
-	if (it != channelsMap.end())
-	{
-		std::map<std::string, t_channelUser> mapChannelUsers = it->second->getClients();
-		std::map<std::string, t_channelUser>::iterator itMapChannelUsers = mapChannelUsers.begin();
-		for (; itMapChannelUsers != mapChannelUsers.end() ; ++itMapChannelUsers) {
-			{
-				if ( itMapChannelUsers->second.client->nickName != client->nickName)
-					Server::sendToClient(itMapChannelUsers->second.client->socketFd, message);
-			}
-		}
-	}
-}
-
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
-size_t 	containSemicol( std::string arg )
+bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &request
 {
-	size_t pos = arg.find( ':' );
-	return pos;
-}
-
-bool	requestIsValid( Client *client, const Request &request )
-{
-	if (request.args.empty()) {
+	if (this->args.empty()) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
 		return false;
 	}
 	size_t pos;
-	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	if ( (pos = containSemicol( *itArgs )) != std::string::npos ) // If ":" is in first arg
+	std::vector<std::string>::const_iterator itArgs = this->args.begin();
+	if ( (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos ) // If ":" is in first arg
 	{
 		if ( pos == 0 )
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 		else
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
-		return false;
 	}
 	else //If ":" is not in first arg
 	{
-		if ( (++itArgs) != request.args.end() && (pos = containSemicol( *itArgs )) != std::string::npos )
+		if ( (++itArgs) != this->args.end() && (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos )
 		{
 			if ( pos == 0 )
-				return true;
+			{
+				if ( itArgs->length() > 1 || ++itArgs != this->args.end() )
+					return true;
+				Server::sendToClient(client->socketFd, ERR_NOTEXTTOSEND(client->nickName));
+			}
 			Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
-			return false;
 		}
-		else if ( (++itArgs) != request.args.end() && (--request.args.end())->find(':') != 0)
+		else if ( (++itArgs) != this->args.end() && (--this->args.end())->find(':') != 0)
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
 		else
 			Server::sendToClient(client->socketFd, ERR_TOOMANYTARGETS);
@@ -86,7 +65,7 @@ bool	requestIsValid( Client *client, const Request &request )
 
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
-	if ( !requestIsValid( client, request ) )
+	if ( !request.requestPrivMsgIsValid( client ) )
 		return ;
 	std::string target = extractTarget( request );
 	std::string messageToSend = extractMessage( request );
@@ -94,9 +73,13 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 //	std::cerr << "mesage: '" << messageToSend << "'" << std::endl;
 	if (targetIsChannel( target ))
 	{
-		messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
 		if (channelExist( server, client, target))
-			sendMessageToAllChannelUsers( messageToSend, target, client);
+		{
+			Channel *specificChannel = server->getChannelByName( target )->second;
+			messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
+
+			specificChannel->sendToAllclientExceptSender( messageToSend, client );
+		}
 		return ;
 	}
 	else if ( server->isUser( target ))

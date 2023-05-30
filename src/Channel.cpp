@@ -80,3 +80,21 @@ void Channel::sendToAllclient(std::string message) {
 		Server::sendToClient(it->second.client->socketFd,message);
 	}
 }
+
+void Channel::sendToAllclientExceptSender(std::string message, Client *client) {
+	mapClientsIt it;
+
+	it = this->_mapClients.begin();
+	for (; it != this->_mapClients.end(); it++){
+		if ( it->first != client->nickName )
+			Server::sendToClient(it->second.client->socketFd,message);
+	}
+}
+
+void Channel::updateTopic( const std::string &newTopic, const std::string &setBy ) {
+	if (newTopic.empty())
+		this->_topic.clear();
+	else
+		setTopic(newTopic, setBy);
+}
+

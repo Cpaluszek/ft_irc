@@ -1,5 +1,6 @@
 
 #include "Request.hpp"
+#include "Client.hpp"
 
 Request::~Request() {}
 

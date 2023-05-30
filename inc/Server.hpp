@@ -40,6 +40,7 @@
 
 class Client;
 class Channel;
+class Request;
 
 class Server {
 public:
@@ -80,20 +81,19 @@ public:
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
-private:
-	std::string 	_password;
-	std::string 	_name;
-	std::string 	_creationDate;
-	int 			_serverSocketFd;		// Note: create a class module for socket management?
-	unsigned int	_connectionCount;
-	clientMap 		_clients;
-	channelMap 		_channels;
+protected:
+	std::string 				_password;
+	std::string 				_name;
+	int 						_serverSocketFd;		// Note: create a class module for socket management?
+	unsigned int				_connectionCount;
+	std::map<int, Client*>		_clients;
+	std::string 				_creationDate;
+	std::map<std::string, Channel*> _channels;
 	// map channels
 
 	std::map<std::string, CmdFunction> _commands;
 
 	// Note: Static allocation ? Or minimal allocation and realloc on new connections
-	// Todo: map ou list
 	pollfd	*_pollFds;
 
 	// Functions
