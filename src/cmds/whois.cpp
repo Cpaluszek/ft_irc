@@ -37,7 +37,7 @@ void whoisCmd(Client *client, const Request &request, Server *server) {
 		std::cerr << RED << "Error: whois: target is NULL" << RESET << std::endl;
 		return ;
 	}
-	if (target->isRegistered) {
+	if (target->hasMode('r')) {
 		Server::sendToClient(client->socketFd, RPL_WHOISREGNICK(client->nickName, targetNick));
 	}
 	// Client info

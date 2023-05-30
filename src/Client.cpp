@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): socketFd(0), isRegistered(false), hasPassword(false), isAway(false), socketBuffer("") {
+Client::Client(): socketFd(0), hasPassword(false), isAway(false), socketBuffer("") {
 }
 
 Client::~Client() {
@@ -65,6 +65,6 @@ void Client::removeMode(char c) {
 
 std::ostream &operator<<(std::ostream &out, const Client &src) {
 	out << "Client: socket(" << src.socketFd << ") - nickname(" << src.nickName <<") - username(" << src.userName \
-		<< ") - isRegistered(" << src.isRegistered <<") - hasPassword(" << src.hasPassword <<")" <<std::endl;
+		<< ") - mode(" << src.getMode() <<") - hasPassword(" << src.hasPassword <<")" <<std::endl;
 	return out;
 }

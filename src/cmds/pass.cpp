@@ -5,7 +5,7 @@ void passCmd(Client *client, const Request &request, Server *server) {
 	if (client->hasPassword) {
 		return ;
 	}
-	if (client->isRegistered) {
+	if (client->hasMode('r')) {
 		Server::sendToClient(client->socketFd, ERR_ALREADYREGISTERED(client->nickName));
 	}
 	else if (request.args.empty() || request.args[0].length() == 0) {

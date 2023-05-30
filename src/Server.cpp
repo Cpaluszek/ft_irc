@@ -202,7 +202,7 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 	}
 	cmdIt it = this->_commands.find(request.command);
 	if (it != this->_commands.end()) {
-		if (!client->isRegistered && request.command != "PASS" && request.command != "USER" && request.command != "NICK") {
+		if (!client->hasMode('r') && request.command != "PASS" && request.command != "USER" && request.command != "NICK") {
 			sendToClient(client->socketFd, ERR_NOTREGISTERED(client->nickName));
 			return ;
 		}

@@ -17,7 +17,7 @@ void userCmd(Client *client, const Request &request, Server *server) {
 	else if (!client->hasPassword) {
 		Server::sendToClient(client->socketFd, ERR_MSG(std::string("PASS is needed")));
 	}
-	else if (client->isRegistered) {
+	else if (client->hasMode('r')) {
 		Server::sendToClient(client->socketFd, ERR_ALREADYREGISTERED(client->nickName));
 	}
 	else {
@@ -26,7 +26,7 @@ void userCmd(Client *client, const Request &request, Server *server) {
 			client->realName = request.args[3];
 		}
 		if (!client->nickName.empty()) {
-			client->isRegistered = true;
+			client->addMode('r');
 			server->sendWelcome(client);
 		}
 	}

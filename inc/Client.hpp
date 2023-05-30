@@ -14,7 +14,6 @@ public:
 	typedef std::map<std::string, Channel*>::iterator channelMapIt;
 
 	int 		socketFd;
-	bool		isRegistered;
 	bool		hasPassword;
 	bool		isAway;
 	std::string nickName;

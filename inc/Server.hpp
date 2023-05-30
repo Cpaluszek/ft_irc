@@ -27,7 +27,8 @@
 #define VERSION std::string("0.1")
 
 // Note: do we need to add 'w' - wallops
-// USERMODE: invisible - oper - registered
+// USERMODE: invisible(i) - oper(o) - registered(r)
+// Todo: use usermode 'r' for register instead of bool
 #define USERMODE std::string("iorw")
 // Todo: CHANMODE
 #define CHANMODE std::string("???")
