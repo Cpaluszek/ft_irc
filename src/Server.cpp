@@ -239,15 +239,12 @@ Server::clientIt Server::getClientEndIt() {
 	return _clients.end();
 }
 
-// Todo: remove typedef
-typedef std::map<std::string, Channel*>::iterator channelIt;
-
 // Todo: return a ptr
-channelIt Server::getChannelByName(const std::string& name) {
+Server::channelIt Server::getChannelByName(const std::string& name) {
 	return this->_channels.find(name);
 }
 
-channelIt Server::getChannelEnd() {
+Server::channelIt Server::getChannelEnd() {
 	return this->_channels.end();
 }
 
