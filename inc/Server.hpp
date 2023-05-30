@@ -31,9 +31,19 @@
 
 // Note: do we need to add 'w' - wallops
 // USERMODE: invisible(i) - oper(o) - registered(r)
-#define USERMODE std::string("iorw")
-// Todo: CHANMODE
-#define CHANMODE std::string("???") // ON gere pas h - halp operator
+#define USERMODE std::string("ior")
+#define CHANMODE std::string("biklnst")
+/*
+ * b - bans
+ * i - invite necessary
+ * k - key is needed
+ * l - limit number of users
+ * n - users outside the channel can NOT send PRIVMSG - TODO: ???
+ * s - secret channel - TODO: ???
+ * t - only operator can change the topic
+ */
+
+
 // Todo: CHANTYPES - # - &???
 #define CHANTYPES std::string("#")
 // Todo: What to put in PREFIX?
