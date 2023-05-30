@@ -8,7 +8,7 @@ std::string getChannelsList(const Client *client, const std::string &targetNick,
 		channelsList = "*";
 	}
 	for (it = channels.begin(); it != channels.end(); it++) {
-		bool isOperator = target->getMode().find('o') != std::string::npos;
+		bool isOperator = target->hasMode('o');
 		bool isClientInChannel = it->second->isClientConnected(client->nickName);
 		if (isOperator || client->nickName == targetNick || isClientInChannel) {
 			if (it  != channels.begin()) {
@@ -45,8 +45,8 @@ void whoisCmd(Client *client, const Request &request, Server *server) {
 	// Server info
 	Server::sendToClient(client->socketFd, RPL_WHOISSERVER(client->nickName, target->nickName, SERVER_INFO));
 	// is the client operator
-	bool isTargetOperator = target->getMode().find('o') != std::string::npos;
-	bool isClientOperator = client->getMode().find('o') != std::string::npos;
+	bool isTargetOperator = target->hasMode('o');
+	bool isClientOperator = client->hasMode('o');
 	if (isTargetOperator) {
 		Server::sendToClient(client->socketFd, RPL_WHOISOPERATOR(client->nickName, target->nickName));
 	}

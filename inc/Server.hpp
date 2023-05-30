@@ -25,8 +25,10 @@
 #define SERVER_NAME std::string("FT_IRC")
 #define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
-// Todo: USERMODE
-#define USERMODE std::string("???")
+
+// Note: do we need to add 'w' - wallops
+// USERMODE: invisible - oper - registered
+#define USERMODE std::string("iorw")
 // Todo: CHANMODE
 #define CHANMODE std::string("???")
 

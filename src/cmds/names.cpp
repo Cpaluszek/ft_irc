@@ -32,7 +32,7 @@ void namesCmd(Client *client, const Request &request, Server *server) {
 		Server::clientIt clientIt;
 		bool endOfNamesNeeded = false;
 		for (clientIt = clients.begin(); clientIt != clients.end(); clientIt++) {
-			bool isInvisible = clientIt->second->getMode().find('i') != std::string::npos;
+			bool isInvisible = clientIt->second->hasMode('i');
 			bool hasJoinedAChannel = !clientIt->second->getChannels().empty();
 			if (isInvisible || hasJoinedAChannel) {
 				continue;

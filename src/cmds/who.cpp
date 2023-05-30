@@ -29,10 +29,10 @@ void whoChannel(const Client *client, Channel *channel, bool operatorOnly) {
 	bool isClientInChannel = channel->isClientConnected(client->nickName);
 	for (it = clients.begin(); it != clients.end(); it++) {
 		Client *currentClient = it->second.client;
-		if (operatorOnly && currentClient->getMode().find('o') == std::string::npos) {
+		if (operatorOnly && currentClient->hasMode('o')) {
 			continue ;
 		}
-		bool isVisible = currentClient->getMode().find('i') == std::string::npos;
+		bool isVisible = !currentClient->hasMode('i');
 		if (isVisible || isClientInChannel) {
 			std::string flags = "H";
 			// Todo: check operator grade for client
@@ -48,7 +48,7 @@ void whoMask(const Client *client, Server *server, const std::string& mask, bool
 	Server::clientIt it;
 	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
 		Client *currentClient = it->second;
-		if (operatorOnly && currentClient->getMode().find('o') == std::string::npos) {
+		if (operatorOnly && currentClient->hasMode('o')) {
 			continue ;
 		}
 

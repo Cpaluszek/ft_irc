@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Server.hpp"
 
-// Todo: do we need to manage signals ? SIQINT - SIQQUIT - SIGKILL ?
+// Todo: manage signals SIQINT - SIQQUIT - SIGKILL ? To avoid leaks in case of interrupt
 
 int main(int argc, char **argv) {
 	if (argc != 3) {
