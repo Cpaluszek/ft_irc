@@ -26,13 +26,16 @@ public:
 	Client();
 	~Client();
 	void		updateNickname(const std::string& newNickname);
+	void		quit();
+
+	// ---- Channels ----
 	void		addChannel(Channel *newChannel);
 	void 		eraseChannel(const std::string& channel);
 	size_t 		getNumberOfChannelsJoined() const;
 	channelMap	getChannels() const;
-	bool 		isOnChannel(std::string channel) const;
+	bool 		isOnChannel(const std::string& channel) const;
 
-	void		quit();
+	// ---- Mode ----
 	std::string getMode() const;
 	bool		hasMode(char c) const;
 	void		addMode(char c);
