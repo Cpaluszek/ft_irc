@@ -1,5 +1,6 @@
 
 #include "Server.hpp"
+bool Server::keyboardInterrupt = false;
 
 Server::Server(std::string port, const std::string& password) {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
@@ -75,19 +76,21 @@ void Server::SetupServerSocket(int port) {
 }
 
 void Server::Update() {
-	// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
-	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
-	if (pollCount == -1) {
-		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
-	}
-
-	for (unsigned int i = 0; i < this->_connectionCount; i++) {
-		if ((this->_pollFds[i].revents & POLLIN) == 0) {
-			continue;
+	while (!Server::keyboardInterrupt) {
+		// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
+		int pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+		if (pollCount == -1 && !Server::keyboardInterrupt) {
+			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
 
-		bool requestOnServerSocket = i == 0;
-		requestOnServerSocket ? registerNewClient() : readClientRequest(i);
+		for (unsigned int i = 0; i < this->_connectionCount; i++) {
+			if ((this->_pollFds[i].revents & POLLIN) == 0) {
+				continue;
+			}
+
+			bool requestOnServerSocket = i == 0;
+			requestOnServerSocket ? registerNewClient() : readClientRequest(i);
+		}
 	}
 }
 
@@ -162,21 +165,6 @@ void Server::readClientRequest(unsigned int index) {
 		if (this->_clients.find(clientFd) == this->_clients.end()) {
 			break ;
 		}
-	}
-}
-
-void Server::sendToClient(int fd, const std::string &content) {
-#ifdef DEBUG
-	std::cout << CYAN << "->" << content << RESET << std::endl;
-#endif
-	size_t bytesSent = 0;
-	while (bytesSent < content.length()) {
-		ssize_t len = send(fd, content.c_str(), content.length(), 0);
-		if (len < 0) {
-			std::cout << "send() error: " << strerror(errno) << std::endl;
-			break ;
-		}
-		bytesSent += len;
 	}
 }
 
@@ -314,4 +302,26 @@ Server::clientMap Server::getClients() {
 }
 
 Server::Server() {}
+
+// ----- STATIC -----
+void Server::sendToClient(int fd, const std::string &content) {
+#ifdef DEBUG
+	std::cout << CYAN << "->" << content << RESET << std::endl;
+#endif
+	size_t bytesSent = 0;
+	while (bytesSent < content.length()) {
+		ssize_t len = send(fd, content.c_str(), content.length(), 0);
+		if (len < 0) {
+			std::cout << "send() error: " << strerror(errno) << std::endl;
+			break ;
+		}
+		bytesSent += len;
+	}
+}
+
+void Server::handleKeyboardInterrupt(int signal) {
+	(void) signal;
+	Server::keyboardInterrupt = true;
+	// Todo: Check leaks
+}
 

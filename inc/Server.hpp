@@ -12,6 +12,7 @@
 #include <poll.h>
 #include <map>
 #include <string>
+#include <csignal>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -80,13 +81,17 @@ public:
 	typedef std::vector<std::string> vecStr;
 	typedef std::vector<std::string>::iterator vecStrIt;
 
+	static bool keyboardInterrupt;
+
 	~Server();
 	Server(std::string port, const std::string& password);
 
-	void 		Update();
-	void 		sendWelcome(Client *client);
-	bool 		isNickAlreadyUsed(const Client &client, std::string nick);
-	void 		disconnectClient(int fd);
+	void 			Update();
+	void 			sendWelcome(Client *client);
+	bool 			isNickAlreadyUsed(const Client &client, std::string nick);
+	void 			disconnectClient(int fd);
+	static void		handleKeyboardInterrupt(int signal);
+	static void sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
 	clientIt getClientBeginIt();
@@ -101,11 +106,11 @@ public:
 	void		addChannel(Channel *newChannel);
 	void 		removeChannel(const std::string &channelName);
 
-	static void sendToClient(int fd, const std::string &content);
 	Client 		*getClientByNick(const std::string &nick);
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
+	// TODO: switch protected to private
 protected:
 	std::string 				_password;
 	std::string 				_name;
