@@ -54,21 +54,21 @@ void printTopic( Client *client, Channel *specificChannel )
 void clearTopic( Client *client, Channel *specificChannel )
 {
 	specificChannel->setTopic( "" , client->nickName );
-	specificChannel->sendToAllclient(TOPIC( specificChannel->name, "" ));
+	specificChannel->sendToAllclient(TOPIC( specificChannel->name, "" ) );
 }
 
 void setTopic( Client *client, Channel *specificChannel, const Request &request )
 {
 	std::vector<std::string>::const_iterator itArgs = ++request.args.begin();
-	std::string newTopic = itArgs->substr( 1, itArgs->length());
+	std::string newTopic = itArgs->substr( 1, itArgs->length() );
 	specificChannel->setTopic( newTopic, client->nickName );
-	specificChannel->sendToAllclient(TOPIC( specificChannel->name, newTopic ));
+	specificChannel->sendToAllclient(TOPIC( specificChannel->name, newTopic ) );
 }
 
 void topicCmd( Client *client, const Request &request, Server *server )
 {
 	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	if ( !request.requestTopicIsValid( client ) || !channelExist( server, client, *itArgs )) {
+	if ( !request.requestTopicIsValid( client ) || !channelExist( server, client, *itArgs ) ) {
 		return ;
 	}
 

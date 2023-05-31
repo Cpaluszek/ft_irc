@@ -21,7 +21,7 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, RPL_LISTSTART(client->nickName));
 		for (it = channels.begin(); it != channels.end(); it++) {
 			// If the channel is not secret 's'
-			if (it->second->mode.find('s') == std::string::npos) {
+			if (it->second->getMods().find('s') == std::string::npos) {
 				sendChannelInformation(client, it->second);
 			}
 		}

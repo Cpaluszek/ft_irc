@@ -8,6 +8,7 @@
 #include "Client.hpp"
 
 class Client;
+class Server;
 class Request {
 public:
 	Request(std::string message);
@@ -23,6 +24,7 @@ public:
 
 	bool				requestPrivMsgIsValid( Client *client ) const;
 	bool				requestTopicIsValid( Client *client ) const;
+	bool				requestModeIsValid( Client *client, Server *server ) const;
 
 };
 
