@@ -195,8 +195,11 @@
 // 407
 # define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
 
-// 442 : when client isn't part of the channel
-# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :No such channel\r\n")
+// 441
+# define ERR_USERNOTINCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 441 " + client + " " + nick + " " + channel + " :They're not on that channel\r\n")
+
+// 442
+# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :You're not on that channel\r\n")
 
 // 471
 #define ERR_CHANNELISFULL

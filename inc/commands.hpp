@@ -38,6 +38,9 @@ void listCmd(Client *client, const Request &request, Server *server);
 // MOTD
 void motdCmd(Client *client, const Request &request, Server *server);
 
+// WHOIS
+void whoisCmd(Client *client, const Request &request, Server *server);
+
 // PING
 void pingCmd(Client *client, const Request &request, Server *server);
 
@@ -51,3 +54,6 @@ void namesCmd(Client *client, const Request &request, Server *server);
 
 // AWAY
 void awayCmd(Client *client, const Request &request, Server *server);
+
+// KICK
+void    kickCmd(Client *client, const Request &request, Server *server);
