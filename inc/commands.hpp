@@ -43,3 +43,6 @@ void pingCmd(Client *client, const Request &request, Server *server);
 
 // PART
 void	partCmd(Client *client, const Request &request, Server *server);
+
+// KICK
+void    kickCmd(Client *client, const Request &request, Server *server);

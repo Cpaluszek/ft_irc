@@ -24,6 +24,7 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/part.cpp \
 					cmds/ping.cpp \
 					cmds/whois.cpp \
+					cmds/kick.cpp \
 					cmds/motd.cpp
 
 
