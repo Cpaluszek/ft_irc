@@ -15,8 +15,7 @@ void passCmd(Client *client, const Request &request, Server *server) {
 		client->hasPassword = true;
 	}
 	else {
-		// Todo: Disconnect client ? + send message to announce disconnection?
 		Server::sendToClient(client->socketFd, ERR_PASSWDMISMATCH(std::string("Client")));
+		server->disconnectClient(client->socketFd);
 	}
 }
-
