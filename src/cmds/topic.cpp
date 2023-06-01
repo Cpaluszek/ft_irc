@@ -74,6 +74,17 @@ void topicCmd( Client *client, const Request &request, Server *server )
 
 
 	Channel *specificChannel = server->getChannelByName( *itArgs )->second;
+	t_channelUser *channelUser =specificChannel->getChannelUserByNick(client->nickName);
+	if ( !channelUser )
+	{
+		Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name));
+		return ;
+	}
+
+	std::string UserChannelMod = channelUser->userMode;
+	bool		UserHasPrivilege = false;
+	if ( UserChannelMod.find('o') != std::string::npos )
+		UserHasPrivilege = true;
 	switch ( defineTopicAction( itArgs, request ) ) {
 		case PRINT_TOPIC:
 			if ( !specificChannel->isClientConnected( client->nickName ) )
@@ -82,10 +93,19 @@ void topicCmd( Client *client, const Request &request, Server *server )
 				printTopic( client, specificChannel );
 			break;
 		case CLEAR_TOPIC:
-			if ( specificChannel->getMods().find('t') != std::string::npos )//TODO : finish
+			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			{
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				return ;
+			}
 			clearTopic( client, specificChannel );//TODO: Check Permissions;
 			break;
 		case SET_TOPIC:
+			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			{
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				return ;
+			}
 			setTopic( client, specificChannel, request );//TODO: Check Permissions
 		default:
 			break;

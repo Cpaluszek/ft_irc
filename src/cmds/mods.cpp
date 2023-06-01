@@ -156,8 +156,8 @@ void mode( Client *client, const Request &request, Server *server )
 		flags = getFlags( request, USERMOD );
 	if ( client->hasMode('o') )
 		executeModeCmd( client, server, request, flags, channel );
-//	std::vector<int>::iterator itprint = flags.begin();
-//	for (;itprint != flags.end() ; itprint++) {
-//		std::cout << *itprint << std::endl;
-//	}
+	std::vector<int>::iterator itprint = flags.begin();
+	for (;itprint != flags.end() ; itprint++) {
+		std::cout << *itprint << std::endl;
+	}
 }
