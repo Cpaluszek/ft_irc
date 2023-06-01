@@ -99,6 +99,15 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		setTopic(newTopic, setBy);
 }
 
+channelUser * Channel::getChannelUserByNick(const std::string &nick) {
+	for (mapClientsIt it = this->_mapClients.begin(); it != this->_mapClients.end(); it++) {
+		if (Utils::copyToUpper(nick) == Utils::copyToUpper(it->second.client->nickName)) {
+			return &it->second;
+		}
+	}
+	return NULL;
+}
+
 void Channel::setMods(std::string mod, int action) {
 	switch (action) {
 		case ADDMOD:
@@ -124,5 +133,36 @@ void Channel::setMods(std::string mod, int action) {
 
 std::string Channel::getMods() {
 	return this->mode;
+}
+
+bool Channel::hasMode(char c) const {
+	return this->mode.find(c) != std::string::npos;
+}
+void Channel::addInvite(const std::string &nickName) {
+	if (isInvited(nickName))
+		return ;
+	this->_inviteList.push_back(nickName);
+}
+
+// Todo: need to convert nickname to uppercase??
+void Channel::removeInvite(const std::string &nickName) {
+	std::vector<std::string>::iterator it;
+	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
+		if (*it == nickName) {
+			this->_inviteList.erase(it);
+			break ;
+		}
+	}
+}
+
+// Todo: need to convert nickname to uppercase??
+bool Channel::isInvited(const std::string &nickName) const {
+	std::vector<std::string>::const_iterator it;
+	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
+		if (*it == nickName) {
+			return true;
+		}
+	}
+	return false;
 }
 

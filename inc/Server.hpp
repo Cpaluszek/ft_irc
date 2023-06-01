@@ -32,19 +32,16 @@
 // Note: do we need to add 'w' - wallops
 // USERMODE: invisible(i) - oper(o) - registered(r)
 #define USERMODE std::string("ior")
-#define CHANMODE std::string("biklnst")
+#define CHANMODE std::string("itkol")
 /*
- * b - bans
- * i - invite necessary
- * k - key is needed
- * l - limit number of users
- * n - users outside the channel can NOT send PRIVMSG - TODO: ???
- * s - secret channel - TODO: ???
- * t - only operator can change the topic
+ * i - Set or remove invite-only channel
+ * k - Set or remove the channel key
+ * l - Set or remove the user limit to channel
+ * o - Set or remove channel operator privilege
+ * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
 
-// Todo: CHANTYPES - # - &???
 #define CHANTYPES std::string("#")
 // Todo: What to put in PREFIX?
 #define PREFIX		std::string("@")
@@ -101,7 +98,7 @@ public:
 	bool 			isNickAlreadyUsed(const Client &client, std::string nick);
 	void 			disconnectClient(int fd);
 	static void		handleKeyboardInterrupt(int signal);
-	static void sendToClient(int fd, const std::string &content);
+	static void 	sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
 	clientIt getClientBeginIt();
@@ -110,6 +107,7 @@ public:
 	// Channel
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
+	// Todo: switch to channel ptr
 	channelIt	getChannelByName(const std::string& name);
 	channelIt	getChannelEnd(); // a remove?
 	bool		isAChannel( const std::string &channel ) const;
@@ -143,5 +141,4 @@ protected:
 
 	void readClientRequest(unsigned int index);
 	void handleClientRequest(Client *client, const std::string& content);
-
 };

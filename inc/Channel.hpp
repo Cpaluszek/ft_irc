@@ -14,14 +14,12 @@ class Server;
 
 
 /*  ----- CHANNEL MODES -----
- * b - bans
- * i - invite necessary
- * k - key is needed
- * l - limit number of users
- * n - users outside the channel can NOT send PRIVMSG - TODO: ???
- * o - operator status
- * s - secret channel - TODO: ???
- * t - only operator can change the topic
+ * i - Set or remove invite-only channel
+ * k - Set or remove the channel key
+ * l - Set or remove the user limit to channel
+ * n - Set or remove external user permission to send message to channel //TOdo: integrate
+ * o - Set or remove channel operator privilege
+ * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
 typedef struct t_channelUser
@@ -35,6 +33,7 @@ typedef struct t_channelUser
 // Todo: founder + operator
 class Channel {
 public:
+	// Todo: switch a map of ChannelUser*
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
@@ -57,19 +56,26 @@ public:
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
-	mapClients		getClients() const;
-	size_t			getClientCount() const;
-	bool 			isClientConnected(const std::string& nickName) const;
-	void			sendToAllclient(std::string message);
-	void			sendToAllclientExceptSender(std::string message, Client *client);
+	mapClients	getClients() const;
+	size_t		getClientCount() const;
+	bool 		isClientConnected(const std::string& nickName) const;
+	void		sendToAllclient(std::string message);
+	void		sendToAllclientExceptSender(std::string message, Client *client);
 
-	void			addClient(Client *client);
-	void			eraseClient(const std::string& client);
+	channelUser * getChannelUserByNick(const std::string &nick);
+	void		addClient(Client *client);
+	void		eraseClient(const std::string& client);
 
 	// ------- Mode -------
+	bool hasMode(char c) const;
 	std::string		getMods();
 	void 			setMods( std::string mod, int action );
 
+
+	// INVITE LIST
+	void addInvite(const std::string &nickName);
+	void removeInvite(const std::string &nickName);
+	bool isInvited(const std::string &nickName) const;
 
 private:
 	Server *_server;
@@ -80,4 +86,6 @@ private:
 	std::string _topicSetBy;
 	std::string _topicSetTime;
 	std::string	mode;
+	std::vector<std::string> _inviteList;
 };
+
