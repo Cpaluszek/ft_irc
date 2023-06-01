@@ -4,7 +4,12 @@
 void connectClientToChannel(Client *client, Channel *channel) {
 	// Todo: check if banned
 	// Todo: check if channel is full
-	// Todo: check invitation required ?
+	// check invitation required
+	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {
+		// Todo: test
+		Server::sendToClient(client->socketFd, ERR_INVITEONLYCHAN(client->nickName, channel->name));
+		return ;
+	}
 
 	// Success
 	client->addChannel(channel);

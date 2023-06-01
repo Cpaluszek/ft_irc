@@ -213,7 +213,8 @@
 #define ERR_CHANNELISFULL
 
 // 473
-#define ERR_INVITEONLYCHAN
+#define ERR_INVITEONLYCHAN(nick, channel) (":" + SERVER_NAME + " 473 " + nick \
+		+ " " + channel + " :Cannot join channel (+i)\r\n")
 
 // 474
 #define ERR_BANNEDFROMCHAN
