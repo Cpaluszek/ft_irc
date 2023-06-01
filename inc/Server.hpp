@@ -12,6 +12,7 @@
 #include <poll.h>
 #include <map>
 #include <string>
+#include <csignal>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -26,20 +27,54 @@
 #define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
 
-// Note: do we need to add 'w' - wallops
-// USERMODE: invisible(i) - oper(o) - registered(r)
-#define USERMODE std::string("iorw")
-// Todo: CHANMODE
-#define CHANMODE std::string("???")
-
 #define MOTD_FILE "config/motd.txt"
 
-// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
-#define CHANLIMIT 10
+// Note: do we need to add 'w' - wallops
+// USERMODE: invisible(i) - oper(o) - registered(r)
+#define USERMODE std::string("ior")
+#define CHANMODE std::string("biklnst")
+/*
+ * b - bans
+ * i - invite necessary
+ * k - key is needed
+ * l - limit number of users
+ * n - users outside the channel can NOT send PRIVMSG - TODO: ???
+ * s - secret channel - TODO: ???
+ * t - only operator can change the topic
+ */
 
-// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
-#define CHANNELLEN 32
 
+// Todo: CHANTYPES - # - &???
+#define CHANTYPES std::string("#")
+// Todo: What to put in PREFIX?
+#define PREFIX		std::string("@")
+
+
+
+#define CHANLIMIT 10  	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
+#define CHANNELLEN 32 	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
+// ---- RPL_ISUPPORT ----
+// [RPL\_ISUPPORT Tokens](https://defs.ircdocs.horse/defs/isupport.html)
+#define CHANLIMIT_TOKEN		std::string("CHANLIMIT=" + CHANTYPES + ":10")
+#define CHANMODES_TOKEN		std::string("CHANMODES=" + CHANMODE)
+#define CHANNELLEN_TOKEN 	std::string("CHANNELLEN=32")			// Maximum channel name length
+#define CHANTYPES_TOKEN		std::string("CHANTYPES=" + CHANTYPES)
+#define KEYLEN_TOKEN		std::string("KEYLEN=10")				// Channel key length limit
+#define KICKLEN_TOKEN		std::string("KICKLEN=")					// No length limit for kick message
+#define MAXLIST_TOKEN		std::string("MAXLIST=")
+#define MAXNICKLEN_TOKEN	std::string("MAXNICKLEN=32")			// Maximum nickname length
+#define MAXTARGETS_TOKEN	std::string("MAXTARGETS=")
+#define MODES_TOKEN			std::string("MODES=")
+#define TARGMAX_TOKEN		std::string("TARGMAX=WHO:,WHOIS:1,NAMES:,PRIVMSG:,NOTICE:,JOIN:,PART:")
+#define TOPICLEN_TOKEN		std::string("TOPICLEN=")				// Maximum topic length
+#define PREFIX_TOKEN		std::string("PREFIX=" + PREFIX)
+#define USERLEN_TOKEN		std::string("USERLEN=10")				// Maximum length of username
+#define ISUPPORT_TOKEN 		std::string(CHANLIMIT_TOKEN + " " + CHANMODES_TOKEN + " " + CHANNELLEN_TOKEN \
+		+ " " + CHANTYPES_TOKEN + " " + KEYLEN_TOKEN + " " + KICKLEN_TOKEN + " " + MAXLIST_TOKEN + " " \
+  		+ MAXNICKLEN_TOKEN + " " + MAXTARGETS_TOKEN)
+
+#define ISUPPORT_TOKEN2 	std::string(MODES_TOKEN + " " + TARGMAX_TOKEN + " " + TOPICLEN_TOKEN \
+		+ " " + PREFIX_TOKEN + " " + USERLEN_TOKEN)
 class Client;
 class Channel;
 class Request;
@@ -56,13 +91,17 @@ public:
 	typedef std::vector<std::string> vecStr;
 	typedef std::vector<std::string>::iterator vecStrIt;
 
+	static bool keyboardInterrupt;
+
 	~Server();
 	Server(std::string port, const std::string& password);
 
-	void 		Update();
-	void 		sendWelcome(Client *client);
-	bool 		isNickAlreadyUsed(const Client &client, std::string nick);
-	void 		disconnectClient(int fd);
+	void 			Update();
+	void 			sendWelcome(Client *client);
+	bool 			isNickAlreadyUsed(const Client &client, std::string nick);
+	void 			disconnectClient(int fd);
+	static void		handleKeyboardInterrupt(int signal);
+	static void sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
 	clientIt getClientBeginIt();
@@ -77,11 +116,11 @@ public:
 	void		addChannel(Channel *newChannel);
 	void 		removeChannel(const std::string &channelName);
 
-	static void sendToClient(int fd, const std::string &content);
 	Client 		*getClientByNick(const std::string &nick);
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
+	// TODO: switch protected to private
 protected:
 	std::string 				_password;
 	std::string 				_name;

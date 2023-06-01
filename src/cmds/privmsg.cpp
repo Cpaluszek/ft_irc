@@ -36,7 +36,7 @@ bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &requ
 	}
 	size_t pos;
 	std::vector<std::string>::const_iterator itArgs = this->args.begin();
-	if ( (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos ) // If ":" is in first arg
+	if ((pos = Utils::getSemicolonPos(*itArgs)) != std::string::npos ) // If ":" is in first arg
 	{
 		if ( pos == 0 )
 			Server::sendToClient(client->socketFd, ERR_NORECIPIENT(client->nickName, request.command));
@@ -45,7 +45,7 @@ bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &requ
 	}
 	else //If ":" is not in first arg
 	{
-		if ( (++itArgs) != this->args.end() && (pos = Utils::getSemicolPos( *itArgs )) != std::string::npos )
+		if ( (++itArgs) != this->args.end() && (pos = Utils::getSemicolonPos(*itArgs)) != std::string::npos )
 		{
 			if ( pos == 0 )
 			{

@@ -52,5 +52,8 @@ void namesCmd(Client *client, const Request &request, Server *server);
 // AWAY
 void awayCmd(Client *client, const Request &request, Server *server);
 
+// KICK
+void    kickCmd(Client *client, const Request &request, Server *server);
+
 // MODE
 void mode( Client *client, const Request &request, Server *server );

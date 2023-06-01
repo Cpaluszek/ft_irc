@@ -29,6 +29,9 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/names.cpp \
 					cmds/away.cpp \
 					cmds/mods.cpp
+					cmds/away.cpp \
+					cmds/kick.cpp \
+					cmds/motd.cpp \
 
 
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))

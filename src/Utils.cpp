@@ -38,9 +38,7 @@ std::vector<std::string> Utils::split(const std::string& source, const std::stri
 	return result;
 }
 
-size_t 	Utils::getSemicolPos( const std::string &arg )
-{
-	size_t pos = arg.find( ':' );
-	return pos;
+size_t 	Utils::getSemicolonPos(const std::string &arg ) {
+	return arg.find( ':' );
 }
 

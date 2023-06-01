@@ -1,5 +1,6 @@
 
 #include "Server.hpp"
+bool Server::keyboardInterrupt = false;
 
 Server::Server(std::string port, const std::string& password) {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
@@ -15,13 +16,8 @@ Server::Server(std::string port, const std::string& password) {
 	this->_password = password;
 	
 	SetupServerSocket(portNumber);
-	// Setup poll file descriptors
-	this->_pollFds = new struct pollfd[SOMAXCONN];
-	this->_pollFds[0].fd = this->_serverSocketFd;
-	this->_pollFds[0].events = POLLIN;
-	this->_connectionCount = 1;
 
-	// Init Commands
+	// Todo: create a function for Init Commands
 	this->_commands["TOPIC"] = &topicCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
@@ -38,6 +34,7 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["PART"] = &partCmd;
 	this->_commands["NAMES"] = &namesCmd;
 	this->_commands["AWAY"] = &awayCmd;
+    this->_commands["KICK"] = &kickCmd;
 	this->_commands["MODE"] = &mode;
 
 	this->_creationDate = Utils::getCurrentDateTime();
@@ -50,7 +47,6 @@ Server::~Server() {
 
 void Server::SetupServerSocket(int port) {
 	// Todo: should we use getaddrinfo ? -> https://github.dev/barimehdi77/ft_irc/tree/main/srcs
-
 	this->_serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_serverSocketFd == -1) {
 		throw std::runtime_error(std::string("Socket creation failed: ") + strerror(errno));
@@ -73,24 +69,30 @@ void Server::SetupServerSocket(int port) {
 	if (listen(this->_serverSocketFd, SOMAXCONN) < 0) {
 		throw std::runtime_error(std::string("listen() failed: ") + strerror(errno));
 	}
+	this->_pollFds = new struct pollfd[SOMAXCONN];
+	this->_pollFds[0].fd = this->_serverSocketFd;
+	this->_pollFds[0].events = POLLIN;
+	this->_connectionCount = 1;
 	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET \
 		<< GREEN << ": Server started ready to accept connections" << RESET << std::endl;
 }
 
 void Server::Update() {
-	// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
-	int	pollCount = poll(this->_pollFds, this->_connectionCount, -1);
-	if (pollCount == -1) {
-		throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
-	}
-
-	for (unsigned int i = 0; i < this->_connectionCount; i++) {
-		if ((this->_pollFds[i].revents & POLLIN) == 0) {
-			continue;
+	while (!Server::keyboardInterrupt) {
+		// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
+		int pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+		if (pollCount == -1 && !Server::keyboardInterrupt) {
+			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
 
-		bool requestOnServerSocket = i == 0;
-		requestOnServerSocket ? registerNewClient() : readClientRequest(i);
+		for (unsigned int i = 0; i < this->_connectionCount; i++) {
+			if ((this->_pollFds[i].revents & POLLIN) == 0) {
+				continue;
+			}
+
+			bool requestOnServerSocket = i == 0;
+			requestOnServerSocket ? registerNewClient() : readClientRequest(i);
+		}
 	}
 }
 
@@ -168,21 +170,6 @@ void Server::readClientRequest(unsigned int index) {
 	}
 }
 
-void Server::sendToClient(int fd, const std::string &content) {
-#ifdef DEBUG
-	std::cout << CYAN << "->" << content << RESET << std::endl;
-#endif
-	size_t bytesSent = 0;
-	while (bytesSent < content.length()) {
-		ssize_t len = send(fd, content.c_str(), content.length(), 0);
-		if (len < 0) {
-			std::cout << "send() error: " << strerror(errno) << std::endl;
-			break ;
-		}
-		bytesSent += len;
-	}
-}
-
 void Server::handleClientRequest(Client *client, const std::string& content) {
 	Request request(content);
 
@@ -227,8 +214,9 @@ void Server::sendWelcome(Client *client) {
 	sendToClient(fd, RPL_YOURHOST(client->nickName));
 	sendToClient(fd, RPL_CREATED(client->nickName, _creationDate));
 	sendToClient(fd, RPL_MYINFO(client->nickName));
-	// Note: RPL_ISSUPPORT ?? -> OSKOUR
-	// Note: MOTD?
+	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN));
+	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN2));
+	motdCmd(client, Request(), this);
 	// Note: mode?
 }
 
@@ -240,15 +228,12 @@ Server::clientIt Server::getClientEndIt() {
 	return _clients.end();
 }
 
-// Todo: remove typedef
-typedef std::map<std::string, Channel*>::iterator channelIt;
-
 // Todo: return a ptr
-channelIt Server::getChannelByName(const std::string& name) {
+Server::channelIt Server::getChannelByName(const std::string& name) {
 	return this->_channels.find(name);
 }
 
-channelIt Server::getChannelEnd() {
+Server::channelIt Server::getChannelEnd() {
 	return this->_channels.end();
 }
 
@@ -266,7 +251,7 @@ void Server::removeChannel(const std::string &channelName) {
 	this->_channels.erase(it);
 }
 
-//this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
+// Note : this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;
 	if (channels.find( channel ) == channels.end())
@@ -285,7 +270,7 @@ bool Server::isUser( const std::string& user )
 	return false;
 }
 
-//return -1 if not a valid user, maybe delete "isUser"
+// Note: return -1 if not a valid user, maybe delete "isUser"
 int Server::findUserSocketFd( const std::string& user )
 {
 	clientIt it = this->getClientBeginIt();
@@ -319,4 +304,26 @@ Server::clientMap Server::getClients() {
 }
 
 Server::Server() {}
+
+// ----- STATIC -----
+void Server::sendToClient(int fd, const std::string &content) {
+#ifdef DEBUG
+	std::cout << CYAN << "->" << content << RESET << std::endl;
+#endif
+	size_t bytesSent = 0;
+	while (bytesSent < content.length()) {
+		ssize_t len = send(fd, content.c_str(), content.length(), 0);
+		if (len < 0) {
+			std::cout << "send() error: " << strerror(errno) << std::endl;
+			break ;
+		}
+		bytesSent += len;
+	}
+}
+
+void Server::handleKeyboardInterrupt(int signal) {
+	(void) signal;
+	Server::keyboardInterrupt = true;
+	// Todo: Check leaks
+}
 

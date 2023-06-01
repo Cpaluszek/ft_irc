@@ -12,6 +12,18 @@
 class Client;
 class Server;
 
+
+/*  ----- CHANNEL MODES -----
+ * b - bans
+ * i - invite necessary
+ * k - key is needed
+ * l - limit number of users
+ * n - users outside the channel can NOT send PRIVMSG - TODO: ???
+ * o - operator status
+ * s - secret channel - TODO: ???
+ * t - only operator can change the topic
+ */
+
 typedef struct t_channelUser
 {
 	Client *client;

@@ -22,6 +22,10 @@
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
 		+ " " + SERVER_NAME + " " + VERSION + " " + USERMODE + " " + CHANMODE + "\r\n")
 
+// 005
+#define RPL_ISUPPORT(nick, tokens) (":" + SERVER_NAME + " 005 " + nick \
+		+ " " + tokens + " :are supported by this server\r\n")
+
 // 301
 #define RPL_AWAY(nick, target, message) (":" + SERVER_NAME + " 301 " + nick \
 		+ " " + target + " :" + message + "\r\n")
@@ -191,8 +195,11 @@
 // 407
 # define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
 
-// 442 : when client isn't part of the channel
-# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :No such channel\r\n")
+// 441
+# define ERR_USERNOTINCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 441 " + client + " " + nick + " " + channel + " :They're not on that channel\r\n")
+
+// 442
+# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :You're not on that channel\r\n")
 
 // 471
 #define ERR_CHANNELISFULL
