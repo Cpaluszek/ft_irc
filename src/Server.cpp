@@ -81,7 +81,7 @@ void Server::SetupServerSocket(int port) {
 void Server::Update() {
 	while (!Server::keyboardInterrupt) {
 		// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
-		int pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+		int pollCount = poll(this->_pollFds, this->_connectionCount, POLL_TIMEOUT);
 		if (pollCount == -1 && !Server::keyboardInterrupt) {
 			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
@@ -90,7 +90,6 @@ void Server::Update() {
 			if ((this->_pollFds[i].revents & POLLIN) == 0) {
 				continue;
 			}
-
 			bool requestOnServerSocket = i == 0;
 			requestOnServerSocket ? registerNewClient() : readClientRequest(i);
 		}

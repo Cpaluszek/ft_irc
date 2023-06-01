@@ -26,6 +26,7 @@
 #define SERVER_NAME std::string("FT_IRC")
 #define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
+#define POLL_TIMEOUT 500
 
 #define MOTD_FILE "config/motd.txt"
 
