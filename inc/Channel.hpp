@@ -53,12 +53,14 @@ public:
 	std::string getTopicTime() const;
 
 
+
 	void updateTopic( const std::string &newTopic, const std::string &setBy );
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
 	mapClients		getClients() const;
 	size_t			getClientCount() const;
+    size_t          getClientLimit() const;
 	bool 			isClientConnected(const std::string& nickName) const;
 	void			sendToAllclient(std::string message);
 	void			sendToAllclientExceptSender(std::string message, Client *client);
@@ -67,17 +69,21 @@ public:
 	void			eraseClient(const std::string& client);
 
 	// ------- Mode -------
-	std::string		getMods();
-	void 			setMods( std::string mod, int action );
+    std::string getMods() const;
+    bool		hasMode(char c) const;
+    void		addMode(char c);
+    void		removeMode(char c);
+    void        setClientLimit(std::string limit);
 
 
 private:
-	Server *_server;
-	mapClients 	_mapClients;
-	std::string _creationTime;
-	std::string _key;
-	std::string _topic;
-	std::string _topicSetBy;
-	std::string _topicSetTime;
-	std::string	mode;
+	Server          *_server;
+	mapClients 	    _mapClients;
+	std::string     _creationTime;
+	std::string     _key;
+	std::string     _topic;
+	std::string     _topicSetBy;
+	std::string     _topicSetTime;
+	std::string	    _mode;
+    size_t          _clientLimit;
 };

@@ -114,7 +114,11 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 			case O_RM_OP_USERMOD:
 				break;
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
-				break;
+            {
+                // check that atoi(std::string) <= 4096 && >0
+                // si cest bon appel a la fncton de limit channel
+                break;
+            }
 			case L_RM_CLIENTLIMIT_CHANNELMOD :
 				break;
 			case I_ADD_INVITEONLY_CHANNELMOD:

@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
-	this->mode = "nt";
+	this->_mode = "nt";
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
@@ -99,30 +99,33 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		setTopic(newTopic, setBy);
 }
 
-void Channel::setMods(std::string mod, int action) {
-	switch (action) {
-		case ADDMOD:
-			for (size_t i = 0; i < mod.length(); ++i) {
-				if ( this->mode.find(mod[i]) == std::string::npos )
-					this->mode += mod[i];
-			}
-			break;
-		case REMOVMOD:
-		{
-			std::string newMod;
-			for (size_t i = 0; i < this->mode.length(); ++i) {
-				if ( mod.find(this->mode[i]) == std::string::npos )
-					newMod += this->mode[i];
-			}
-			this->mode = newMod;
-			break;
-		}
-		default:
-			break;
-	}
+std::string Channel::getMods() const {
+    return this->_mode;
 }
 
-std::string Channel::getMods() {
-	return this->mode;
+bool Channel::hasMode(char c) const {
+    return this->_mode.find(c) != std::string::npos;
 }
+
+void Channel::addMode(char c) {
+    if (this->_mode.find(c) == std::string::npos) {
+        this->_mode += c;
+    }
+}
+
+void Channel::removeMode(char c) {
+    size_t pos = this->_mode.find(c);
+    if (pos != std::string::npos) {
+        this->_mode.erase(pos);
+    }
+}
+
+void Channel::setClientLimit(std::string limit) {
+    this->_clientLimit = atoi(limit.c_str());
+}
+
+size_t Channel::getClientLimit() const {
+    return this->_clientLimit;
+}
+
 
