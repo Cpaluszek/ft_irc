@@ -7,6 +7,7 @@ Channel::Channel(const std::string& name, Client *client, Server *server): name(
 	newClient.prefix = "@";
 	newClient.userMode = "o";
 	newClient.joinTime = Utils::getCurrentDateTime();
+	// Todo: we need to use to upper in nicknames
 	this->_mapClients[client->nickName] = newClient;
 	_creationTime = Utils::getCurrentDateTime();
 }
@@ -73,6 +74,14 @@ void Channel::eraseClient(const std::string& client) {
 	}
 }
 
+void Channel::updateClient(const std::string &oldNick, const std::string &newNick) {
+	mapClientsIt it = this->_mapClients.find(oldNick);
+	if (it != this->_mapClients.end()) {
+		t_channelUser temp = it->second;
+		this->_mapClients.erase(it);
+		this->_mapClients[newNick] = temp;
+	}
+}
 void Channel::sendToAllclient(std::string message) {
 	mapClientsIt it;
 
@@ -165,4 +174,5 @@ bool Channel::isInvited(const std::string &nickName) const {
 	}
 	return false;
 }
+
 

@@ -2,7 +2,6 @@
 #include "Channel.hpp"
 
 void connectClientToChannel(Client *client, Channel *channel) {
-	// Todo: check if banned
 	// Todo: check if channel is full
 	// check invitation required
 	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {

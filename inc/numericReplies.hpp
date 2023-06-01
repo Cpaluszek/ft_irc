@@ -162,8 +162,8 @@
 #define ERR_NICKNAMEINUSE(nick) (":" + SERVER_NAME + " 433 " + nick \
 		+ " :Nickname is already in use\r\n")
 
-#define RPL_NICK(oldNick, nick, user, host) ( ":" + oldNick + "!"  \
-	+ user + "@" + host + " NICK " + nick + "\r\n")
+#define RPL_NICK(oldNick, nick, user) ( ":" + oldNick + "!"  \
+	+ user + "@" + LOCAL_HOST_IP + " NICK " + nick + "\r\n")
 
 // 451
 #define ERR_NOTREGISTERED(nick) (":" + SERVER_NAME + " 451 " + nick \

@@ -26,16 +26,28 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 	}
 	// Success
 	else {
-		// Todo: updateNickname should send the info to all the connected channels
 		client->updateNickname(nick);
 		if (!client->hasMode('r') && client->userName.length() != 0) {  // First nickname input
 			client->addMode('r');
 			server->sendWelcome(client);
 		}
 		else { // Update nickname
-			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName, std::string(LOCAL_HOST_IP)));
-			// TODO: update nick in each channel information
-				// find client.channels
+			Server::sendToClient(client->socketFd, RPL_NICK(client->previousNickname, nick, client->userName));
+			Client::channelMap channels = client->getChannels();
+			Client::channelMapIt it;
+			for (it = channels.begin(); it != channels.end(); it++) {
+				it->second->updateClient(client->previousNickname, client->nickName);
+
+				// Alert all users in the channel that the nickname has changed
+				Channel::mapClients channelClients = it->second->getClients();
+				Channel::mapClientsIt channelClientIt;
+				for (channelClientIt = channelClients.begin(); channelClientIt != channelClients.end(); channelClientIt++) {
+					Client *current = channelClientIt->second.client;
+					if (current->nickName != client->nickName) {
+						Server::sendToClient(current->socketFd, RPL_NICK(client->previousNickname, client->nickName, client->userName));
+					}
+				}
+			}
 		}
 	}
 }

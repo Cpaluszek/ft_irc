@@ -37,7 +37,7 @@ public:
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
-	// Todo: use getters and setters  + private vars
+	// Todo: use getters and setters + private vars
 	std::string name;
 
 	char symbol;
@@ -50,7 +50,6 @@ public:
 	std::string getTopic() const;
 	std::string getTopicUser() const;
 	std::string getTopicTime() const;
-
 
 	void updateTopic( const std::string &newTopic, const std::string &setBy );
 
@@ -65,6 +64,7 @@ public:
 	channelUser * getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);
 	void		eraseClient(const std::string& client);
+	void		updateClient(const std::string &oldNick, const std::string &newNick);
 
 	// ------- Mode -------
 	bool hasMode(char c) const;
