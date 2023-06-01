@@ -15,6 +15,7 @@ class Server;
  * i - Set or remove invite-only channel
  * k - Set or remove the channel key
  * l - Set or remove the user limit to channel
+ * n - Set or remove external user permission to send message to channel //TOdo: integrate
  * o - Set or remove channel operator privilege
  * t - Set or remove the restriction of the TOPIC command to channel operators
  */

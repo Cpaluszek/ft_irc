@@ -1,8 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
-	this->mode = "t"; // Todo: 'o' is required ??
-	// Todo: add 'n' user outside the channel cannot send
+	this->mode = "nt";
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";

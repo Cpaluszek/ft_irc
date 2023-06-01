@@ -42,7 +42,6 @@
  */
 
 
-// Todo: CHANTYPES - # - &???
 #define CHANTYPES std::string("#")
 // Todo: What to put in PREFIX?
 #define PREFIX		std::string("@")
