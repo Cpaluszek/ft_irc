@@ -73,11 +73,15 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 //	std::cerr << "mesage: '" << messageToSend << "'" << std::endl;
 	if (targetIsChannel( target ))
 	{
-		if (channelExist( server, client, target)) //TODO: check if user is on channel
+		if (channelExist( server, client, target))
 		{
 			Channel *specificChannel = server->getChannelByName( target )->second;
+			if ( !specificChannel->isClientConnected( client->nickName ) )
+			{
+				Server::sendToClient( client->socketFd, ERR_CANNOTSENDTOCHAN( client->nickName, specificChannel->name ));
+				return ;
+			}
 			messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
-
 			specificChannel->sendToAllclientExceptSender( messageToSend, client );
 		}
 		return ;
