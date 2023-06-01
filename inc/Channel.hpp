@@ -4,6 +4,8 @@
 
 #include "Client.hpp"
 #include "Utils.hpp"
+# define ADDMOD		200
+# define REMOVMOD 	201
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channels)
 
@@ -38,7 +40,7 @@ public:
 
 	// Todo: use getters and setters  + private vars
 	std::string name;
-	std::string mode;
+
 	char symbol;
 
 	Channel(const std::string& name, Client *client, Server *server);
@@ -55,23 +57,27 @@ public:
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
-	mapClients	getClients() const;
-	size_t		getClientCount() const;
-	bool 		isClientConnected(const std::string& nickName) const;
-	void		sendToAllclient(std::string message);
-	void		sendToAllclientExceptSender(std::string message, Client *client);
+	mapClients		getClients() const;
+	size_t			getClientCount() const;
+	bool 			isClientConnected(const std::string& nickName) const;
+	void			sendToAllclient(std::string message);
+	void			sendToAllclientExceptSender(std::string message, Client *client);
 
-	void		addClient(Client *client);
-	void		eraseClient(const std::string& client);
+	void			addClient(Client *client);
+	void			eraseClient(const std::string& client);
+
+	// ------- Mode -------
+	std::string		getMods();
+	void 			setMods( std::string mod, int action );
+
 
 private:
 	Server *_server;
-	mapClients _mapClients;
+	mapClients 	_mapClients;
 	std::string _creationTime;
 	std::string _key;
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-
+	std::string	mode;
 };
-

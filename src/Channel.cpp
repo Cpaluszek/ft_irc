@@ -99,3 +99,30 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		setTopic(newTopic, setBy);
 }
 
+void Channel::setMods(std::string mod, int action) {
+	switch (action) {
+		case ADDMOD:
+			for (size_t i = 0; i < mod.length(); ++i) {
+				if ( this->mode.find(mod[i]) == std::string::npos )
+					this->mode += mod[i];
+			}
+			break;
+		case REMOVMOD:
+		{
+			std::string newMod;
+			for (size_t i = 0; i < this->mode.length(); ++i) {
+				if ( mod.find(this->mode[i]) == std::string::npos )
+					newMod += this->mode[i];
+			}
+			this->mode = newMod;
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+std::string Channel::getMods() {
+	return this->mode;
+}
+

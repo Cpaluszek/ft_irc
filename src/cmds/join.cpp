@@ -88,7 +88,7 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 		}
 		else {
 			Channel *currentChannel = existingChannelIt->second;
-			if (currentChannel->mode.find_first_of('k') != std::string::npos) {
+			if (currentChannel->getMods().find_first_of('k') != std::string::npos) {
 				if (keyIt != keys.end() && currentChannel->getKey() != *keyIt) {
 					Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, currentChannel->name));
 				}

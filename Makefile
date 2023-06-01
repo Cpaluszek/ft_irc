@@ -6,7 +6,7 @@ NAME			:=	ircserv
 HEADERS_DIR		:=	inc
 HEADERS_FILES	:=	Server.hpp Client.hpp Utils.hpp Request.hpp \
 					Channel.hpp \
-					numericReplies.hpp commands.hpp colors.hpp
+					numericReplies.hpp commands.hpp colors.hpp flags.hpp
 
 HEADERS			:= $(addprefix $(HEADERS_DIR)/, $(HEADERS_FILES))
 
@@ -25,10 +25,11 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/ping.cpp \
 					cmds/topic.cpp \
 					cmds/whois.cpp \
+					cmds/motd.cpp \
 					cmds/names.cpp \
 					cmds/away.cpp \
-					cmds/kick.cpp \
-					cmds/motd.cpp \
+					cmds/mods.cpp \
+					cmds/kick.cpp
 
 
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
