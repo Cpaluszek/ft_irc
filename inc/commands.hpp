@@ -51,3 +51,6 @@ void namesCmd(Client *client, const Request &request, Server *server);
 
 // AWAY
 void awayCmd(Client *client, const Request &request, Server *server);
+
+// INVITE
+void inviteCmd(Client *client, const Request &request, Server *server);

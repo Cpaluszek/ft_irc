@@ -12,14 +12,11 @@ class Server;
 
 
 /*  ----- CHANNEL MODES -----
- * b - bans
- * i - invite necessary
- * k - key is needed
- * l - limit number of users
- * n - users outside the channel can NOT send PRIVMSG - TODO: ???
- * o - operator status
- * s - secret channel - TODO: ???
- * t - only operator can change the topic
+ * i - Set or remove invite-only channel
+ * k - Set or remove the channel key
+ * l - Set or remove the user limit to channel
+ * o - Set or remove channel operator privilege
+ * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
 typedef struct t_channelUser
@@ -33,6 +30,7 @@ typedef struct t_channelUser
 // Todo: founder + operator
 class Channel {
 public:
+	// Todo: switch a map of ChannelUser*
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
@@ -44,6 +42,8 @@ public:
 	Channel(const std::string& name, Client *client, Server *server);
 	Channel();
 
+	std::string getMode() const;
+	bool hasMode(char c) const;
 	std::string getPrefix(const std::string& clientName);
 	std::string getKey() const;
 	std::string getTopic() const;
@@ -60,7 +60,7 @@ public:
 	bool 		isClientConnected(const std::string& nickName) const;
 	void		sendToAllclient(std::string message);
 	void		sendToAllclientExceptSender(std::string message, Client *client);
-
+	channelUser * getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);
 	void		eraseClient(const std::string& client);
 

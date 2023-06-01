@@ -6,6 +6,9 @@
 #define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@" + LOCAL_HOST_IP + " " + cmd \
 		+ " " + reply + "\r\n")
 
+#define RPL_INVITE(nickname, user, target, channel) (":" + nickname + "!" + user + "@" + LOCAL_HOST_IP \
+	+ " INVITE " + target + " " + channel + "\r\n")
+
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user) ( ":" + SERVER_NAME + " 001 " + nick \
 		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + LOCAL_HOST_IP + "\r\n")
@@ -92,6 +95,10 @@
 // 333
 #define RPL_TOPICWHOTIME(nick, channel, who, time) (":" + SERVER_NAME + " 333 " + nick + \
 		+ " " + channel + " " + who + " " + time + "\r\n")
+
+// 341
+#define RPL_INVITING(client, nick, channel) (":" + SERVER_NAME + " " + client \
+		+ " " + nick + " " + channel + "\r\n")
 
 // 352
 #define RPL_WHOREPLY(client, channel, user, nick, flag, realname) (":" + SERVER_NAME + " 352 " + client \
@@ -198,6 +205,10 @@
 // 442 : when client isn't part of the channel
 # define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :No such channel\r\n")
 
+// 443
+#define ERR_USERONCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 443 " + client \
+		+ " " + nick + " " + channel + " :is already on channel\r\n")
+
 // 471
 #define ERR_CHANNELISFULL
 
@@ -213,3 +224,7 @@
 
 // 476
 #define ERR_BADCHANMASK(channel) (":" + SERVER_NAME + " 476 " + channel + " :Bad Channel Mask\r\n")
+
+// 482
+#define ERR_CHANOPRIVSNEEDED(nick, channel) (":" + SERVER_NAME + " 482 " + nick \
+		+ " " + channel + " :You're not channel operator\r\n")

@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
-	this->mode = "t";
+	this->mode = "t"; // Todo: 'o' is required ??
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
@@ -97,5 +97,22 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		this->_topic.clear();
 	else
 		setTopic(newTopic, setBy);
+}
+
+std::string Channel::getMode() const {
+	return this->mode;
+}
+
+bool Channel::hasMode(char c) const {
+	return this->mode.find(c) != std::string::npos;
+}
+
+channelUser * Channel::getChannelUserByNick(const std::string &nick) {
+	for (mapClientsIt it = this->_mapClients.begin(); it != this->_mapClients.end(); it++) {
+		if (Utils::copyToUpper(nick) == Utils::copyToUpper(it->second.client->nickName)) {
+			return &it->second;
+		}
+	}
+	return NULL;
 }
 
