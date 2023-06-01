@@ -34,12 +34,12 @@ void Client::eraseChannel(const std::string& channel) {
 	this->_channels.erase(channel);
 }
 
-void	Client::quit() {
+void	Client::leaveAllChannels() {
 	channelMapIt it = this->_channels.begin();
 	for(; it != this->_channels.end(); it++) {
 		Channel *channel = it->second;
 		channel->eraseClient(this->nickName);
-		channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (channel->name + " has quit")));
+		channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (channel->name + "leave all channels")));
 	}
 }
 

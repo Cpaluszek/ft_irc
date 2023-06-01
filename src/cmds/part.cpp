@@ -43,6 +43,6 @@ void	quitChannel(Client *client, Channel *channel)
 	size_t channelUserCount = channel->getClientCount();
 	channel->eraseClient(client->nickName);
 	if (channelUserCount > 1) {
-		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has quit")));
+		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has leaveAllChannels")));
 	}
 }

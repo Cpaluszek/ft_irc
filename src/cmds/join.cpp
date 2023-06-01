@@ -41,10 +41,10 @@ void connectClientToChannel(Client *client, Channel *channel) {
 void joinCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty()) {
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, "JOIN"));
+		return ;
 	}
 	if (request.args[0] == "0") {
-		// Todo: leave all channels
-		std::cout << "Leave all channels" << std::endl;
+		client->leaveAllChannels();
 		return ;
 	}
 	std::vector<std::string> channels = Utils::split(request.args[0], ",");
