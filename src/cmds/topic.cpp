@@ -82,6 +82,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 				printTopic( client, specificChannel );
 			break;
 		case CLEAR_TOPIC:
+			if ( specificChannel->getMods().find('t') != std::string::npos )//TODO : finish
 			clearTopic( client, specificChannel );//TODO: Check Permissions;
 			break;
 		case SET_TOPIC:
