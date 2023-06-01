@@ -64,6 +64,11 @@ public:
 	void		addClient(Client *client);
 	void		eraseClient(const std::string& client);
 
+	// INVITE LIST
+	void addInvite(const std::string &nickName);
+	void removeInvite(const std::string &nickName);
+	bool isInvited(const std::string &nickName) const;
+
 private:
 	Server *_server;
 	mapClients _mapClients;
@@ -72,6 +77,6 @@ private:
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-
+	std::vector<std::string> _inviteList;
 };
 

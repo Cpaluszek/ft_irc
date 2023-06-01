@@ -99,7 +99,7 @@ public:
 	bool 			isNickAlreadyUsed(const Client &client, std::string nick);
 	void 			disconnectClient(int fd);
 	static void		handleKeyboardInterrupt(int signal);
-	static void sendToClient(int fd, const std::string &content);
+	static void 	sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
 	clientIt getClientBeginIt();
@@ -142,5 +142,4 @@ protected:
 
 	void readClientRequest(unsigned int index);
 	void handleClientRequest(Client *client, const std::string& content);
-
 };

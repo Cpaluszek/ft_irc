@@ -45,7 +45,7 @@ void inviteCmd(Client *client, const Request &request, Server *server) {
 	// RPL_INVITING numeric to the command issuer
 	Server::sendToClient(client->socketFd, RPL_INVITING(client->nickName, targetNick, targetChannel));
 	// INVITE message the the issuer as <source> to the target user
+	channel->addInvite(targetNick);
 	Client *targetClient = server->getClientByNick(targetNick);
 	Server::sendToClient(targetClient->socketFd, RPL_INVITE(client->nickName, client->userName, targetChannel, targetNick));
-	// Todo: add to the invite list
 }

@@ -2,6 +2,7 @@
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
 	this->mode = "t"; // Todo: 'o' is required ??
+	// Todo: add 'n' user outside the channel cannot send
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
@@ -114,5 +115,33 @@ channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 		}
 	}
 	return NULL;
+}
+
+void Channel::addInvite(const std::string &nickName) {
+	if (isInvited(nickName))
+		return ;
+	this->_inviteList.push_back(nickName);
+}
+
+// Todo: need to convert nickname to uppercase??
+void Channel::removeInvite(const std::string &nickName) {
+	std::vector<std::string>::iterator it;
+	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
+		if (*it == nickName) {
+			this->_inviteList.erase(it);
+			break ;
+		}
+	}
+}
+
+// Todo: need to convert nickname to uppercase??
+bool Channel::isInvited(const std::string &nickName) const {
+	std::vector<std::string>::const_iterator it;
+	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
+		if (*it == nickName) {
+			return true;
+		}
+	}
+	return false;
 }
 
