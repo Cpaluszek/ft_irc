@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
-	this->mode = "nt";
+	this->mode = "t";
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";

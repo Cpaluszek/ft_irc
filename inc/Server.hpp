@@ -32,15 +32,13 @@
 // Note: do we need to add 'w' - wallops
 // USERMODE: invisible(i) - oper(o) - registered(r)
 #define USERMODE std::string("ior")
-#define CHANMODE std::string("biklnst")
+#define CHANMODE std::string("itkol")
 /*
- * b - bans
- * i - invite necessary
- * k - key is needed
- * l - limit number of users
- * n - users outside the channel can NOT send PRIVMSG - TODO: ???
- * s - secret channel - TODO: ???
- * t - only operator can change the topic
+ * i - Set or remove invite-only channel
+ * k - Set or remove the channel key
+ * l - Set or remove the user limit to channel
+ * o - Set or remove channel operator privilege
+ * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
 
