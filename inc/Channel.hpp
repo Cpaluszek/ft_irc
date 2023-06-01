@@ -60,6 +60,7 @@ public:
 	bool 		isClientConnected(const std::string& nickName) const;
 	void		sendToAllclient(std::string message);
 	void		sendToAllclientExceptSender(std::string message, Client *client);
+    size_t      getClientLimit() const;
 
 	channelUser * getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);
@@ -67,9 +68,11 @@ public:
 	void		updateClient(const std::string &oldNick, const std::string &newNick);
 
 	// ------- Mode -------
-	bool hasMode(char c) const;
-	std::string		getMods();
-	void 			setMods( std::string mod, int action );
+    std::string getMods() const;
+    bool		hasMode(char c) const;
+    void		addMode(char c);
+    void		removeMode(char c);
+    void        setClientLimit(std::string limit);
 
 
 	// INVITE LIST
@@ -85,7 +88,7 @@ private:
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-	std::string	mode;
+	std::string	_mode;
 	std::vector<std::string> _inviteList;
+    size_t          _clientLimit;
 };
-
