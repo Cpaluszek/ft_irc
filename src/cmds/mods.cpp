@@ -51,20 +51,26 @@ bool	modeParamIsValid( int flag, std::string param ) //TODO: change if only one 
 			int maxClient;
 			std::istringstream ss( param );
 			ss >> maxClient;
-			if ( ss.fail() || ss.eof() )
+			if ( ss.fail() && !ss.eof() )
 				return false;
 		}
 		return true;
 }
 
-bool	numberParamIsCorrect( Client *client, const Request &request, char arg, size_t sizeArgs )
+bool	containSecondParam( char arg )
+{
+	if ( arg == 'o' || arg == 'k' || arg == 'l' )
+		return true;
+	return false;
+}
+
+bool	numberParamIsCorrect( Client *client, const Request &request, char arg, size_t sizeArgs, size_t *numberOfFlagsWithParam )
 {
 	//Check number param is correct
-	size_t count = 0;
-	if ( arg == 'o' || arg == 'k' || arg == 'l' )
-		count++;
-	std::cerr << count << std::endl;
-	if ( count != sizeArgs - 2 )
+	if ( containSecondParam( arg ) )
+		(*numberOfFlagsWithParam)++;
+	std::cerr << *numberOfFlagsWithParam << std::endl;
+	if ( *numberOfFlagsWithParam > sizeArgs - 2 )
 	{
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
 		return false;
@@ -78,8 +84,9 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 	std::vector<std::string>::const_iterator	itArgs = (request.args.begin() + 1);
 	const std::string& arg = *itArgs;
 	size_t	sizeArgs = request.args.size();
+	size_t numberOfFlagsWithParam = 0;
 	int typeOfFlag = ADD;
-	int countParamNumber = 0;
+	size_t countParamNumber = 0;
 
 
 	for (size_t i = 0; i < itArgs->length(); ++i) {
@@ -93,14 +100,21 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			typeOfFlag = ADD;
 			continue;
 		}
-		if ( typeOfFlag == ADD && !numberParamIsCorrect( client, request, arg[i], sizeArgs ))
+		if ( typeOfFlag == ADD && !numberParamIsCorrect( client, request, arg[i], sizeArgs, &numberOfFlagsWithParam ))
 		{
 			flagsMap.clear();
 			return flagsMap;
 		}
 		std::string secondParam = "";
-		if ( ( itArgs + countParamNumber + 1 ) != request.args.end() )
-			secondParam = *(itArgs + countParamNumber + 1);
+		if ( ( itArgs + (int)countParamNumber + 1 ) != request.args.end() )
+			secondParam = *(itArgs + (int)countParamNumber + 1);
+		else if ( i == arg.size() - 1 && countParamNumber < sizeArgs - 2 )
+		{
+			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
+			flagsMap.clear();
+			return flagsMap;
+		}
+
 		// Get mod in a Vector<int>, to call them more explicitly
 		switch ( arg[i] ) {
 			case 'i' :
