@@ -45,12 +45,15 @@ void pingCmd(Client *client, const Request &request, Server *server);
 void partCmd(Client *client, const Request &request, Server *server);
 
 // TOPIC
-void topicCmd( Client *client, const Request &request, Server *server);
+void	topicCmd( Client *client, const Request &request, Server *server);
 // NAMES
 void namesCmd(Client *client, const Request &request, Server *server);
 
 // AWAY
 void awayCmd(Client *client, const Request &request, Server *server);
+
+// INVITE
+void inviteCmd(Client *client, const Request &request, Server *server);
 
 // KICK
 void    kickCmd(Client *client, const Request &request, Server *server);

@@ -36,6 +36,7 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["AWAY"] = &awayCmd;
     this->_commands["KICK"] = &kickCmd;
 	this->_commands["MODE"] = &mode;
+	this->_commands["INVITE"] = &inviteCmd;
 
 	this->_creationDate = Utils::getCurrentDateTime();
 }

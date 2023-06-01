@@ -28,6 +28,7 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/motd.cpp \
 					cmds/names.cpp \
 					cmds/away.cpp \
+					cmds/invite.cpp \
 					cmds/mods.cpp \
 					cmds/kick.cpp
 
