@@ -9,9 +9,9 @@
 # define PRINT_TOPIC	2
 # define CLEAR_TOPIC	3
 
-int	defineTopicAction( std::vector<std::string>::const_iterator itArgs )
+int	defineTopicAction( std::vector<std::string>::const_iterator itArgs, const Request &request )
 {
-	if ( (itArgs + 1)->empty() )
+	if ( (itArgs + 1) == request.args.end() )
 		return PRINT_TOPIC;
 	else if ( (itArgs + 1)->find(':') && (itArgs + 1)->length() == 1)
 		return CLEAR_TOPIC;
@@ -74,7 +74,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 
 
 	Channel *specificChannel = server->getChannelByName( *itArgs )->second;
-	switch ( defineTopicAction( itArgs ) ) {
+	switch ( defineTopicAction( itArgs, request ) ) {
 		case PRINT_TOPIC:
 			if ( !specificChannel->isClientConnected( client->nickName ) )
 				Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name ));

@@ -106,6 +106,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 	for (; itFlags != itFlagsEnd ; ++itFlags) {
 		switch ( *itFlags ) {
 			case O_ADD_OP_CHANNELMOD:
+
 				break;
 			case O_RM_OP_CHANNELMOD:
 				break;
@@ -153,11 +154,10 @@ void mode( Client *client, const Request &request, Server *server )
 		flags = getFlags( request, CHANNELMOD );
 	else
 		flags = getFlags( request, USERMOD );
-	executeModeCmd( client, server, request, flags, channel );
+	if ( client->hasMode('o') )
+		executeModeCmd( client, server, request, flags, channel );
 //	std::vector<int>::iterator itprint = flags.begin();
 //	for (;itprint != flags.end() ; itprint++) {
 //		std::cout << *itprint << std::endl;
 //	}
-
-
 }
