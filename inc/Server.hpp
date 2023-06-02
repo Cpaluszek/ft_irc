@@ -39,16 +39,16 @@
  * i - Set or remove invite-only channel
  * k - Set or remove the channel key
  * l - Set or remove the user limit to channel
+ * n - Set or remove external user permission to send message to channel
  * o - Set or remove channel operator privilege
  * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
-
 #define CHANTYPES std::string("#")
-// Todo: What to put in PREFIX?
 #define PREFIX		std::string("@")
-
-
+/*
+ * @ - creator
+ */
 
 #define CHANLIMIT 10  	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
 #define CHANNELLEN 32 	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
