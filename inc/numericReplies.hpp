@@ -231,7 +231,7 @@
 
 // 481
 #define ERR_NOPRIVILEGES( nick ) (":" + SERVER_NAME + " 481 " + nick + " :" + "Permission Denied- \
-		You're not an IRC operator")
+		You're not an IRC operator/r/n")
 
 // 482
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (":" + SERVER_NAME + " 482 " + nick \
