@@ -93,7 +93,7 @@ public:
 	static bool keyboardInterrupt;
 
 	~Server();
-	Server(std::string port, const std::string& password);
+	Server(const std::string& port, const std::string& password);
 
 	void 			Update();
 	void 			sendWelcome(Client *client);

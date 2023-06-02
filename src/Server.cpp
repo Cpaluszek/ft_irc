@@ -2,7 +2,7 @@
 #include "Server.hpp"
 bool Server::keyboardInterrupt = false;
 
-Server::Server(std::string port, const std::string& password) {
+Server::Server(const std::string& port, const std::string& password) : _serverSocketFd(), _connectionCount(), _pollFds() {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
@@ -60,7 +60,7 @@ void Server::SetupServerSocket(int port) {
 		throw std::runtime_error(std::string("Socket creation failed: ") + strerror(errno));
 	}
 
-	struct sockaddr_in address;
+	sockaddr_in address = {};
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
 	address.sin_addr.s_addr = inet_addr(LOCAL_HOST_IP);
@@ -87,16 +87,14 @@ void Server::SetupServerSocket(int port) {
 
 void Server::Update() {
 	while (!Server::keyboardInterrupt) {
-		// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
 		int pollCount = poll(this->_pollFds, this->_connectionCount, POLL_TIMEOUT);
 		if (pollCount == -1 && !Server::keyboardInterrupt) {
 			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
 
 		for (unsigned int i = 0; i < this->_connectionCount; i++) {
-			if ((this->_pollFds[i].revents & POLLIN) == 0) {
+			if ((this->_pollFds[i].revents & POLLIN) == 0)
 				continue;
-			}
 			bool requestOnServerSocket = i == 0;
 			requestOnServerSocket ? registerNewClient() : readClientRequest(i);
 		}
@@ -104,7 +102,7 @@ void Server::Update() {
 }
 
 void Server::registerNewClient() {
-	struct sockaddr_storage address;
+	sockaddr_storage address = {};
 	socklen_t addressLen = sizeof(address);
 	int clientFd = accept(this->_serverSocketFd, (struct sockaddr*)&address, &addressLen);
 	if (clientFd == -1) {
@@ -221,7 +219,7 @@ void Server::sendWelcome(Client *client) {
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN));
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN2));
 	motdCmd(client, Request(), this);
-	// Note: mode?
+	// Todo: mode?
 }
 
 Server::clientIt Server::getClientBeginIt() {
@@ -255,7 +253,6 @@ void Server::removeChannel(const std::string &channelName) {
 	this->_channels.erase(it);
 }
 
-// Note : this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;
 	if (channels.find( channel ) == channels.end())
@@ -326,7 +323,7 @@ void Server::sendToClient(int fd, const std::string &content) {
 }
 
 void Server::handleKeyboardInterrupt(int signal) {
-	std::cout << RED << "Received signal: " << signal << RESET << std::endl;
+	std::cout << std::endl << RED << "Received signal: " << signal << RESET << std::endl;
 	Server::keyboardInterrupt = true;
 	// Todo: Check leaks
 }
