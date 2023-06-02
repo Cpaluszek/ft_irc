@@ -55,15 +55,13 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 
 bool	modeParamIsValid( int flag, std::string param ) //TODO: change if only one flag
 {
-		if ( flag == L_ADD_CLIENTLIMIT_CHANNELMOD )
-		{
-			int maxClient;
-			std::istringstream ss( param );
-			ss >> maxClient;
-			if ( ss.fail() && !ss.eof() )
-				return false;
-		}
-		return true;
+	(void) flag;
+	int maxClient;
+	std::istringstream ss( param );
+	ss >> maxClient;
+	if ( ss.fail() && !ss.eof() )
+		return false;
+	return true;
 }
 
 bool	containSecondParam( char arg )
@@ -73,49 +71,53 @@ bool	containSecondParam( char arg )
 	return false;
 }
 
-//bool	numberParamIsCorrect( Client *client, const Request &request, char arg, size_t sizeArgs, size_t *numberOfFlagsWithParam )
-//{
-//	//Check number param is correct
-//	if ( containSecondParam( arg ) )
-//		(*numberOfFlagsWithParam)++;
-//	if ( *numberOfFlagsWithParam > sizeArgs - 2 )
-//	{
-//		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
-//		return false;
-//	}
-//	return true;
-//}
+bool	setTypeOfFlag( int *typeOfFlag, char c )
+{
+	switch (c) {
+		case '-':
+			*typeOfFlag = RM;
+			return true;
+		case '+':
+			*typeOfFlag = ADD;
+			return true;
+		default:
+			return false;
+	}
+}
+
+static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWithParam, size_t sizeArgs )
+{
+	return (i == arg.size() - 1 && numberOfFlagsWithParam > (int)sizeArgs - 2);
+}
 
 std::map<int, std::string> getFlags( Client *client, const Request &request, int mode )
 {
 	std::map<int, std::string>					flagsMap;
 	std::vector<std::string>::const_iterator	itArgs = (request.args.begin() + 1);
-	const std::string& arg = *itArgs;
-	size_t	sizeArgs = request.args.size();
-	int numberOfFlagsWithParam = 0;
-	int typeOfFlag = ADD;
+	const std::string& 							arg = *itArgs;
+	std::string									secondParam;
+	size_t										sizeArgs = request.args.size();
+	int											numberOfFlagsWithParam = 0;
+	int											typeOfFlag = ADD;
 
 
 	for (size_t i = 0; i < itArgs->length(); ++i) {
-		if ( arg[i] == '-')
-		{
-			typeOfFlag = RM;
+		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
-		}
-		else if ( arg[i] == '+' )
+		if ( containSecondParam( arg[i]) )
 		{
-			typeOfFlag = ADD;
-			continue;
-		}
-		numberOfFlagsWithParam++;
-		std::string secondParam = "";
-		if ( ( itArgs + numberOfFlagsWithParam ) != request.args.end() && i < arg.size() - 1 && containSecondParam( arg[i] ) )
-			secondParam = *(itArgs + numberOfFlagsWithParam);
-		else if ( i == arg.size() - 1 && numberOfFlagsWithParam > (int)sizeArgs - 2 )
-		{
-			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
-			flagsMap.clear();
-			return flagsMap;
+			numberOfFlagsWithParam++;
+			std::cerr << numberOfFlagsWithParam << std::endl;
+			std::vector<std::string>::const_iterator itSecondParam = itArgs + numberOfFlagsWithParam;
+
+			if ( itSecondParam != request.args.end() && i < arg.size() - 1 )
+				secondParam = *( itSecondParam );
+			else if ( lackOfParam( i, arg, numberOfFlagsWithParam, sizeArgs ) )
+			{
+				Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
+				flagsMap.clear();
+				return flagsMap;
+			}
 		}
 //		std::cerr << "i = " << i << ", countparam=" << numberOfFlagsWithParam << ", secondparam=" << secondParam << ", sizeArgs=" << sizeArgs << ", sizeArg=" << arg.size() << std::endl;
 
@@ -129,18 +131,14 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 				if ( mode == USERMOD )
 				{
 					if ( typeOfFlag == ADD )
-					{
 						flagsMap[ O_ADD_OP_USERMOD ] = secondParam;
-					}
 					else
 						flagsMap[ O_RM_OP_USERMOD ] = "";
 				}
 				else
 				{
 					if ( typeOfFlag == ADD )
-					{
 						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
-					}
 					else
 						flagsMap[ O_RM_OP_CHANNELMOD ] = "";
 				}
@@ -250,14 +248,12 @@ void modesOverview( Channel *channel, Client *client )
 
 void mode( Client *client, const Request &request, Server *server )
 {
-	(void) client;
-	(void) server;
-
 	Channel *channel;
-	if ( !request.requestModeIsValid( client, server ) )
-		return ;
 	std::map<int, std::string>	flagsMap;
 	std::vector<std::string>::const_iterator itRequest = request.args.begin();
+
+	if ( !request.requestModeIsValid( client, server ) )
+		return ;
 	if ( itRequest->find('#', 0) != std::string::npos )
 	{
 		channel = server->getChannelByName( *request.args.begin() );
@@ -268,13 +264,14 @@ void mode( Client *client, const Request &request, Server *server )
 		}
 		flagsMap = getFlags( client, request, CHANNELMOD );
 	}
-	else 	{
+	else
+	{
 		channel = NULL;
 		flagsMap = getFlags( client, request, USERMOD );
 	}
 	if ( flagsMap.empty() )
 		return ;
-	if ( channel && channel->isClientOperator(client->nickName) )
+	if ( channel && !channel->isClientOperator( client->nickName ) )
 	{
 		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name ) );
 		return ;
