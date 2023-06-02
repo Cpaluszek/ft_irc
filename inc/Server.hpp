@@ -116,7 +116,6 @@ public:
 	void 		removeChannel(const std::string &channelName);
 
 	Client 		*getClientByNick(const std::string &nick);
-	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
 private:

@@ -219,7 +219,6 @@ void Server::sendWelcome(Client *client) {
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN));
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN2));
 	motdCmd(client, Request(), this);
-	// Todo: mode?
 }
 
 Server::clientIt Server::getClientBeginIt() {
@@ -269,18 +268,6 @@ bool Server::isUser( const std::string& user )
 			return true;
 	}
 	return false;
-}
-
-// Note: return -1 if not a valid user, maybe delete "isUser"
-int Server::findUserSocketFd( const std::string& user )
-{
-	clientIt it = this->getClientBeginIt();
-	clientIt itEnd = this->getClientEndIt();
-	for (; it != itEnd ; it++) {
-		if ( it->second->nickName == user )
-			return it->second->socketFd;
-	}
-	return -1;
 }
 
 Server::channelMap Server::getChannels() {
