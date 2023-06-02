@@ -55,7 +55,6 @@ Server::~Server() {
 }
 
 void Server::SetupServerSocket(int port) {
-	// Todo: should we use getaddrinfo ? -> https://github.dev/barimehdi77/ft_irc/tree/main/srcs
 	this->_serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_serverSocketFd == -1) {
 		throw std::runtime_error(std::string("Socket creation failed: ") + strerror(errno));
@@ -144,9 +143,8 @@ void Server::disconnectClient(int fd) {
 }
 
 void Server::readClientRequest(unsigned int index) {
-	// Note: what size to use ?
-	char buffer[10000];
-	memset(&buffer, 0, 10000);
+	char buffer[READ_BUFFER_SIZE];
+	memset(&buffer, 0, READ_BUFFER_SIZE);
 	int clientFd = this->_pollFds[index].fd;
 
 	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
@@ -186,7 +184,6 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 #endif
 
 	if (!request.isValid) {
-		// Note: how to manage invalid messages?
 		sendToClient(client->socketFd, "Invalid Message\n");
 		return ;
 	}
@@ -198,7 +195,6 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 		}
 		it->second(client, request, this);
 	}
-	// Todo: make a list of ignored cmds
 	else if (request.command != "PONG" && request.command != "CAP") {
 		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
