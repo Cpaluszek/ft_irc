@@ -62,6 +62,10 @@ _WHITE			:=	\x1b[37m
 
 all: banner $(NAME)
 
+debug: all
+	valgrind --show-leak-kinds=all --leak-check=full --track-fds=yes --verbose --show-mismatched-frees=yes --read-var-info=yes --log-file=valgrind-out.txt ./$(NAME) 6697 test
+
+
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
 
@@ -85,4 +89,4 @@ banner:
 	@echo "(__)   (__)(____)(__)(__\_) \___)"
 	@echo ""	
 
-.PHONY: all clean fclean re banner
+.PHONY: all clean fclean re banner debug
