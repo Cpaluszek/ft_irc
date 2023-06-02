@@ -229,9 +229,13 @@ Server::clientIt Server::getClientEndIt() {
 	return _clients.end();
 }
 
-// Todo: return a ptr
-Server::channelIt Server::getChannelByName(const std::string& name) {
-	return this->_channels.find(name);
+Channel *Server::getChannelByName(const std::string& name) {
+	for (channelIt it = this->_channels.begin(); it != this->_channels.end(); it++) {
+		if (it->second->name == name) {
+			return it->second;
+		}
+	}
+	return NULL;
 }
 
 Server::channelIt Server::getChannelEnd() {

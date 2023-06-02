@@ -82,8 +82,8 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 
-		Server::channelIt existingChannelIt = server->getChannelByName(*nameIt);
-		if (existingChannelIt == server->getChannelEnd()) {
+		Channel *existingChannel = server->getChannelByName(*nameIt);
+		if (existingChannel == NULL) {
 			Channel *newChannel = new Channel(*nameIt, client, server);
 
 			server->addChannel(newChannel);
@@ -96,12 +96,11 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 		else {
-			Channel *currentChannel = existingChannelIt->second;
-			if (currentChannel->hasMode('k') && keyIt != keys.end() && currentChannel->getKey() != *keyIt) {
-				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, currentChannel->name));
+			if (existingChannel->hasMode('k') && keyIt != keys.end() && existingChannel->getKey() != *keyIt) {
+				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, existingChannel->name));
 			}
 			else {
-				connectClientToChannel(client, currentChannel);
+				connectClientToChannel(client, existingChannel);
 			}
 		}
 		if (keyIt != keys.end()) {

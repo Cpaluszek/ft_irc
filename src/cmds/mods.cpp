@@ -244,11 +244,10 @@ void mode( Client *client, const Request &request, Server *server )
 	std::map<int, std::string>	flagsMap;
 	if ( request.args.begin()->find('#', 0) != std::string::npos )
 	{
-		channel = server->getChannelByName( *request.args.begin() )->second;
+		channel = server->getChannelByName( *request.args.begin() );
 		flagsMap = getFlags( client, request, CHANNELMOD );
 	}
-	else
-	{
+	else 	{
 		channel = NULL;
 		flagsMap = getFlags( client, request, USERMOD );
 	}

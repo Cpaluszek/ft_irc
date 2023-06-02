@@ -73,7 +73,7 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	{
 		if (channelExist( server, client, target))
 		{
-			Channel *specificChannel = server->getChannelByName( target )->second;
+			Channel *specificChannel = server->getChannelByName( target );
 			if ( !specificChannel->isClientConnected( client->nickName ) )
 			{
 				Server::sendToClient( client->socketFd, ERR_CANNOTSENDTOCHAN( client->nickName, specificChannel->name ));

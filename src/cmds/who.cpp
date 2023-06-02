@@ -82,9 +82,9 @@ void whoCmd(Client *client, const Request &request, Server *server) {
 	else {
 		bool operatorOnly = request.args.size() >= 2 && request.args[1] == "o";
 		// Find the channel
-		Server::channelIt channelIt = server->getChannelByName(request.args[0]);
-		if (channelIt != server->getChannelEnd()) {
-			whoChannel(client, channelIt->second, operatorOnly);
+		Channel *channel = server->getChannelByName(request.args[0]);
+		if (channel != NULL) {
+			whoChannel(client, channel, operatorOnly);
 		}
 		else {
 			whoMask(client, server, mask, operatorOnly);

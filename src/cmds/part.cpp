@@ -12,14 +12,14 @@ void	partCmd(Client *client, const Request &request, Server *server)
 	std::vector<std::string>::const_iterator it = request.args.begin();
 	for (; it != request.args.end(); it++)
 	{
-		std::map<std::string, Channel*>::const_iterator channelIt = server->getChannelByName(*it);
-		if (channelIt == server->getChannelEnd())
+		Channel *channel = server->getChannelByName(*it);
+		if (channel == NULL)
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
 		else if (!client->isOnChannel(*it))
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
 		else
 		{
-			quitChannel(client, channelIt->second);
+			quitChannel(client, channel);
 			break ;
 		}
 	}
