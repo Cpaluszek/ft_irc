@@ -328,7 +328,7 @@ void Server::sendToClient(int fd, const std::string &content) {
 }
 
 void Server::handleKeyboardInterrupt(int signal) {
-	(void) signal;
+	std::cout << RED << "Received signal: " << signal << RESET << std::endl;
 	Server::keyboardInterrupt = true;
 	// Todo: Check leaks
 }
