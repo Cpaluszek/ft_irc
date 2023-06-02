@@ -13,7 +13,6 @@ void whoWithoutMask(const Client *client, Server *server) {
 		}
 		else {
 			channelName = channels.begin()->second->name;
-			// Todo: check operator grade for it->second
 			flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 		}
 		Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
