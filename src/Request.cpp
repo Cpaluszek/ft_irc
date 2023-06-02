@@ -9,7 +9,7 @@ Request::Request(std::string message): isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-	std::vector<std::string> vecStr = Utils::split(message, " ");
+	std::vector<std::string> vecStr = Utils::split(message, " ", true);
 	if (vecStr.empty()) {
 		this->isValid = false;
 		return ;

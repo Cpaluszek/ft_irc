@@ -88,11 +88,9 @@ void whoCmd(Client *client, const Request &request, Server *server) {
 		// Find the channel
 		Server::channelIt channelIt = server->getChannelByName(request.args[0]);
 		if (channelIt != server->getChannelEnd()) {
-			// List all users in the channel
 			whoChannel(client, channelIt->second, operatorOnly);
 		}
 		else {
-			// If 1st arg is not a channel -> list all users checking the mask
 			whoMask(client, server, mask, operatorOnly);
 		}
 	}

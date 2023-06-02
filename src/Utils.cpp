@@ -14,8 +14,7 @@ std::string Utils::copyToUpper(std::string src) {
 	return res;
 }
 
-// Todo: add a boolean for the semicolon stop
-std::vector<std::string> Utils::split(const std::string& source, const std::string& delimiter) {
+std::vector<std::string> Utils::split(const std::string &source, const std::string &delimiter, bool stopOnSemicolon) {
 	std::vector<std::string> result;
 	std::string subStr;
 	size_t pos = -1;
@@ -26,7 +25,7 @@ std::vector<std::string> Utils::split(const std::string& source, const std::stri
 			result.push_back(subStr);
 		}
 		prevPos = pos + 1;
-		if (source[prevPos] == ':') {
+		if (stopOnSemicolon && source[prevPos] == ':') {
 			break ;
 		}
 	}
@@ -41,4 +40,3 @@ std::vector<std::string> Utils::split(const std::string& source, const std::stri
 size_t 	Utils::getSemicolonPos(const std::string &arg ) {
 	return arg.find( ':' );
 }
-

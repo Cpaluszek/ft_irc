@@ -47,10 +47,10 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 		client->leaveAllChannels();
 		return ;
 	}
-	std::vector<std::string> channels = Utils::split(request.args[0], ",");
+	std::vector<std::string> channels = Utils::split(request.args[0], ",", false);
 	std::vector<std::string> keys;
 	if (request.args.size() > 1) {
-		keys = Utils::split(request.args[0], ",");
+		keys = Utils::split(request.args[0], ",", false);
 	}
 
 	std::vector<std::string>::iterator nameIt;

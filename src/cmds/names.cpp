@@ -51,7 +51,7 @@ void namesCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	}
 	// Get the channel names input
-	Server::vecStr channelNames = Utils::split(request.args[0], ",");
+	Server::vecStr channelNames = Utils::split(request.args[0], ",", false);
 	Server::vecStrIt it;
 	for (it = channelNames.begin(); it != channelNames.end(); it++) {
 		Server::channelIt channelIt = server->getChannelByName(*it);

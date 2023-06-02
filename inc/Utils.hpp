@@ -10,9 +10,7 @@ public:
 
 	static std::string copyToUpper(std::string src);
 
-	static std::vector<std::string> split(const std::string& source, const std::string& delimiter);
+	static std::vector<std::string> split(const std::string &source, const std::string &delimiter, bool stopOnSemicolon);
 
 	static size_t 	getSemicolonPos(const std::string &arg );
-
-
 };
