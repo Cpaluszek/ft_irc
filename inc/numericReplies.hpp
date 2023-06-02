@@ -87,6 +87,15 @@
 #define RPL_LISTEND(client) (":" + SERVER_NAME + " 323 " + client \
 		+ " :End of /LIST\r\n")
 
+//324
+#define RPL_CHANNELMODEIS( nick, channel, modestring ) (":" + SERVER_NAME + " 332 " + nick + \
+		+ " " + channel + " " + modestring + "\r\n")
+
+//329
+#define RPL_CREATIONTIME( nick, channel ) (":" + SERVER_NAME + " 332 " + nick + \
+		+ " " + channel + "\r\n")
+		//TODO::add creation time channel
+
 // 331 : topic is not set yet on channel
 #define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :No topic is set\r\n")
