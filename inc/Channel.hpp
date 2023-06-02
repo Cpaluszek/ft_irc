@@ -71,9 +71,15 @@ public:
     void		addMode(char c);
     void		removeMode(char c);
 
-
 	size_t      getClientLimit() const;
 	void        setClientLimit(const std::string& limit);
+
+	//Creation Data
+	std::string getCreationTime();
+
+	//Permission
+	bool		isClientOperator(std::string& nickName );
+
 	// INVITE LIST
 	void addInvite(const std::string &nickName);
 	void removeInvite(const std::string &nickName);

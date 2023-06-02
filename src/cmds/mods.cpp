@@ -4,6 +4,20 @@
 #include "Server.hpp"
 #include "flags.hpp"
 
+static bool formatIsChannel( std::string arg )
+{
+	if ( arg.find('#', 0) != std::string::npos )
+		return true;
+	return false;
+}
+
+static bool	formatIsModestring( std::string arg )
+{
+	if ( ( arg.find('-', 0) == std::string::npos && arg.find('+', 0) == std::string::npos ) )
+		return true;
+	return false;
+}
+
 static bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
 	if (server->isAChannel( channel ))
@@ -21,7 +35,7 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command));
 		return false;
 	}
-	else if ( itArgs->find('#', 0) != std::string::npos )
+	else if ( formatIsChannel( *itArgs ) )
 	{
 		std::string channel = *itArgs;
 		if ( this->args.size() == 1 )
@@ -29,12 +43,12 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 		else if ( !channelExist( server, client, channel ) )
 			return false;
 	}
-	else if ( !server->isUser( *itArgs ))
+	else if ( !server->isUser( *itArgs ) )
 	{
 		Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
 		return false;
 	}
-	else if ( ( (itArgs + 1)->find('-', 0) == std::string::npos && (itArgs + 1)->find('+', 0) == std::string::npos ) )
+	else if (formatIsModestring( *(itArgs + 1) ) )
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command));
 	return true;
 }
@@ -222,7 +236,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 void modesOverview( Channel *channel, Client *client )
 {
 	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS( client->nickName, channel->name, channel->getMods() ));
-//	Server::sendToClient( client->socketFd, RPL_CREATIONTIME( client->nickName, channel->name, channel->g ));//TODO: set creation time
+	Server::sendToClient( client->socketFd, RPL_CREATIONTIME( client->nickName, channel->name, channel->getCreationTime() ));
 }
 
 void mode( Client *client, const Request &request, Server *server )
@@ -234,6 +248,7 @@ void mode( Client *client, const Request &request, Server *server )
 	if ( !request.requestModeIsValid( client, server ) )
 		return ;
 	std::map<int, std::string>	flagsMap;
+	std::vector<std::string>::const_iterator itRequest = request.args.begin();
 	if ( request.args.begin()->find('#', 0) != std::string::npos )
 	{
 		channel = server->getChannelByName( *request.args.begin() );
@@ -250,7 +265,7 @@ void mode( Client *client, const Request &request, Server *server )
 	}
 	if ( flagsMap.empty() )
 		return ;
-	if ( channel && channel->getChannelUserByNick( client->nickName )->userMode.find('o') == std::string::npos )//TODO: implement general function to find channel mod
+	if ( channel && channel->isClientOperator(client->nickName) )
 	{
 		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
 		return ;

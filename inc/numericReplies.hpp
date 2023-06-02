@@ -92,8 +92,8 @@
 		+ " " + channel + " " + modestring + "\r\n")
 
 //329
-#define RPL_CREATIONTIME( nick, channel ) (":" + SERVER_NAME + " 332 " + nick + \
-		+ " " + channel + "\r\n")
+#define RPL_CREATIONTIME( nick, channel, creationTime ) (":" + SERVER_NAME + " 332 " + nick + \
+		+ " " + channel + " " + creationTime + "\r\n")
 		//TODO::add creation time channel
 
 // 331 : topic is not set yet on channel

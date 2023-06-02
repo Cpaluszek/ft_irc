@@ -175,4 +175,15 @@ bool Channel::isInvited(const std::string &nickName) const {
 	return false;
 }
 
+std::string Channel::getCreationTime() {
+	return this->_creationTime;
+}
+
+bool Channel::isClientOperator(std::string &nickName) {
+	std::string mode = this->getChannelUserByNick( nickName )->userMode;
+	if ( !mode.empty() && mode.find('o') != std::string::npos )
+		return true;
+	return false;
+}
+
 
