@@ -58,8 +58,8 @@ public:
 	mapClients	getClients() const;
 	size_t		getClientCount() const;
 	bool 		isClientConnected(const std::string& nickName) const;
-	void		sendToAllclient(std::string message);
-	void		sendToAllclientExceptSender(std::string message, Client *client);
+	void		sendToAllclient(const std::string& message);
+	void		sendToAllclientExceptSender(const std::string& message, Client *client);
 
 	channelUser * getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);

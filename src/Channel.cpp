@@ -82,16 +82,18 @@ void Channel::updateClient(const std::string &oldNick, const std::string &newNic
 		this->_mapClients[newNick] = temp;
 	}
 }
-void Channel::sendToAllclient(std::string message) {
+void Channel::sendToAllclient(const std::string& message) {
+	if (this->_mapClients.empty()) {
+		return ;
+	}
 	mapClientsIt it;
-
 	it = this->_mapClients.begin();
 	for (; it != this->_mapClients.end(); it++){
 		Server::sendToClient(it->second.client->socketFd,message);
 	}
 }
 
-void Channel::sendToAllclientExceptSender(std::string message, Client *client) {
+void Channel::sendToAllclientExceptSender(const std::string& message, Client *client) {
 	mapClientsIt it;
 
 	it = this->_mapClients.begin();
