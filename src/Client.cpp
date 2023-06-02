@@ -39,7 +39,7 @@ void	Client::leaveAllChannels() {
 	for(; it != this->_channels.end(); it++) {
 		Channel *channel = it->second;
 		channel->eraseClient(this->nickName);
-		channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (channel->name + "leave all channels")));
+		channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (it->first + "leave all channels")));
 	}
 }
 

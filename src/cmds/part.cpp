@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   part.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/17 14:44:02 by jlitaudo          #+#    #+#             */
-/*   Updated: 2023/05/25 16:11:13 by cpalusze         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "commands.hpp"
 
@@ -37,6 +26,7 @@ void	partCmd(Client *client, const Request &request, Server *server)
 
 }
 
+// Todo: leave all channels is not always correct reason
 void	quitChannel(Client *client, Channel *channel)
 {
 	client->eraseChannel(channel->name);

@@ -42,6 +42,10 @@ Server::Server(std::string port, const std::string& password) {
 }
 
 Server::~Server() {
+	clientIt it = this->_clients.begin();
+	for (; it != this->_clients.end(); it++) {
+		disconnectClient(it->second->socketFd);
+	}
 	close(this->_serverSocketFd);
 	delete [] this->_pollFds;
 }
