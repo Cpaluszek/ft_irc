@@ -9,9 +9,9 @@
 # define PRINT_TOPIC	2
 # define CLEAR_TOPIC	3
 
-int	defineTopicAction( std::vector<std::string>::const_iterator itArgs )
+int	defineTopicAction( std::vector<std::string>::const_iterator itArgs, const Request &request )
 {
-	if ( (itArgs + 1)->empty() )
+	if ( (itArgs + 1) == request.args.end() )
 		return PRINT_TOPIC;
 	else if ( (itArgs + 1)->find(':') && (itArgs + 1)->length() == 1)
 		return CLEAR_TOPIC;
@@ -74,7 +74,18 @@ void topicCmd( Client *client, const Request &request, Server *server )
 
 
 	Channel *specificChannel = server->getChannelByName( *itArgs )->second;
-	switch ( defineTopicAction( itArgs ) ) {
+	t_channelUser *channelUser =specificChannel->getChannelUserByNick(client->nickName);
+	if ( !channelUser )
+	{
+		Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name));
+		return ;
+	}
+
+	std::string UserChannelMod = channelUser->userMode;
+	bool		UserHasPrivilege = false;
+	if ( UserChannelMod.find('o') != std::string::npos )
+		UserHasPrivilege = true;
+	switch ( defineTopicAction( itArgs, request ) ) {
 		case PRINT_TOPIC:
 			if ( !specificChannel->isClientConnected( client->nickName ) )
 				Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name ));
@@ -82,9 +93,19 @@ void topicCmd( Client *client, const Request &request, Server *server )
 				printTopic( client, specificChannel );
 			break;
 		case CLEAR_TOPIC:
+			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			{
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				return ;
+			}
 			clearTopic( client, specificChannel );//TODO: Check Permissions;
 			break;
 		case SET_TOPIC:
+			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			{
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				return ;
+			}
 			setTopic( client, specificChannel, request );//TODO: Check Permissions
 		default:
 			break;

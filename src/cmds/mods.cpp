@@ -44,12 +44,50 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 	return true;
 }
 
-std::vector<int> getFlags( const Request &request, int mode )
+bool	modeParamIsValid( int flag, std::string param ) //TODO: change if only one flag
 {
-	std::vector<int>					flags;
+		if ( flag ==  L_ADD_CLIENTLIMIT_CHANNELMOD )
+		{
+			int maxClient;
+			std::istringstream ss( param );
+			ss >> maxClient;
+			if ( ss.fail() && !ss.eof() )
+				return false;
+		}
+		return true;
+}
+
+bool	containSecondParam( char arg )
+{
+	if ( arg == 'o' || arg == 'k' || arg == 'l' )
+		return true;
+	return false;
+}
+
+bool	numberParamIsCorrect( Client *client, const Request &request, char arg, size_t sizeArgs, size_t *numberOfFlagsWithParam )
+{
+	//Check number param is correct
+	if ( containSecondParam( arg ) )
+		(*numberOfFlagsWithParam)++;
+	std::cerr << *numberOfFlagsWithParam << std::endl;
+	if ( *numberOfFlagsWithParam > sizeArgs - 2 )
+	{
+		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
+		return false;
+	}
+	return true;
+}
+
+std::map<int, std::string> getFlags( Client *client, const Request &request, int mode )
+{
+	std::map<int, std::string>					flagsMap;
 	std::vector<std::string>::const_iterator	itArgs = (request.args.begin() + 1);
 	const std::string& arg = *itArgs;
+	size_t	sizeArgs = request.args.size();
+	size_t numberOfFlagsWithParam = 0;
+	size_t countParamNumber = 0;
 	int typeOfFlag = ADD;
+
 
 	for (size_t i = 0; i < itArgs->length(); ++i) {
 		if ( arg[i] == '-')
@@ -62,49 +100,105 @@ std::vector<int> getFlags( const Request &request, int mode )
 			typeOfFlag = ADD;
 			continue;
 		}
+		if ( typeOfFlag == ADD && !numberParamIsCorrect( client, request, arg[i], sizeArgs, &numberOfFlagsWithParam ))
+		{
+			flagsMap.clear();
+			return flagsMap;
+		}
+		std::string secondParam = "";
+		if ( ( itArgs + (int)countParamNumber + 1 ) != request.args.end() )
+			secondParam = *(itArgs + (int)countParamNumber + 1);
+		else if ( i == arg.size() - 1 && countParamNumber < sizeArgs - 2 )
+		{
+			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
+			flagsMap.clear();
+			return flagsMap;
+		}
+
 		// Get mod in a Vector<int>, to call them more explicitly
 		switch ( arg[i] ) {
 			case 'i' :
-				typeOfFlag == ADD ? flags.push_back( I_ADD_INVITEONLY_CHANNELMOD ) : flags.push_back( I_RM_INVITEONLY_CHANNELMOD );
+				typeOfFlag == ADD ? flagsMap[ I_ADD_INVITEONLY_CHANNELMOD ] = "" : flagsMap[ I_RM_INVITEONLY_CHANNELMOD ] = "";
 				break;
 			case 'o':
 			{
 				if ( mode == USERMOD )
-					typeOfFlag == ADD ? flags.push_back( O_ADD_OP_USERMOD ) : flags.push_back( O_RM_OP_USERMOD );
+				{
+					if ( typeOfFlag == ADD )
+					{
+						flagsMap[ O_ADD_OP_USERMOD ] = secondParam;
+						countParamNumber++;
+					}
+					else
+						flagsMap[ O_RM_OP_USERMOD ] = "";
+				}
 				else
-					typeOfFlag == ADD ? flags.push_back( O_ADD_OP_CHANNELMOD ) : flags.push_back( O_RM_OP_CHANNELMOD );
+				{
+					if ( typeOfFlag == ADD )
+					{
+						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
+						countParamNumber++;
+					}
+					else
+						flagsMap[ O_RM_OP_CHANNELMOD ] = "";
+				}
 				break;
 			}
 			case 't':
-				typeOfFlag == ADD ? flags.push_back( T_ADD_PROTECTEDTOPIC_CHANNELMOD ) : flags.push_back( T_RM_PROTECTEDTOPIC_CHANNELMOD );
+			{
+				typeOfFlag == ADD ? flagsMap[ T_ADD_PROTECTEDTOPIC_CHANNELMOD ] = "" : flagsMap[ T_RM_PROTECTEDTOPIC_CHANNELMOD ] = "";
 				break;
+			}
 			case 'k':
-				typeOfFlag == ADD ? flags.push_back( K_ADD_KEY_CHANNELMOD ) : flags.push_back( K_RM_KEY_CHANNELMOD );
+			{
+				if ( typeOfFlag == ADD ) {
+					flagsMap[K_ADD_KEY_CHANNELMOD] = secondParam;
+					countParamNumber++;
+				}
+				else
+					flagsMap[ K_RM_KEY_CHANNELMOD ] = "";
 				break;
+			}
 			case 'l':
-				typeOfFlag == ADD ? flags.push_back( L_ADD_CLIENTLIMIT_CHANNELMOD ) : flags.push_back( L_RM_CLIENTLIMIT_CHANNELMOD );
+			{
+				if ( typeOfFlag == ADD )
+				{
+					if ( !modeParamIsValid( L_ADD_CLIENTLIMIT_CHANNELMOD, secondParam ))
+					{
+						flagsMap.clear();
+						Server::sendToClient( client->socketFd, "MaxLimit Client has to be a number\r\n");
+						return flagsMap;
+					}
+					flagsMap[ L_ADD_CLIENTLIMIT_CHANNELMOD ] = secondParam;
+					countParamNumber++;
+				}
+				else
+					flagsMap[ L_RM_CLIENTLIMIT_CHANNELMOD ] = "";
 				break;
+			}
 			case ' ':
-				return flags;
+				return flagsMap;
 			default:
 				break;
 		}
 	}
-	return flags;
-}//TODO: implement all mod
+	return flagsMap;
+}
 
 
-static void executeModeCmd( Client *client, Server *server, const Request &request, std::vector<int> flags, Channel *channel)
+static void executeModeCmd( Client *client, Server *server, const Request &request, const std::map<int, std::string> &flagsMap, Channel *channel )
 {
 	(void)client;
 	(void)server;
 	(void)request;
-	(void)flags;
+	(void)flagsMap;
 	(void)channel;
-	std::vector<int>::iterator itFlags = flags.begin();
-	std::vector<int>::iterator itFlagsEnd = flags.end();
+	std::map<int, std::string>::const_iterator itFlags = flagsMap.begin();
+	std::map<int, std::string>::const_iterator itFlagsEnd = flagsMap.end();
+
 	for (; itFlags != itFlagsEnd ; ++itFlags) {
-		switch ( *itFlags ) {
+		std::string flagParam = itFlags->second;
+		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 				break;
 			case O_RM_OP_CHANNELMOD:
@@ -147,21 +241,30 @@ void mode( Client *client, const Request &request, Server *server )
 	Channel *channel;
 	if ( !request.requestModeIsValid( client, server ) )
 		return ;
+	std::map<int, std::string>	flagsMap;
 	if ( request.args.begin()->find('#', 0) != std::string::npos )
+	{
 		channel = server->getChannelByName( *request.args.begin() )->second;
+		flagsMap = getFlags( client, request, CHANNELMOD );
+	}
 	else
+	{
 		channel = NULL;
-	std::vector<int>	flags;
-	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	if ( itArgs[0].find('#', 0) != std::string::npos )
-		flags = getFlags( request, CHANNELMOD );
-	else
-		flags = getFlags( request, USERMOD );
-	executeModeCmd( client, server, request, flags, channel );
-//	std::vector<int>::iterator itprint = flags.begin();
-//	for (;itprint != flags.end() ; itprint++) {
-//		std::cout << *itprint << std::endl;
-//	}
-
-
+		flagsMap = getFlags( client, request, USERMOD );
+	}
+	if ( flagsMap.empty() )
+		return ;
+	if ( !client->hasMode('o') )
+	{
+		if ( channel )
+			Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
+		else
+			Server::sendToClient( client->socketFd, ERR_NOPRIVILEGES( client->nickName));
+		return ;
+	}
+	executeModeCmd( client, server, request, flagsMap, channel );
+	std::map<int, std::string>::iterator itprint = flagsMap.begin(); //print map DEBUG
+	for (;itprint != flagsMap.end() ; itprint++) {
+		std::cout << itprint->first << std::endl;
+	}
 }
