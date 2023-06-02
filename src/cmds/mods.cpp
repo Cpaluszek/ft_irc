@@ -85,8 +85,8 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 	const std::string& arg = *itArgs;
 	size_t	sizeArgs = request.args.size();
 	size_t numberOfFlagsWithParam = 0;
-	int typeOfFlag = ADD;
 	size_t countParamNumber = 0;
+	int typeOfFlag = ADD;
 
 
 	for (size_t i = 0; i < itArgs->length(); ++i) {
@@ -237,20 +237,28 @@ void mode( Client *client, const Request &request, Server *server )
 	Channel *channel;
 	if ( !request.requestModeIsValid( client, server ) )
 		return ;
-	if ( request.args.begin()->find('#', 0) != std::string::npos )
-		channel = server->getChannelByName( *request.args.begin() )->second;
-	else
-		channel = NULL;
 	std::map<int, std::string>	flagsMap;
-	std::vector<std::string>::const_iterator itArgs = request.args.begin();
-	if ( itArgs[0].find('#', 0) != std::string::npos )
+	if ( request.args.begin()->find('#', 0) != std::string::npos )
+	{
+		channel = server->getChannelByName( *request.args.begin() )->second;
 		flagsMap = getFlags( client, request, CHANNELMOD );
+	}
 	else
+	{
+		channel = NULL;
 		flagsMap = getFlags( client, request, USERMOD );
+	}
 	if ( flagsMap.empty() )
 		return ;
-	if ( client->hasMode('o') )
-		executeModeCmd( client, server, request, flagsMap, channel );
+	if ( !client->hasMode('o') )
+	{
+		if ( channel )
+			Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
+		else
+			Server::sendToClient( client->socketFd, ERR_NOPRIVILEGES( client->nickName));
+		return ;
+	}
+	executeModeCmd( client, server, request, flagsMap, channel );
 	std::map<int, std::string>::iterator itprint = flagsMap.begin(); //print map DEBUG
 	for (;itprint != flagsMap.end() ; itprint++) {
 		std::cout << itprint->first << std::endl;

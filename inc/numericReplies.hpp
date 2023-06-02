@@ -229,6 +229,10 @@
 // 476
 #define ERR_BADCHANMASK(channel) (":" + SERVER_NAME + " 476 " + channel + " :Bad Channel Mask\r\n")
 
+// 481
+#define ERR_NOPRIVILEGES( nick ) (":" + SERVER_NAME + " 481 " + nick + " :" + "Permission Denied- \
+		You're not an IRC operator")
+
 // 482
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (":" + SERVER_NAME + " 482 " + nick \
 		+ " " + channel + " :You're not channel operator\r\n")
