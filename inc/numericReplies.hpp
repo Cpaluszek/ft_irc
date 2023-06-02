@@ -94,7 +94,6 @@
 //329
 #define RPL_CREATIONTIME( nick, channel, creationTime ) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " " + creationTime + "\r\n")
-		//TODO::add creation time channel
 
 // 331 : topic is not set yet on channel
 #define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
@@ -241,3 +240,6 @@
 // 482
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (":" + SERVER_NAME + " 482 " + nick \
 		+ " " + channel + " :You're not channel operator\r\n")
+
+// 501
+#define ERR_UMODEUNKNOWNFLAG( nick, modes ) (":" + SERVER_NAME + " 501 " + nick + " :Unknown MODE flag : '" + modes + "\r\n")

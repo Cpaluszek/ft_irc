@@ -20,9 +20,9 @@ static bool	formatIsModestring( std::string arg )
 
 static bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
-	if (server->isAChannel( channel ))
+	if ( server->isAChannel( channel ) )
 		return true;
-	Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, channel));
+	Server::sendToClient( client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, channel) );
 	return false;
 }
 
@@ -45,11 +45,11 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 	}
 	else if ( !server->isUser( *itArgs ) )
 	{
-		Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs));
+		Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs ) );
 		return false;
 	}
-	else if (formatIsModestring( *(itArgs + 1) ) )
-		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command));
+	else if ( formatIsModestring( *( itArgs + 1 ) ) )
+		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command ) );
 	return true;
 }
 
@@ -164,10 +164,10 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			{
 				if ( typeOfFlag == ADD )
 				{
-					if ( !modeParamIsValid( L_ADD_CLIENTLIMIT_CHANNELMOD, secondParam ))
+					if ( !modeParamIsValid( L_ADD_CLIENTLIMIT_CHANNELMOD, secondParam ) )
 					{
 						flagsMap.clear();
-						Server::sendToClient( client->socketFd, "MaxLimit Client has to be a number\r\n");
+						Server::sendToClient( client->socketFd, "Client MaxLimit has to be a number\r\n");
 						return flagsMap;
 					}
 					flagsMap[ L_ADD_CLIENTLIMIT_CHANNELMOD ] = secondParam;
@@ -179,7 +179,11 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			case ' ':
 				return flagsMap;
 			default:
+			{
+				if ( mode == USERMOD )
+					flagsMap[ UNKNOWN_FLAG ] += arg[i];
 				break;
+			}
 		}
 	}
 	return flagsMap;
@@ -227,6 +231,11 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 				break;
 			case K_RM_KEY_CHANNELMOD:
 				break;
+			case UNKNOWN_FLAG:
+			{
+				Server::sendToClient( client->socketFd, ERR_UMODEUNKNOWNFLAG( client->nickName, flagParam ) );
+				break;
+			}
 			default:
 				break;
 		}
@@ -249,7 +258,7 @@ void mode( Client *client, const Request &request, Server *server )
 		return ;
 	std::map<int, std::string>	flagsMap;
 	std::vector<std::string>::const_iterator itRequest = request.args.begin();
-	if ( request.args.begin()->find('#', 0) != std::string::npos )
+	if ( itRequest->find('#', 0) != std::string::npos )
 	{
 		channel = server->getChannelByName( *request.args.begin() );
 		if ( request.args.size() == 1 )
@@ -257,7 +266,7 @@ void mode( Client *client, const Request &request, Server *server )
 			modesOverview( channel, client );
 			return ;
 		}
-		flagsMap = getFlags( client, request, CHANNELMOD );//TODO: add ERR_UNODEUNKNOWNFLAG
+		flagsMap = getFlags( client, request, CHANNELMOD );
 	}
 	else 	{
 		channel = NULL;
@@ -267,7 +276,7 @@ void mode( Client *client, const Request &request, Server *server )
 		return ;
 	if ( channel && channel->isClientOperator(client->nickName) )
 	{
-		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
+		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name ) );
 		return ;
 	}
 	executeModeCmd( client, server, request, flagsMap, channel );
