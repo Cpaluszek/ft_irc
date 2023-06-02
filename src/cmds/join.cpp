@@ -1,12 +1,17 @@
 #include "commands.hpp"
 #include "Channel.hpp"
 
+// Todo: test limit and invite mode
 void connectClientToChannel(Client *client, Channel *channel) {
-	// Todo: check if channel is full
-	// check invitation required
+	// Check if invitation is required
 	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {
-		// Todo: test
 		Server::sendToClient(client->socketFd, ERR_INVITEONLYCHAN(client->nickName, channel->name));
+		return ;
+	}
+
+	// Check if the channel as reached limit
+	if (channel->hasMode('l') && channel->getClientLimit() <= channel->getClientCount()) {
+		Server::sendToClient(client->socketFd, ERR_CHANNELISFULL(client->nickName, channel->name));
 		return ;
 	}
 
@@ -92,20 +97,9 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 		}
 		else {
 			Channel *currentChannel = existingChannelIt->second;
-			if (currentChannel->getMods().find_first_of('k') != std::string::npos) {
-				if (keyIt != keys.end() && currentChannel->getKey() != *keyIt) {
-					Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, currentChannel->name));
-				}
-				else {
-					connectClientToChannel(client, currentChannel);
-				}
+			if (currentChannel->hasMode('k') && keyIt != keys.end() && currentChannel->getKey() != *keyIt) {
+				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, currentChannel->name));
 			}
-            else if (currentChannel->getMods().find_first_of('l') != std::string::npos){
-                if (currentChannel->getClientCount() >= currentChannel->getClientLimit())
-                    Server::sendToClient(client->socketFd, "Too many users on this channel");
-                else
-                    connectClientToChannel(client, currentChannel);
-            }
 			else {
 				connectClientToChannel(client, currentChannel);
 			}

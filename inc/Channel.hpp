@@ -74,7 +74,7 @@ public:
 
 
 	size_t      getClientLimit() const;
-	void        setClientLimit(std::string limit);
+	void        setClientLimit(const std::string& limit);
 	// INVITE LIST
 	void addInvite(const std::string &nickName);
 	void removeInvite(const std::string &nickName);
@@ -90,5 +90,5 @@ private:
 	std::string _topicSetTime;
 	std::string	_mode;
 	std::vector<std::string> _inviteList;
-    size_t          _clientLimit;
+    size_t          		_clientLimit;
 };

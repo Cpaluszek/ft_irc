@@ -52,6 +52,7 @@
 
 #define CHANLIMIT 10  	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
 #define CHANNELLEN 32 	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
+
 // ---- RPL_ISUPPORT ----
 // [RPL\_ISUPPORT Tokens](https://defs.ircdocs.horse/defs/isupport.html)
 #define CHANLIMIT_TOKEN		std::string("CHANLIMIT=" + CHANTYPES + ":10")
