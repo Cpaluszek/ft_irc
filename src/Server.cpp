@@ -16,8 +16,12 @@ Server::Server(std::string port, const std::string& password) {
 	this->_password = password;
 	
 	SetupServerSocket(portNumber);
+	initCommands();
 
-	// Todo: create a function for Init Commands
+	this->_creationDate = Utils::getCurrentDateTime();
+}
+
+void Server::initCommands() {
 	this->_commands["TOPIC"] = &topicCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
@@ -34,11 +38,9 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["PART"] = &partCmd;
 	this->_commands["NAMES"] = &namesCmd;
 	this->_commands["AWAY"] = &awayCmd;
-    this->_commands["KICK"] = &kickCmd;
+	this->_commands["KICK"] = &kickCmd;
 	this->_commands["MODE"] = &mode;
 	this->_commands["INVITE"] = &inviteCmd;
-
-	this->_creationDate = Utils::getCurrentDateTime();
 }
 
 Server::~Server() {

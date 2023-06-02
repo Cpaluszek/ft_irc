@@ -138,6 +138,7 @@ protected:
 	// Functions
 	Server();
 	void SetupServerSocket(int port);
+	void initCommands();
 	void registerNewClient();
 
 	void readClientRequest(unsigned int index);
