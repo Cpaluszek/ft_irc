@@ -136,7 +136,8 @@ channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 }
 
 
-void Channel::setClientLimit(std::string limit) {
+void Channel::setClientLimit(const std::string& limit) {
+	// Todo: verify that the limit is >0
     this->_clientLimit = atoi(limit.c_str());
 }
 
