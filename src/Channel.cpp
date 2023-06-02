@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
-	this->mode = "nt";
+	this->_mode = "nt";
 	channelUser newClient;
 	newClient.client = client;
 	newClient.prefix = "@";
@@ -110,6 +110,23 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		setTopic(newTopic, setBy);
 }
 
+std::string Channel::getMods() const {
+    return this->_mode;
+}
+
+void Channel::addMode(char c) {
+    if (this->_mode.find(c) == std::string::npos) {
+        this->_mode += c;
+    }
+}
+
+void Channel::removeMode(char c) {
+    size_t pos = this->_mode.find(c);
+    if (pos != std::string::npos) {
+        this->_mode.erase(pos);
+    }
+}
+
 channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 	for (mapClientsIt it = this->_mapClients.begin(); it != this->_mapClients.end(); it++) {
 		if (Utils::copyToUpper(nick) == Utils::copyToUpper(it->second.client->nickName)) {
@@ -119,36 +136,19 @@ channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 	return NULL;
 }
 
-void Channel::setMods(std::string mod, int action) {
-	switch (action) {
-		case ADDMOD:
-			for (size_t i = 0; i < mod.length(); ++i) {
-				if ( this->mode.find(mod[i]) == std::string::npos )
-					this->mode += mod[i];
-			}
-			break;
-		case REMOVMOD:
-		{
-			std::string newMod;
-			for (size_t i = 0; i < this->mode.length(); ++i) {
-				if ( mod.find(this->mode[i]) == std::string::npos )
-					newMod += this->mode[i];
-			}
-			this->mode = newMod;
-			break;
-		}
-		default:
-			break;
-	}
+
+void Channel::setClientLimit(std::string limit) {
+    this->_clientLimit = atoi(limit.c_str());
 }
 
-std::string Channel::getMods() {
-	return this->mode;
+size_t Channel::getClientLimit() const {
+    return this->_clientLimit;
 }
 
 bool Channel::hasMode(char c) const {
-	return this->mode.find(c) != std::string::npos;
+	return this->_mode.find(c) != std::string::npos;
 }
+
 void Channel::addInvite(const std::string &nickName) {
 	if (isInvited(nickName))
 		return ;

@@ -67,11 +67,14 @@ public:
 	void		updateClient(const std::string &oldNick, const std::string &newNick);
 
 	// ------- Mode -------
-	bool hasMode(char c) const;
-	std::string		getMods();
-	void 			setMods( std::string mod, int action );
+    std::string getMods() const;
+    bool		hasMode(char c) const;
+    void		addMode(char c);
+    void		removeMode(char c);
 
 
+	size_t      getClientLimit() const;
+	void        setClientLimit(std::string limit);
 	// INVITE LIST
 	void addInvite(const std::string &nickName);
 	void removeInvite(const std::string &nickName);
@@ -85,7 +88,7 @@ private:
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-	std::string	mode;
+	std::string	_mode;
 	std::vector<std::string> _inviteList;
+    size_t          _clientLimit;
 };
-

@@ -100,6 +100,12 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 					connectClientToChannel(client, currentChannel);
 				}
 			}
+            else if (currentChannel->getMods().find_first_of('l') != std::string::npos){
+                if (currentChannel->getClientCount() >= currentChannel->getClientLimit())
+                    Server::sendToClient(client->socketFd, "Too many users on this channel");
+                else
+                    connectClientToChannel(client, currentChannel);
+            }
 			else {
 				connectClientToChannel(client, currentChannel);
 			}
