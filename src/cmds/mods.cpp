@@ -97,7 +97,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 		std::string secondParam = "";
 		if ( ( itArgs + numberOfFlagsWithParam ) != request.args.end() && i < arg.size() - 1 && containSecondParam( arg[i] ) )
 			secondParam = *(itArgs + numberOfFlagsWithParam);
-		else if ( i == arg.size() - 1 && numberOfFlagsWithParam < (int)sizeArgs - 2 )
+		else if ( i == arg.size() - 1 && numberOfFlagsWithParam > (int)sizeArgs - 2 )
 		{
 			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
 			flagsMap.clear();
