@@ -7,7 +7,6 @@ Channel::Channel(const std::string& name, Client *client, Server *server): name(
 	newClient.prefix = "@";
 	newClient.userMode = "o";
 	newClient.joinTime = Utils::getCurrentDateTime();
-	// Todo: we need to use to upper in nicknames
 	this->_mapClients[client->nickName] = newClient;
 	_creationTime = Utils::getCurrentDateTime();
 }
@@ -155,7 +154,6 @@ void Channel::addInvite(const std::string &nickName) {
 	this->_inviteList.push_back(nickName);
 }
 
-// Todo: need to convert nickname to uppercase??
 void Channel::removeInvite(const std::string &nickName) {
 	std::vector<std::string>::iterator it;
 	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
@@ -166,7 +164,6 @@ void Channel::removeInvite(const std::string &nickName) {
 	}
 }
 
-// Todo: need to convert nickname to uppercase??
 bool Channel::isInvited(const std::string &nickName) const {
 	std::vector<std::string>::const_iterator it;
 	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
