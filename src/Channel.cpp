@@ -76,7 +76,7 @@ void Channel::eraseClient(const std::string& client) {
 void Channel::updateClient(const std::string &oldNick, const std::string &newNick) {
 	mapClientsIt it = this->_mapClients.find(oldNick);
 	if (it != this->_mapClients.end()) {
-		t_channelUser temp = it->second;
+		channelUser temp = it->second;
 		this->_mapClients.erase(it);
 		this->_mapClients[newNick] = temp;
 	}

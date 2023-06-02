@@ -30,7 +30,6 @@ typedef struct t_channelUser
 	std::string userMode;
 } channelUser;
 
-// Todo: founder + operator
 class Channel {
 public:
 	// Todo: switch a map of ChannelUser*

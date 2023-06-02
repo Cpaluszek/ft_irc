@@ -15,18 +15,13 @@ public:
 	Request();
 	~Request();
 
-	bool						isValid;
-	std::string					command;
-	std::vector<std::string> 	args;
+	bool isValid;
+	std::string command;
+	std::vector<std::string> args;
 
-	// Note: remove tags and source ?
-	std::vector<std::string> 	tags;
-	std::string 				source;
-
-	bool				requestPrivMsgIsValid( Client *client ) const;
-	bool				requestTopicIsValid( Client *client ) const;
-	bool				requestModeIsValid( Client *client, Server *server ) const;
-
+	bool requestPrivMsgIsValid(Client *client) const;
+	bool requestTopicIsValid(Client *client) const;
+	bool requestModeIsValid(Client *client, Server *server) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const Request &src);

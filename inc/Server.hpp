@@ -31,8 +31,6 @@
 
 #define MOTD_FILE "config/motd.txt"
 
-// Note: do we need to add 'w' - wallops
-// USERMODE: invisible(i) - oper(o) - registered(r)
 #define USERMODE std::string("ior")
 #define CHANMODE std::string("itkol")
 /*
@@ -121,11 +119,10 @@ public:
 	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
-	// TODO: switch protected to private
-protected:
+private:
 	std::string 				_password;
 	std::string 				_name;
-	int 						_serverSocketFd;		// Note: create a class module for socket management?
+	int 						_serverSocketFd;
 	unsigned int				_connectionCount;
 	std::map<int, Client*>		_clients;
 	std::string 				_creationDate;
