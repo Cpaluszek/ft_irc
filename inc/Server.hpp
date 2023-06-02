@@ -26,30 +26,31 @@
 #define SERVER_NAME std::string("FT_IRC")
 #define SERVER_INFO std::string("This is an IRC server")
 #define VERSION std::string("0.1")
+#define POLL_TIMEOUT 500
+#define READ_BUFFER_SIZE 10000
 
 #define MOTD_FILE "config/motd.txt"
 
-// Note: do we need to add 'w' - wallops
-// USERMODE: invisible(i) - oper(o) - registered(r)
 #define USERMODE std::string("ior")
 #define CHANMODE std::string("itkol")
 /*
  * i - Set or remove invite-only channel
  * k - Set or remove the channel key
  * l - Set or remove the user limit to channel
+ * n - Set or remove external user permission to send message to channel
  * o - Set or remove channel operator privilege
  * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
-
 #define CHANTYPES std::string("#")
-// Todo: What to put in PREFIX?
 #define PREFIX		std::string("@")
-
-
+/*
+ * @ - creator
+ */
 
 #define CHANLIMIT 10  	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
 #define CHANNELLEN 32 	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
+
 // ---- RPL_ISUPPORT ----
 // [RPL\_ISUPPORT Tokens](https://defs.ircdocs.horse/defs/isupport.html)
 #define CHANLIMIT_TOKEN		std::string("CHANLIMIT=" + CHANTYPES + ":10")
@@ -91,7 +92,7 @@ public:
 	static bool keyboardInterrupt;
 
 	~Server();
-	Server(std::string port, const std::string& password);
+	Server(const std::string& port, const std::string& password);
 
 	void 			Update();
 	void 			sendWelcome(Client *client);
@@ -108,21 +109,19 @@ public:
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
 	// Todo: switch to channel ptr
-	channelIt	getChannelByName(const std::string& name);
+	Channel * getChannelByName(const std::string& name);
 	channelIt	getChannelEnd(); // a remove?
 	bool		isAChannel( const std::string &channel ) const;
 	void		addChannel(Channel *newChannel);
 	void 		removeChannel(const std::string &channelName);
 
 	Client 		*getClientByNick(const std::string &nick);
-	int			findUserSocketFd(const std::string &user);
 	bool		isUser(const std::string &user);
 
-	// TODO: switch protected to private
-protected:
+private:
 	std::string 				_password;
 	std::string 				_name;
-	int 						_serverSocketFd;		// Note: create a class module for socket management?
+	int 						_serverSocketFd;
 	unsigned int				_connectionCount;
 	std::map<int, Client*>		_clients;
 	std::string 				_creationDate;
@@ -137,6 +136,7 @@ protected:
 	// Functions
 	Server();
 	void SetupServerSocket(int port);
+	void initCommands();
 	void registerNewClient();
 
 	void readClientRequest(unsigned int index);

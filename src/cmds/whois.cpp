@@ -40,6 +40,9 @@ void whoisCmd(Client *client, const Request &request, Server *server) {
 	if (target->hasMode('r')) {
 		Server::sendToClient(client->socketFd, RPL_WHOISREGNICK(client->nickName, targetNick));
 	}
+	if (target->isAway) {
+		Server::sendToClient(client->socketFd, RPL_AWAY(client->nickName, target->nickName, target->awayMessage));
+	}
 	// Client info
 	Server::sendToClient(client->socketFd, RPL_WHOISUSER(client->nickName, targetNick, target->userName, target->realName));
 	// Server info

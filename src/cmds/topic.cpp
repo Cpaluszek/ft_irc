@@ -72,11 +72,9 @@ void topicCmd( Client *client, const Request &request, Server *server )
 		return ;
 	}
 
-
-	Channel *specificChannel = server->getChannelByName( *itArgs )->second;
-	t_channelUser *channelUser =specificChannel->getChannelUserByNick(client->nickName);
-	if ( !channelUser )
-	{
+	Channel *specificChannel = server->getChannelByName( *itArgs );
+	t_channelUser *channelUser = specificChannel->getChannelUserByNick(client->nickName);
+	if ( !channelUser ) 	{
 		Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name));
 		return ;
 	}

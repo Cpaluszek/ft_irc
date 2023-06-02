@@ -9,25 +9,11 @@ Request::Request(std::string message): isValid(true) {
 		this->isValid = false;
 		return ;
 	}
-	std::vector<std::string> vecStr = Utils::split(message, " ");
+	std::vector<std::string> vecStr = Utils::split(message, " ", true);
 	if (vecStr.empty()) {
 		this->isValid = false;
 		return ;
 	}
-
-// Todo: check for tags - '@'
-//	if (vecStr[0][0] == '@') {
-//		this->tags = split(vecStr[0], ";");
-//		this->tags[0].erase(0, 1);
-//		vecStr.erase(vecStr.begin());
-//	}
-//
-// Todo: check for source - ':'
-//	if (vecStr[0][0] == ':') {
-//		this->source = vecStr[0];
-//		this->source.erase(0, 1);
-//		vecStr.erase(vecStr.begin());
-//	}
 
 	// Parse commad
 	this->command = vecStr[0];
@@ -58,10 +44,6 @@ std::ostream &operator<<(std::ostream &out, const Request &src) {
 	for (std::vector<std::string>::const_iterator it = src.args.begin(); it < src.args.end(); it++) {
 		out << *it << ";";
 	}
-	out << "} - tags {";
-	for (std::vector<std::string>::const_iterator it = src.tags.begin(); it < src.tags.end(); it++) {
-		out << *it << ";";
-	}
-	out << "} - source: " << src.source << RESET << std::endl;
+	out << "}" << RESET << std::endl;
 	return out;
 }

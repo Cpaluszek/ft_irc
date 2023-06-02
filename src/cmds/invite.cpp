@@ -16,14 +16,13 @@ void inviteCmd(Client *client, const Request &request, Server *server) {
 	// Todo: check if we need to remove '#' on channel name
 
 	// Check the channel existence - ERR_NOSUCHCHANNEL
-	Server::channelIt channelIt = server->getChannelByName(targetChannel);
-	if (channelIt == server->getChannelEnd()) {
+	Channel *channel = server->getChannelByName(targetChannel);
+	if (channel == NULL) {
 		Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, targetChannel));
 		return ;
 	}
 
 	// Check the presence on targetChannel - ERR_NOTONCHANNEL
-	Channel *channel = channelIt->second;
 	if (!channel->isClientConnected(client->nickName)) {
 		Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, targetChannel));
 		return ;

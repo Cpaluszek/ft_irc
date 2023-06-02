@@ -51,12 +51,12 @@ void namesCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	}
 	// Get the channel names input
-	Server::vecStr channelNames = Utils::split(request.args[0], ",");
+	Server::vecStr channelNames = Utils::split(request.args[0], ",", false);
 	Server::vecStrIt it;
 	for (it = channelNames.begin(); it != channelNames.end(); it++) {
-		Server::channelIt channelIt = server->getChannelByName(*it);
-		if (channelIt != server->getChannelEnd()) {
-			getChannelNames(channelIt->second, client);
+		Channel *channel = server->getChannelByName(*it);
+		if (channel != NULL) {
+			getChannelNames(channel, client);
 		}
 		else {
 			Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, *it));

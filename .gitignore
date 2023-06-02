@@ -4,3 +4,4 @@ ircserv
 client
 serv
 *.nfs
+valgrind-out.txt

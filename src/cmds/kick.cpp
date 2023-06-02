@@ -15,8 +15,8 @@ void	kickCmd(Client *client, const Request &request, Server *server)
     }
     std::vector<std::string>::const_iterator it = request.args.begin();
 //    it++;
-    std::map<std::string, Channel*>::const_iterator channelIt = server->getChannelByName(*it);
-    if (channelIt == server->getChannelEnd())
+    Channel *channel = server->getChannelByName(*it);
+    if (channel == NULL)
     {
         Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
         return ;
@@ -26,7 +26,6 @@ void	kickCmd(Client *client, const Request &request, Server *server)
         Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
         return ;
     }
-    Channel *channel = channelIt->second;
     Client  *user;
     it++;
     for (; it != request.args.end(); it++)
@@ -35,7 +34,7 @@ void	kickCmd(Client *client, const Request &request, Server *server)
         if (channel->isClientConnected(*it) == false)
             Server::sendToClient(client->socketFd, ERR_USERNOTINCHANNEL(client->nickName, *it, channel->name));
         else
-            kickFromChannel(client, user, channelIt->second);
+            kickFromChannel(client, user, channel);
     }
 }
 

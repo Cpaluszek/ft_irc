@@ -4,8 +4,8 @@ void whoWithoutMask(const Client *client, Server *server) {
 	Server::clientIt it;
 	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
 		std::string channelName;
-		std::string flags = "H";
 		Client *currentClient = it->second;
+		std::string flags = currentClient->isAway ? "G" : "H";
 
 		Client::channelMap channels = it->second->getChannels();
 		if (channels.empty()) {
@@ -13,7 +13,6 @@ void whoWithoutMask(const Client *client, Server *server) {
 		}
 		else {
 			channelName = channels.begin()->second->name;
-			// Todo: check operator grade for it->second
 			flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 		}
 		Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
@@ -34,8 +33,7 @@ void whoChannel(const Client *client, Channel *channel, bool operatorOnly) {
 		}
 		bool isVisible = !currentClient->hasMode('i');
 		if (isVisible || isClientInChannel) {
-			std::string flags = "H";
-			// Todo: check operator grade for client
+			std::string flags = currentClient->isAway ? "G" : "H";
 			flags.append(it->second.prefix);
 			Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
 					, currentClient->realName, channel->name, flags));
@@ -56,14 +54,13 @@ void whoMask(const Client *client, Server *server, const std::string& mask, bool
 		if (mask == currentClient->nickName || mask == currentClient->userName || mask == currentClient->realName ||\
 			mask == SERVER_NAME || mask == LOCAL_HOST_IP) {
 			std::string channelName;
-			std::string flags = "H";
+			std::string flags = currentClient->isAway ? "G" : "H";
 		 	Client::channelMap channels = currentClient->getChannels();
 			 if (channels.empty()) {
 				 channelName = "*";
 			 }
 			 else {
 				 channelName = channels.begin()->second->name;
-				 // Todo: check operator grade for client
 				 flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 			 }
 			 Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName, \
@@ -75,7 +72,6 @@ void whoMask(const Client *client, Server *server, const std::string& mask, bool
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#who-message)
 //  WHO emersion        ; request information on user "emersion"
 //  WHO #ircv3          ; list users in the "#ircv3" channel
-// Note: what is flag H
 void whoCmd(Client *client, const Request &request, Server *server) {
 	std::string mask = request.args.empty() ? "" : request.args[0];
 
@@ -86,13 +82,11 @@ void whoCmd(Client *client, const Request &request, Server *server) {
 	else {
 		bool operatorOnly = request.args.size() >= 2 && request.args[1] == "o";
 		// Find the channel
-		Server::channelIt channelIt = server->getChannelByName(request.args[0]);
-		if (channelIt != server->getChannelEnd()) {
-			// List all users in the channel
-			whoChannel(client, channelIt->second, operatorOnly);
+		Channel *channel = server->getChannelByName(request.args[0]);
+		if (channel != NULL) {
+			whoChannel(client, channel, operatorOnly);
 		}
 		else {
-			// If 1st arg is not a channel -> list all users checking the mask
 			whoMask(client, server, mask, operatorOnly);
 		}
 	}

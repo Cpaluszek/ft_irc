@@ -1,13 +1,17 @@
 #include "commands.hpp"
 #include "Channel.hpp"
 
+// Todo: test limit and invite mode
 void connectClientToChannel(Client *client, Channel *channel) {
-	// Todo: check if banned
-	// Todo: check if channel is full
-	// check invitation required
+	// Check if invitation is required
 	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {
-		// Todo: test
 		Server::sendToClient(client->socketFd, ERR_INVITEONLYCHAN(client->nickName, channel->name));
+		return ;
+	}
+
+	// Check if the channel as reached limit
+	if (channel->hasMode('l') && channel->getClientLimit() <= channel->getClientCount()) {
+		Server::sendToClient(client->socketFd, ERR_CHANNELISFULL(client->nickName, channel->name));
 		return ;
 	}
 
@@ -42,16 +46,16 @@ void connectClientToChannel(Client *client, Channel *channel) {
 void joinCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty()) {
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, "JOIN"));
-	}
-	if (request.args[0] == "0") {
-		// Todo: leave all channels
-		std::cout << "Leave all channels" << std::endl;
 		return ;
 	}
-	std::vector<std::string> channels = Utils::split(request.args[0], ",");
+	if (request.args[0] == "0") {
+		client->leaveAllChannels();
+		return ;
+	}
+	std::vector<std::string> channels = Utils::split(request.args[0], ",", false);
 	std::vector<std::string> keys;
 	if (request.args.size() > 1) {
-		keys = Utils::split(request.args[0], ",");
+		keys = Utils::split(request.args[0], ",", false);
 	}
 
 	std::vector<std::string>::iterator nameIt;
@@ -78,8 +82,8 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 
-		Server::channelIt existingChannelIt = server->getChannelByName(*nameIt);
-		if (existingChannelIt == server->getChannelEnd()) {
+		Channel *existingChannel = server->getChannelByName(*nameIt);
+		if (existingChannel == NULL) {
 			Channel *newChannel = new Channel(*nameIt, client, server);
 
 			server->addChannel(newChannel);
@@ -92,17 +96,11 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 		else {
-			Channel *currentChannel = existingChannelIt->second;
-			if (currentChannel->getMods().find_first_of('k') != std::string::npos) {
-				if (keyIt != keys.end() && currentChannel->getKey() != *keyIt) {
-					Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, currentChannel->name));
-				}
-				else {
-					connectClientToChannel(client, currentChannel);
-				}
+			if (existingChannel->hasMode('k') && keyIt != keys.end() && existingChannel->getKey() != *keyIt) {
+				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, existingChannel->name));
 			}
 			else {
-				connectClientToChannel(client, currentChannel);
+				connectClientToChannel(client, existingChannel);
 			}
 		}
 		if (keyIt != keys.end()) {

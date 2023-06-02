@@ -69,13 +69,11 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	std::string target = extractTarget( request );
 	std::string messageToSend = extractMessage( request );
-//	std::cerr << "target: '" << target << "'" << std::endl;
-//	std::cerr << "mesage: '" << messageToSend << "'" << std::endl;
 	if (targetIsChannel( target ))
 	{
 		if (channelExist( server, client, target))
 		{
-			Channel *specificChannel = server->getChannelByName( target )->second;
+			Channel *specificChannel = server->getChannelByName( target );
 			if ( !specificChannel->isClientConnected( client->nickName ) )
 			{
 				Server::sendToClient( client->socketFd, ERR_CANNOTSENDTOCHAN( client->nickName, specificChannel->name ));
@@ -88,9 +86,11 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 	}
 	else if ( server->isUser( target ))
 	{
-		messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG", ": " + messageToSend);
-		int clientFd = server->findUserSocketFd( target );
-		Server::sendToClient(clientFd, messageToSend);
+		Client *targetClient = server->getClientByNick(target);
+		if (targetClient->isAway) {
+			Server::sendToClient(client->socketFd, RPL_AWAY(client->nickName, targetClient->nickName, targetClient->awayMessage));
+		}
+		Server::sendToClient(targetClient->socketFd, RPL_CMD(client->nickName, client->userName, "PRIVMSG", ": " + messageToSend));
 		return ;
 	}
 	Server::sendToClient(client->socketFd, ERR_NOSUCHNICK( client->nickName , target ));

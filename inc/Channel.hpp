@@ -30,14 +30,13 @@ typedef struct t_channelUser
 	std::string userMode;
 } channelUser;
 
-// Todo: founder + operator
 class Channel {
 public:
 	// Todo: switch a map of ChannelUser*
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
-	// Todo: use getters and setters  + private vars
+	// Todo: use getters and setters + private vars
 	std::string name;
 
 	char symbol;
@@ -51,7 +50,6 @@ public:
 	std::string getTopicUser() const;
 	std::string getTopicTime() const;
 
-
 	void updateTopic( const std::string &newTopic, const std::string &setBy );
 
 	void setTopic(const std::string &newTopic, const std::string &nick);
@@ -59,19 +57,23 @@ public:
 	mapClients	getClients() const;
 	size_t		getClientCount() const;
 	bool 		isClientConnected(const std::string& nickName) const;
-	void		sendToAllclient(std::string message);
-	void		sendToAllclientExceptSender(std::string message, Client *client);
+	void		sendToAllclient(const std::string& message);
+	void		sendToAllclientExceptSender(const std::string& message, Client *client);
 
 	channelUser * getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);
 	void		eraseClient(const std::string& client);
+	void		updateClient(const std::string &oldNick, const std::string &newNick);
 
 	// ------- Mode -------
-	bool hasMode(char c) const;
-	std::string		getMods();
-	void 			setMods( std::string mod, int action );
+    std::string getMods() const;
+    bool		hasMode(char c) const;
+    void		addMode(char c);
+    void		removeMode(char c);
 
 
+	size_t      getClientLimit() const;
+	void        setClientLimit(const std::string& limit);
 	// INVITE LIST
 	void addInvite(const std::string &nickName);
 	void removeInvite(const std::string &nickName);
@@ -85,7 +87,7 @@ private:
 	std::string _topic;
 	std::string _topicSetBy;
 	std::string _topicSetTime;
-	std::string	mode;
+	std::string	_mode;
 	std::vector<std::string> _inviteList;
+    size_t          		_clientLimit;
 };
-

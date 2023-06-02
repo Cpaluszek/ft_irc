@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quit.cpp                                           :+:      :+:    :+:   */
+/*   leaveAllChannels.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jlitaudo <jlitaudo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -17,8 +17,7 @@
 void quitCmd(Client *client, const Request &request, Server *server) {
 	(void) request;
 
-	client->quit();
+	client->leaveAllChannels();
 	Server::sendToClient(client->socketFd, ERR_MSG(std::string("Disconnected from server")));
 	server->disconnectClient(client->socketFd);
-
 }

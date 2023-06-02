@@ -9,6 +9,12 @@
 #define RPL_INVITE(nickname, user, target, channel) (":" + nickname + "!" + user + "@" + LOCAL_HOST_IP \
 	+ " INVITE " + target + " " + channel + "\r\n")
 
+#define RPL_NICK(oldNick, nick, user) ( ":" + oldNick + "!"  \
+	+ user + "@" + LOCAL_HOST_IP + " NICK " + nick + "\r\n")
+
+//TOPIC command to send to all user when change/cleared topic
+#define TOPIC(channel, newTopic) ("TOPIC " + channel + " :" + newTopic + "\r\n")
+
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user) ( ":" + SERVER_NAME + " 001 " + nick \
 		+ " :Welcome to the " + SERVER_NAME + " Network, " + nick + "!" + user + "@" + LOCAL_HOST_IP + "\r\n")
@@ -37,7 +43,7 @@
 #define RPL_UNAWAY(nick) (":" + SERVER_NAME + " 305 " + nick \
 		+ " :You are no longer marked as being away\r\n")
 
-//306
+// 306
 #define RPL_NOWAWAY(nick) (":" + SERVER_NAME + " 306 " + nick \
 		+ " :You are marked as being away\r\n")
 
@@ -85,9 +91,6 @@
 #define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :No topic is set\r\n")
 
-//TOPIC command to send to all user when change/cleared topic
-#define TOPIC(channel, newTopic) ("TOPIC " + channel + " :" + newTopic + "\r\n")
-
 // 332 : Sent to a client when joining the channel to inform of the current topic
 #define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
 		+ " " + channel + " :" + topic + "\r\n")
@@ -133,14 +136,30 @@
 #define RPL_WHOISMODES(client, nick, modes) (":" + SERVER_NAME + " 379 " + client \
 		+ " " + nick + " :is using modes " + modes + "\r\n")
 
+// 401
+# define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " + nick + " '" + target + "'" \
+		+ " :No such nick/channel:\r\n")
+
 // 403
 #define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick \
 		+ " " + channel + " :No such channel\r\n")
+
+// 404
+# define ERR_CANNOTSENDTOCHAN(nick, channel) (":" + SERVER_NAME + " 404 " + nick + " " + channel + " :Cannot send to channel\r\n")
 
 // 405
 #define ERR_TOOMANYCHANNELS(nick, channel) (":" + SERVER_NAME + " 405 " + nick \
 		+ " " + channel + " :You have joined too many channel\r\n")
 
+// 407
+# define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
+
+// 411
+# define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " + \
+		nick + " :No recipient given (command)\r\n")
+
+// 412
+# define ERR_NOTEXTTOSEND(nick) (":" + SERVER_NAME + " 412 " + nick + " :No text to send\r\n")
 
 // 421
 #define ERR_UNKNOWCOMMAND(nick, command) (":" + SERVER_NAME + " 421 " + nick \
@@ -162,8 +181,15 @@
 #define ERR_NICKNAMEINUSE(nick) (":" + SERVER_NAME + " 433 " + nick \
 		+ " :Nickname is already in use\r\n")
 
-#define RPL_NICK(oldNick, nick, user, host) ( ":" + oldNick + "!"  \
-	+ user + "@" + host + " NICK " + nick + "\r\n")
+// 441
+# define ERR_USERNOTINCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 441 " + client + " " + nick + " " + channel + " :They're not on that channel\r\n")
+
+// 442
+# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :You're not on that channel\r\n")
+
+// 443
+#define ERR_USERONCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 443 " + client \
+		+ " " + nick + " " + channel + " :is already on channel\r\n")
 
 // 451
 #define ERR_NOTREGISTERED(nick) (":" + SERVER_NAME + " 451 " + nick \
@@ -181,39 +207,9 @@
 #define ERR_PASSWDMISMATCH(nick) (":" + SERVER_NAME + " 464 " + nick \
 		+  " :Password incorrect\r\n")
 
-// 401
-# define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " + nick + " '" + target + "'" \
-		+ " :No such nick/channel:\r\n")
-
-//411
-# define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " + \
-		nick + " :No recipient given (command)\r\n")
-
-//412
-# define ERR_NOTEXTTOSEND(nick) (":" + SERVER_NAME + " 412 " + nick + " :No text to send\r\n")
-
-//403
-# define ERR_NOSUCHCHANNEL(nick, channel) (":" + SERVER_NAME + " 403 " + nick + " " + channel + " :No such channel\r\n")
-
-//404
-# define ERR_CANNOTSENDTOCHAN(nick, channel) (":" + SERVER_NAME + " 404 " + nick + " " + channel + " :Cannot send to channel\r\n")
-
-
-// 407
-# define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
-
-// 441
-# define ERR_USERNOTINCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 441 " + client + " " + nick + " " + channel + " :They're not on that channel\r\n")
-
-// 442
-# define ERR_NOTONCHANNEL(nick, channel) (":" + SERVER_NAME + " 442 " + nick + " " + channel + " :You're not on that channel\r\n")
-
-// 443
-#define ERR_USERONCHANNEL(client, nick, channel) (":" + SERVER_NAME + " 443 " + client \
-		+ " " + nick + " " + channel + " :is already on channel\r\n")
-
 // 471
-#define ERR_CHANNELISFULL
+#define ERR_CHANNELISFULL(nick, channel) (":" + SERVER_NAME + " 471 " + nick \
+		+ " " + channel + " :Cannot join channel (+l)\r\n")
 
 // 473
 #define ERR_INVITEONLYCHAN(nick, channel) (":" + SERVER_NAME + " 473 " + nick \

@@ -26,7 +26,7 @@ public:
 	Client();
 	~Client();
 	void		updateNickname(const std::string& newNickname);
-	void		quit();
+	void		leaveAllChannels();
 
 	// ---- Channels ----
 	void		addChannel(Channel *newChannel);

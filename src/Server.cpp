@@ -2,7 +2,7 @@
 #include "Server.hpp"
 bool Server::keyboardInterrupt = false;
 
-Server::Server(std::string port, const std::string& password) {
+Server::Server(const std::string& port, const std::string& password) : _serverSocketFd(), _connectionCount(), _pollFds() {
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
@@ -16,8 +16,12 @@ Server::Server(std::string port, const std::string& password) {
 	this->_password = password;
 	
 	SetupServerSocket(portNumber);
+	initCommands();
 
-	// Todo: create a function for Init Commands
+	this->_creationDate = Utils::getCurrentDateTime();
+}
+
+void Server::initCommands() {
 	this->_commands["TOPIC"] = &topicCmd;
 	this->_commands["PRIVMSG"] = &privmsgCmd;
 	this->_commands["PASS"] = &passCmd;
@@ -34,26 +38,29 @@ Server::Server(std::string port, const std::string& password) {
 	this->_commands["PART"] = &partCmd;
 	this->_commands["NAMES"] = &namesCmd;
 	this->_commands["AWAY"] = &awayCmd;
-    this->_commands["KICK"] = &kickCmd;
+	this->_commands["KICK"] = &kickCmd;
 	this->_commands["MODE"] = &mode;
 	this->_commands["INVITE"] = &inviteCmd;
-
-	this->_creationDate = Utils::getCurrentDateTime();
 }
 
 Server::~Server() {
+	if (!this->_clients.empty()) {
+		clientIt it = this->_clients.begin();
+		for (; it != this->_clients.end(); it++) {
+			disconnectClient(it->second->socketFd);
+		}
+	}
 	close(this->_serverSocketFd);
 	delete [] this->_pollFds;
 }
 
 void Server::SetupServerSocket(int port) {
-	// Todo: should we use getaddrinfo ? -> https://github.dev/barimehdi77/ft_irc/tree/main/srcs
 	this->_serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_serverSocketFd == -1) {
 		throw std::runtime_error(std::string("Socket creation failed: ") + strerror(errno));
 	}
 
-	struct sockaddr_in address;
+	sockaddr_in address = {};
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
 	address.sin_addr.s_addr = inet_addr(LOCAL_HOST_IP);
@@ -80,17 +87,14 @@ void Server::SetupServerSocket(int port) {
 
 void Server::Update() {
 	while (!Server::keyboardInterrupt) {
-		// Note: avec l'option -1 la fonction poll est bloquante - envisager l'utilisantion d'un timeout de 5 ou 10 ms?
-		int pollCount = poll(this->_pollFds, this->_connectionCount, -1);
+		int pollCount = poll(this->_pollFds, this->_connectionCount, POLL_TIMEOUT);
 		if (pollCount == -1 && !Server::keyboardInterrupt) {
 			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
 
 		for (unsigned int i = 0; i < this->_connectionCount; i++) {
-			if ((this->_pollFds[i].revents & POLLIN) == 0) {
+			if ((this->_pollFds[i].revents & POLLIN) == 0)
 				continue;
-			}
-
 			bool requestOnServerSocket = i == 0;
 			requestOnServerSocket ? registerNewClient() : readClientRequest(i);
 		}
@@ -98,7 +102,7 @@ void Server::Update() {
 }
 
 void Server::registerNewClient() {
-	struct sockaddr_storage address;
+	sockaddr_storage address = {};
 	socklen_t addressLen = sizeof(address);
 	int clientFd = accept(this->_serverSocketFd, (struct sockaddr*)&address, &addressLen);
 	if (clientFd == -1) {
@@ -137,9 +141,8 @@ void Server::disconnectClient(int fd) {
 }
 
 void Server::readClientRequest(unsigned int index) {
-	// Note: what size to use ?
-	char buffer[10000];
-	memset(&buffer, 0, 10000);
+	char buffer[READ_BUFFER_SIZE];
+	memset(&buffer, 0, READ_BUFFER_SIZE);
 	int clientFd = this->_pollFds[index].fd;
 
 	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
@@ -179,7 +182,6 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 #endif
 
 	if (!request.isValid) {
-		// Note: how to manage invalid messages?
 		sendToClient(client->socketFd, "Invalid Message\n");
 		return ;
 	}
@@ -191,7 +193,6 @@ void Server::handleClientRequest(Client *client, const std::string& content) {
 		}
 		it->second(client, request, this);
 	}
-	// Todo: make a list of ignored cmds
 	else if (request.command != "PONG" && request.command != "CAP") {
 		sendToClient(client->socketFd, ERR_UNKNOWCOMMAND(client->nickName, request.command));
 	}
@@ -218,7 +219,6 @@ void Server::sendWelcome(Client *client) {
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN));
 	sendToClient(fd, RPL_ISUPPORT(client->nickName, ISUPPORT_TOKEN2));
 	motdCmd(client, Request(), this);
-	// Note: mode?
 }
 
 Server::clientIt Server::getClientBeginIt() {
@@ -229,9 +229,13 @@ Server::clientIt Server::getClientEndIt() {
 	return _clients.end();
 }
 
-// Todo: return a ptr
-Server::channelIt Server::getChannelByName(const std::string& name) {
-	return this->_channels.find(name);
+Channel *Server::getChannelByName(const std::string& name) {
+	for (channelIt it = this->_channels.begin(); it != this->_channels.end(); it++) {
+		if (it->second->name == name) {
+			return it->second;
+		}
+	}
+	return NULL;
 }
 
 Server::channelIt Server::getChannelEnd() {
@@ -252,7 +256,6 @@ void Server::removeChannel(const std::string &channelName) {
 	this->_channels.erase(it);
 }
 
-// Note : this->channel.find( target ) == this->channel.end() is not working because this->_channel bring a different copy for each side.
 bool Server::isAChannel(const std::string& channel) {
 	channelMap channels = this->_channels;
 	if (channels.find( channel ) == channels.end())
@@ -269,18 +272,6 @@ bool Server::isUser( const std::string& user )
 			return true;
 	}
 	return false;
-}
-
-// Note: return -1 if not a valid user, maybe delete "isUser"
-int Server::findUserSocketFd( const std::string& user )
-{
-	clientIt it = this->getClientBeginIt();
-	clientIt itEnd = this->getClientEndIt();
-	for (; it != itEnd ; it++) {
-		if ( it->second->nickName == user )
-			return it->second->socketFd;
-	}
-	return -1;
 }
 
 Server::channelMap Server::getChannels() {
@@ -323,7 +314,7 @@ void Server::sendToClient(int fd, const std::string &content) {
 }
 
 void Server::handleKeyboardInterrupt(int signal) {
-	(void) signal;
+	std::cout << std::endl << RED << "Received signal: " << signal << RESET << std::endl;
 	Server::keyboardInterrupt = true;
 	// Todo: Check leaks
 }
