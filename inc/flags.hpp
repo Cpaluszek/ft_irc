@@ -6,6 +6,11 @@
 
 typedef enum
 {
+	CHANNELMOD,
+	USERMOD,
+	ADD,
+	RM,
+
 	O_ADD_OP_USERMOD,
 	O_RM_OP_USERMOD,
 	O_ADD_OP_CHANNELMOD,

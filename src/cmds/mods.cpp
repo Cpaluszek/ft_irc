@@ -4,11 +4,6 @@
 #include "Server.hpp"
 #include "flags.hpp"
 
-#define CHANNELMOD	35
-#define USERMOD		36
-#define ADD			37
-#define RM			38
-
 static bool	channelExist( Server *server , Client *client, const std::string& channel )
 {
 	if (server->isAChannel( channel ))
@@ -69,7 +64,6 @@ bool	numberParamIsCorrect( Client *client, const Request &request, char arg, siz
 	//Check number param is correct
 	if ( containSecondParam( arg ) )
 		(*numberOfFlagsWithParam)++;
-	std::cerr << *numberOfFlagsWithParam << std::endl;
 	if ( *numberOfFlagsWithParam > sizeArgs - 2 )
 	{
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
@@ -85,7 +79,6 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 	const std::string& arg = *itArgs;
 	size_t	sizeArgs = request.args.size();
 	size_t numberOfFlagsWithParam = 0;
-	size_t countParamNumber = 0;
 	int typeOfFlag = ADD;
 
 
@@ -106,14 +99,15 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			return flagsMap;
 		}
 		std::string secondParam = "";
-		if ( ( itArgs + (int)countParamNumber + 1 ) != request.args.end() )
-			secondParam = *(itArgs + (int)countParamNumber + 1);
-		else if ( i == arg.size() - 1 && countParamNumber < sizeArgs - 2 )
+		if ( ( itArgs + (int)numberOfFlagsWithParam + 1 ) != request.args.end() && i < arg.size() - 1 )
+			secondParam = *(itArgs + (int)numberOfFlagsWithParam + 1);
+		else if ( i == arg.size() - 1 && numberOfFlagsWithParam < sizeArgs - 2 )
 		{
 			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command));
 			flagsMap.clear();
 			return flagsMap;
 		}
+		std::cerr << "i = " << i << ", countparam=" << numberOfFlagsWithParam << ", secondparam=" << secondParam << ", sizeArgs=" << sizeArgs << ", sizeArg=" << arg.size() << std::endl;
 
 		// Get mod in a Vector<int>, to call them more explicitly
 		switch ( arg[i] ) {
@@ -127,7 +121,6 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					if ( typeOfFlag == ADD )
 					{
 						flagsMap[ O_ADD_OP_USERMOD ] = secondParam;
-						countParamNumber++;
 					}
 					else
 						flagsMap[ O_RM_OP_USERMOD ] = "";
@@ -137,7 +130,6 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					if ( typeOfFlag == ADD )
 					{
 						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
-						countParamNumber++;
 					}
 					else
 						flagsMap[ O_RM_OP_CHANNELMOD ] = "";
@@ -153,7 +145,6 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			{
 				if ( typeOfFlag == ADD ) {
 					flagsMap[K_ADD_KEY_CHANNELMOD] = secondParam;
-					countParamNumber++;
 				}
 				else
 					flagsMap[ K_RM_KEY_CHANNELMOD ] = "";
@@ -170,7 +161,6 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 						return flagsMap;
 					}
 					flagsMap[ L_ADD_CLIENTLIMIT_CHANNELMOD ] = secondParam;
-					countParamNumber++;
 				}
 				else
 					flagsMap[ L_RM_CLIENTLIMIT_CHANNELMOD ] = "";
@@ -250,12 +240,9 @@ void mode( Client *client, const Request &request, Server *server )
 	}
 	if ( flagsMap.empty() )
 		return ;
-	if ( !client->hasMode('o') )
+	if ( channel && channel->getChannelUserByNick( client->nickName )->userMode.find('o') == std::string::npos )//TODO: implement general function to find channel mod
 	{
-		if ( channel )
-			Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
-		else
-			Server::sendToClient( client->socketFd, ERR_NOPRIVILEGES( client->nickName));
+		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name));
 		return ;
 	}
 	executeModeCmd( client, server, request, flagsMap, channel );
