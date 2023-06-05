@@ -67,11 +67,13 @@ void setTopic( Client *client, Channel *specificChannel, const Request &request 
 
 void topicCmd( Client *client, const Request &request, Server *server )
 {
+	bool		UserHasPrivilege = false;
 	std::vector<std::string>::const_iterator itArgs = request.args.begin();
+
 	if ( !request.requestTopicIsValid( client ) || !channelExist( server, client, *itArgs ) ) {
 		return ;
 	}
-
+	// if client is not on channel
 	Channel *specificChannel = server->getChannelByName( *itArgs );
 	t_channelUser *channelUser = specificChannel->getChannelUserByNick(client->nickName);
 	if ( !channelUser ) 	{
@@ -80,9 +82,8 @@ void topicCmd( Client *client, const Request &request, Server *server )
 	}
 
 	std::string UserChannelMod = channelUser->userMode;
-	bool		UserHasPrivilege = false;
-	if ( UserChannelMod.find('o') != std::string::npos )
-		UserHasPrivilege = true;
+	UserHasPrivilege = specificChannel->isClientOperator( client->nickName );
+	// Exec topic cmd if user has privilege
 	switch ( defineTopicAction( itArgs, request ) ) {
 		case PRINT_TOPIC:
 			if ( !specificChannel->isClientConnected( client->nickName ) )
