@@ -84,6 +84,9 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 
 		Channel *existingChannel = server->getChannelByName(*nameIt);
 		if (existingChannel == NULL) {
+//			if (keyIt != keys.end()) {
+				// Todo: set the key if present
+//			}
 			Channel *newChannel = new Channel(*nameIt, client, server);
 
 			server->addChannel(newChannel);

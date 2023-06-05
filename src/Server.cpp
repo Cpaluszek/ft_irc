@@ -44,11 +44,10 @@ void Server::initCommands() {
 }
 
 Server::~Server() {
-	if (!this->_clients.empty()) {
+	while (!this->_clients.empty()) {
 		clientIt it = this->_clients.begin();
-		for (; it != this->_clients.end(); it++) {
-			disconnectClient(it->second);
-		}
+		it->second->leaveAllChannels();
+		disconnectClient(it->second);
 	}
 	close(this->_serverSocketFd);
 	delete [] this->_pollFds;
