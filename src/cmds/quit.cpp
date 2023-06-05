@@ -19,5 +19,5 @@ void quitCmd(Client *client, const Request &request, Server *server) {
 
 	client->leaveAllChannels();
 	Server::sendToClient(client->socketFd, ERR_MSG(std::string("Disconnected from server")));
-	server->disconnectClient(client->socketFd);
+	server->disconnectClient(client);
 }

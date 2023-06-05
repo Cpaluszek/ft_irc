@@ -16,6 +16,6 @@ void passCmd(Client *client, const Request &request, Server *server) {
 	}
 	else {
 		Server::sendToClient(client->socketFd, ERR_PASSWDMISMATCH(std::string("Client")));
-		server->disconnectClient(client->socketFd);
+		server->disconnectClient(client);
 	}
 }

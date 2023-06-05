@@ -93,7 +93,7 @@ public:
 	void 			Update();
 	void 			sendWelcome(Client *client);
 	bool 			isNickAlreadyUsed(const Client &client, std::string nick);
-	void 			disconnectClient(int fd);
+	void 			disconnectClient(Client *client);
 	static void		handleKeyboardInterrupt(int signal);
 	static void 	sendToClient(int fd, const std::string &content);
 

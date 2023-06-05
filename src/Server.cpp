@@ -47,7 +47,7 @@ Server::~Server() {
 	if (!this->_clients.empty()) {
 		clientIt it = this->_clients.begin();
 		for (; it != this->_clients.end(); it++) {
-			disconnectClient(it->second->socketFd);
+			disconnectClient(it->second);
 		}
 	}
 	close(this->_serverSocketFd);
@@ -122,17 +122,18 @@ void Server::registerNewClient() {
 			<< ": Connection on socket " << clientFd << RESET << std::endl;
 }
 
-void Server::disconnectClient(int fd) {
-	Server::clientIt it = this->_clients.find(fd);
-	if (it == this->_clients.end()) {
-		std::cerr << RED << "Error: Channel not found" << RESET << std::endl;
+void Server::disconnectClient(Client *client) {
+	if (client == NULL) {
+		std::cerr << RED << "Error: Client not found" << RESET << std::endl;
 		return ;
 	}
-	delete it->second;
-	this->_clients.erase(it);
-	close(fd);
+	int clientFd = client->socketFd;
+	this->_clients.erase(clientFd);
+	close(client->socketFd);
+	delete client;
+
 	for (unsigned int i = 0; i < this->_connectionCount; i++) {
-		if (this->_pollFds[i].fd == fd) {
+		if (this->_pollFds[i].fd == clientFd) {
 			this->_pollFds[i] = this->_pollFds[this->_connectionCount - 1];
 			break ;
 		}
@@ -144,6 +145,7 @@ void Server::readClientRequest(unsigned int index) {
 	char buffer[READ_BUFFER_SIZE];
 	memset(&buffer, 0, READ_BUFFER_SIZE);
 	int clientFd = this->_pollFds[index].fd;
+	Client *client = this->_clients[clientFd];
 
 	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
 
@@ -153,15 +155,10 @@ void Server::readClientRequest(unsigned int index) {
 		}
 		std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET << GREEN
 			<< ": Disconnection on socket " << clientFd << RESET << std::endl;
-
-		// Todo: If a connection is closed without the client issuing a QUIT
-		// the server MUST distribute a QUIT message to other clients to inform
-		// For instance, "Ping timeout: 120 seconds", "Excess Flood", and "Too many connections from this IP" are examples of relevant reasons for closing or for a connection with a client to have been closed.
-
-		disconnectClient(clientFd);
+		client->leaveAllChannels();
+		disconnectClient(client);
 		return ;
 	}
-	Client *client = this->_clients[clientFd];
 	client->socketBuffer += std::string(buffer);
 	size_t pos;
 	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
