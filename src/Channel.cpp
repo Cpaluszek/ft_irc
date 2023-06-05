@@ -193,3 +193,7 @@ std::string Channel::getName() const {
 char Channel::getSymbol() const {
 	return this->_symbol;
 }
+
+void Channel::setKey(std::string &key) {
+    this->_key = key;
+}
