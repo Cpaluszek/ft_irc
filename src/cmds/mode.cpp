@@ -80,8 +80,7 @@ static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWith
 }
 
 static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int *numberOfFlagsWithParam, \
-	std::vector<std::string>::const_iterator itArgs, const Request &request, \
-		std::string *secondParam, const std::string arg, size_t i, size_t sizeArgs )
+	const Request &request, std::string *secondParam, const std::string arg, size_t i, size_t sizeArgs )
 {
 	std::vector<std::string>::const_iterator itSecondParam = request.args.begin() + 2 + *numberOfFlagsWithParam;
 
@@ -117,7 +116,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
 		if ( containSecondParam( arg[i]) )
-			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, itArgs, request, &secondParam, arg, i, sizeArgs ) )
+			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, request, &secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
 
 		switch ( arg[i] ) {
