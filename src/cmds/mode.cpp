@@ -85,11 +85,11 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
 {
 	(void)itArgs;
 	std::vector<std::string>::const_iterator itSecondParam = request.args.begin() + 2 + *numberOfFlagsWithParam;
-	std::vector<std::string>::const_iterator	itTest = request.args.begin();
-	for (; itTest != request.args.end() ; ++itTest) {
-		std::cerr << "itTest=" << *itTest << std::endl;
-	}
-	std::cerr << "number=" << *numberOfFlagsWithParam << std::endl;
+//	std::cerr << "itSecondParam-Value:" << *itSecondParam << std::endl;
+//	std::vector<std::string>::const_iterator	itTest = request.args.begin();
+//	for (; itTest != request.args.end() ; ++itTest) {
+//		std::cerr << "itTest=" << *itTest << std::endl;
+//	}
 	(*numberOfFlagsWithParam)++;
 	if ( itSecondParam != request.args.end() )
 		*secondParam = *( itSecondParam );
@@ -205,7 +205,6 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 			{
-				std::cerr << flagParam << std::endl;
 				channel->getClients().find(flagParam)->second.userMode = "o";
 				break;
 			}
