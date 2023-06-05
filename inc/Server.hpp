@@ -22,19 +22,18 @@
 #include "commands.hpp"
 #include "colors.hpp"
 
+// ----- SERVER INFO -----
 #define LOCAL_HOST_IP "127.0.0.1"
 #define SERVER_NAME std::string("FT_IRC")
 #define SERVER_INFO std::string("This is an IRC server")
-#define VERSION std::string("0.1")
-#define POLL_TIMEOUT 500
-#define READ_BUFFER_SIZE 10000
+#define VERSION 	std::string("0.1")
+#define MOTD_FILE 	"config/motd.txt"
 
-#define MOTD_FILE "config/motd.txt"
-
-#define USERMODE std::string("ior")
-#define CHANMODE std::string("itkol")
-/*
- * i - Set or remove invite-only channel
+#define CHANTYPES 	std::string("#")
+#define PREFIX		std::string("@")
+#define USERMODE 	std::string("ior")
+#define CHANMODE 	std::string("itkol")
+/* i - Set or remove invite-only channel
  * k - Set or remove the channel key
  * l - Set or remove the user limit to channel
  * n - Set or remove external user permission to send message to channel
@@ -42,11 +41,9 @@
  * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
-#define CHANTYPES std::string("#")
-#define PREFIX		std::string("@")
-/*
- * @ - creator
- */
+#define POLL_TIMEOUT 500
+#define READ_BUFFER_SIZE 10000
+
 
 #define CHANLIMIT 10  	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#chanlimit-parameter)
 #define CHANNELLEN 32 	// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channellen-parameter)
@@ -79,6 +76,8 @@ class Request;
 
 class Server {
 public:
+	static bool keyboardInterrupt;
+
 	typedef void (*CmdFunction)(Client*, const Request &, Server*);
 	typedef std::map<std::string, CmdFunction>::iterator cmdIt;
 	typedef std::map<std::string, Channel*> channelMap;
@@ -88,8 +87,6 @@ public:
 	// Todo: Check for usage
 	typedef std::vector<std::string> vecStr;
 	typedef std::vector<std::string>::iterator vecStrIt;
-
-	static bool keyboardInterrupt;
 
 	~Server();
 	Server(const std::string& port, const std::string& password);
@@ -102,14 +99,15 @@ public:
 	static void 	sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
-	clientIt getClientBeginIt();
-	clientIt getClientEndIt();
-	clientMap getClients();
+	clientIt 	getClientBeginIt();
+	clientIt 	getClientEndIt();
+	clientMap 	getClients();
+
 	// Channel
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
-	Channel * getChannelByName(const std::string& name);
-	channelIt	getChannelEnd(); // a remove?
+	Channel 	*getChannelByName(const std::string& name);
+	channelIt	getChannelEnd(); // Todo: remove
 	bool		isAChannel( const std::string &channel ) const;
 	void		addChannel(Channel *newChannel);
 	void 		removeChannel(const std::string &channelName);
@@ -118,21 +116,17 @@ public:
 	bool		isUser(const std::string &user);
 
 private:
-	std::string 				_password;
-	std::string 				_name;
-	int 						_serverSocketFd;
-	unsigned int				_connectionCount;
-	std::map<int, Client*>		_clients;
-	std::string 				_creationDate;
+	int 							_serverSocketFd;
+	unsigned int					_connectionCount;
+	std::string 					_password;
+	std::string 					_name;
+	std::string 					_creationDate;
+	std::map<int, Client*>			_clients;
 	std::map<std::string, Channel*> _channels;
-	// map channels
-
 	std::map<std::string, CmdFunction> _commands;
 
-	// Note: Static allocation ? Or minimal allocation and realloc on new connections
 	pollfd	*_pollFds;
 
-	// Functions
 	Server();
 	void SetupServerSocket(int port);
 	void initCommands();
