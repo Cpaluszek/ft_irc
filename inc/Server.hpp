@@ -84,7 +84,6 @@ public:
 	typedef std::map<std::string, Channel*>::iterator channelIt;
 	typedef std::map<int, Client*> clientMap;
 	typedef std::map<int, Client*>::iterator clientIt;
-	// Todo: Check for usage
 	typedef std::vector<std::string> vecStr;
 	typedef std::vector<std::string>::iterator vecStrIt;
 
