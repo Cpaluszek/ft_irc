@@ -101,7 +101,7 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
  * @param client
  * @param request
  * @param mode : USERMOD or CHANNELMOD
- * @return a map<int, std::string>, string are empty when flags doesn't need secondParam. Int contains all flags or UNKNOWN_FLAG if not known.
+ * @return a map<int, std::string>, string are empty when flags doesn't need secondParam. Int contains all flags or UNKNOWN_FLAG if not known. Return Empty map if error
  */
 std::map<int, std::string> getFlags( Client *client, const Request &request, int mode ) {
 	std::map<int, std::string>					flagsMap;
@@ -119,7 +119,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 		if ( containSecondParam( arg[i]) )
 			if ( !checkAndFillSecondParam( client, flagsMap, numberOfFlagsWithParam, itArgs, request, secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
-		// Get mod in a Vector<int>, to call them more explicitly
+
 		switch ( arg[i] ) {
 			case 'i' :
 				typeOfFlag == ADD ? flagsMap[ I_ADD_INVITEONLY_CHANNELMOD ] = "" : flagsMap[ I_RM_INVITEONLY_CHANNELMOD ] = "";
@@ -296,10 +296,12 @@ void mode( Client *client, const Request &request, Server *server )
 
 	if ( !request.requestModeIsValid( client, server ) )
 		return ;
+	// usermod or channel mod ==> get flags
 	if ( itRequest->find('#', 0) != std::string::npos )
 		getFlagsAndPrintChannelMode( client, request, server, channel, &flagsMap );
 	else
 		flagsMap = getFlags( client, request, USERMOD );
+	//Exec
 	if ( !flagsMap.empty() )
 		executeModeCmd( client, server, request, flagsMap, channel );
 //	std::map<int, std::string>::iterator itprint = flagsMap.begin(); //print map DEBUG
