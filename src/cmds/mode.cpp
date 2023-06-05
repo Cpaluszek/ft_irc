@@ -181,37 +181,76 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 	std::map<int, std::string>::const_iterator itFlags = flagsMap.begin();
 	std::map<int, std::string>::const_iterator itFlagsEnd = flagsMap.end();
 
+    //todo : checker si le client existe
 	for (; itFlags != itFlagsEnd ; ++itFlags) {
 		std::string flagParam = itFlags->second;
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
+			{
+                channel->getClients().find(flagParam)->second.userMode = "o";
 				break;
+			}
 			case O_RM_OP_CHANNELMOD:
+			{
+                channel->getClients().find(flagParam)->second.userMode = "";
 				break;
+			}
 			case O_ADD_OP_USERMOD:
+			{
+                server->getClientByNick(flagParam)->addMode('o');
 				break;
+			}
 			case O_RM_OP_USERMOD:
+			{
+                server->getClientByNick(flagParam)->removeMode('o');
 				break;
+			}
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
             {
-                // check that atoi(std::string) <= 4096 && >0
+                channel->addMode('l');
+				channel->setClientLimit(flagParam);
+				// check that atoi(std::string) <= 4096 && >0
                 // si cest bon appel a la fncton de limit channel
                 break;
             }
-			case L_RM_CLIENTLIMIT_CHANNELMOD :
+			case L_RM_CLIENTLIMIT_CHANNELMOD:
+			{
+
+				channel->removeMode('l');
 				break;
+			}
 			case I_ADD_INVITEONLY_CHANNELMOD:
+			{
+				channel->addMode('i');
 				break;
+			}
 			case I_RM_INVITEONLY_CHANNELMOD:
+			{
+				channel->removeMode('i');
 				break;
+			}
 			case T_ADD_PROTECTEDTOPIC_CHANNELMOD:
+			{
+				channel->addMode('t');
+                channel->updateTopic(flagParam, client->nickName);
 				break;
+			}
 			case T_RM_PROTECTEDTOPIC_CHANNELMOD:
+			{
+				channel->removeMode('t');
 				break;
+			}
 			case K_ADD_KEY_CHANNELMOD:
+			{
+                channel->addMode('k');
+				channel->setKey(flagParam);
+                break;
+			}
+            case K_RM_KEY_CHANNELMOD:
+			{
+                channel->removeMode('k');
 				break;
-			case K_RM_KEY_CHANNELMOD:
-				break;
+			}
 			case UNKNOWN_FLAG:
 			{
 				Server::sendToClient( client->socketFd, ERR_UMODEUNKNOWNFLAG( client->nickName, flagParam ) );
