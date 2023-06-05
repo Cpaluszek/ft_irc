@@ -160,7 +160,7 @@
 		+ " " + channel + " :You have joined too many channel\r\n")
 
 // 407
-# define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + "Too many target for private message\r\n")
+# define ERR_TOOMANYTARGETS	(":" + SERVER_NAME + " 407 " + ":Too many target for private message\r\n")
 
 // 411
 # define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " + \
