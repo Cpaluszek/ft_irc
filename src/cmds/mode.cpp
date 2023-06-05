@@ -1,25 +1,19 @@
-//
-// Created by aucaland on 5/30/23.
-//
 #include "Server.hpp"
 #include "flags.hpp"
 
-static bool formatIsChannel( std::string arg )
-{
+static bool formatIsChannel( const std::string& arg ) {
 	if ( arg.find('#', 0) != std::string::npos )
 		return true;
 	return false;
 }
 
-static bool	formatIsModestring( std::string arg )
-{
+static bool	formatIsModestring( const std::string& arg ) {
 	if ( ( arg.find('-', 0) == std::string::npos && arg.find('+', 0) == std::string::npos ) )
 		return true;
 	return false;
 }
 
-static bool	channelExist( Server *server , Client *client, const std::string& channel )
-{
+static bool	channelExist( Server *server , Client *client, const std::string& channel ) {
 	if ( server->isAChannel( channel ) )
 		return true;
 	Server::sendToClient( client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, channel) );
@@ -30,21 +24,18 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 {
 	std::vector<std::string>::const_iterator itArgs = this->args.begin();
 
-	if ( this->args.empty() )
-	{
+	if ( this->args.empty() ) {
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command));
 		return false;
 	}
-	else if ( formatIsChannel( *itArgs ) )
-	{
+	else if ( formatIsChannel( *itArgs ) ) {
 		std::string channel = *itArgs;
 		if ( this->args.size() == 1 )
 			return true;
 		else if ( !channelExist( server, client, channel ) )
 			return false;
 	}
-	else if ( !server->isUser( *itArgs ) )
-	{
+	else if ( !server->isUser( *itArgs ) ) {
 		Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, *itArgs ) );
 		return false;
 	}
@@ -53,7 +44,7 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 	return true;
 }
 
-bool	modeParamIsValid( int flag, std::string param ) //TODO: change if only one flag
+bool	modeParamIsValid( int flag, const std::string& param ) //TODO: change if only one flag
 {
 	(void) flag;
 	int maxClient;
@@ -64,15 +55,13 @@ bool	modeParamIsValid( int flag, std::string param ) //TODO: change if only one 
 	return true;
 }
 
-bool	containSecondParam( char arg )
-{
+bool	containSecondParam( char arg ) {
 	if ( arg == 'o' || arg == 'k' || arg == 'l' )
 		return true;
 	return false;
 }
 
-bool	setTypeOfFlag( int *typeOfFlag, char c )
-{
+bool	setTypeOfFlag( int *typeOfFlag, char c ) {
 	switch (c) {
 		case '-':
 			*typeOfFlag = RM;
@@ -99,8 +88,7 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
 	numberOfFlagsWithParam++;
 	if ( itSecondParam != request.args.end() && i < arg.size() - 1 )
 		secondParam = *( itSecondParam );
-	else if ( lackOfParam( i, arg, numberOfFlagsWithParam, sizeArgs ) )
-	{
+	else if ( lackOfParam( i, arg, numberOfFlagsWithParam, sizeArgs ) ) 	{
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
 		flagsMap.clear();
 		return false;
@@ -108,8 +96,7 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
 	return true;
 }
 
-std::map<int, std::string> getFlags( Client *client, const Request &request, int mode )
-{
+std::map<int, std::string> getFlags( Client *client, const Request &request, int mode ) {
 	std::map<int, std::string>					flagsMap;
 	std::vector<std::string>::const_iterator	itArgs = (request.args.begin() + 1);
 	const std::string& 							arg = *itArgs;
@@ -130,17 +117,14 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			case 'i' :
 				typeOfFlag == ADD ? flagsMap[ I_ADD_INVITEONLY_CHANNELMOD ] = "" : flagsMap[ I_RM_INVITEONLY_CHANNELMOD ] = "";
 				break;
-			case 'o':
-			{
-				if ( mode == USERMOD )
-				{
+			case 'o': {
+				if ( mode == USERMOD ) {
 					if ( typeOfFlag == ADD )
 						flagsMap[ O_ADD_OP_USERMOD ] = secondParam;
 					else
 						flagsMap[ O_RM_OP_USERMOD ] = "";
 				}
-				else
-				{
+				else {
 					if ( typeOfFlag == ADD )
 						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
 					else
@@ -148,21 +132,18 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 				}
 				break;
 			}
-			case 't':
-			{
+			case 't': {
 				typeOfFlag == ADD ? flagsMap[ T_ADD_PROTECTEDTOPIC_CHANNELMOD ] = "" : flagsMap[ T_RM_PROTECTEDTOPIC_CHANNELMOD ] = "";
 				break;
 			}
-			case 'k':
-			{
+			case 'k': {
 				if ( typeOfFlag == ADD )
 					flagsMap[K_ADD_KEY_CHANNELMOD] = secondParam;
 				else
 					flagsMap[ K_RM_KEY_CHANNELMOD ] = "";
 				break;
 			}
-			case 'l':
-			{
+			case 'l': {
 				if ( typeOfFlag == ADD )
 				{
 					if ( !modeParamIsValid( L_ADD_CLIENTLIMIT_CHANNELMOD, secondParam ) )
@@ -179,8 +160,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			}
 			case ' ':
 				return flagsMap;
-			default:
-			{
+			default: {
 				if ( mode == USERMOD )
 					flagsMap[ UNKNOWN_FLAG ] += arg[i];
 				break;
@@ -243,8 +223,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 	}
 }
 
-void modesOverview( Channel *channel, Client *client )
-{
+void modesOverview( Channel *channel, Client *client ) {
 	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS( client->nickName, channel->name, channel->getMods() ));
 	Server::sendToClient( client->socketFd, RPL_CREATIONTIME( client->nickName, channel->name, channel->getCreationTime() ));
 }
@@ -252,13 +231,11 @@ void modesOverview( Channel *channel, Client *client )
 void getFlagsAndPrintChannelMode( Client *client, const Request &request, Server *server , Channel *channel, std::map<int, std::string> *flagsMap )
 {
 	channel = server->getChannelByName( *request.args.begin() );
-	if ( request.args.size() == 1 )
-	{
+	if ( request.args.size() == 1 ) {
 		modesOverview( channel, client );
 		return ;
 	}
-	if ( channel && !channel->isClientOperator( client->nickName ) )
-	{
+	if ( channel && !channel->isClientOperator( client->nickName ) ) {
 		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name ) );
 		return ;
 	}
