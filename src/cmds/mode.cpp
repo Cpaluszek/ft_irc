@@ -79,16 +79,21 @@ static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWith
 	return (i == arg.size() - 1 && numberOfFlagsWithParam > (int)sizeArgs - 2);
 }
 
-static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int &numberOfFlagsWithParam, \
+static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int *numberOfFlagsWithParam, \
 	std::vector<std::string>::const_iterator itArgs, const Request &request, \
-		std::string secondParam, const std::string arg, size_t i, size_t sizeArgs )
+		std::string *secondParam, const std::string arg, size_t i, size_t sizeArgs )
 {
-	std::vector<std::string>::const_iterator itSecondParam = itArgs + numberOfFlagsWithParam;
-
-	numberOfFlagsWithParam++;
-	if ( itSecondParam != request.args.end() && i < arg.size() - 1 )
-		secondParam = *( itSecondParam );
-	else if ( lackOfParam( i, arg, numberOfFlagsWithParam, sizeArgs ) ) 	{
+	(void)itArgs;
+	std::vector<std::string>::const_iterator itSecondParam = request.args.begin() + 2 + *numberOfFlagsWithParam;
+	std::vector<std::string>::const_iterator	itTest = request.args.begin();
+	for (; itTest != request.args.end() ; ++itTest) {
+		std::cerr << "itTest=" << *itTest << std::endl;
+	}
+	std::cerr << "number=" << *numberOfFlagsWithParam << std::endl;
+	(*numberOfFlagsWithParam)++;
+	if ( itSecondParam != request.args.end() )
+		*secondParam = *( itSecondParam );
+	else if ( lackOfParam( i, arg, *numberOfFlagsWithParam, sizeArgs ) ) 	{
 		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
 		flagsMap.clear();
 		return false;
@@ -117,8 +122,11 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
 		if ( containSecondParam( arg[i]) )
-			if ( !checkAndFillSecondParam( client, flagsMap, numberOfFlagsWithParam, itArgs, request, secondParam, arg, i, sizeArgs ) )
+		{
+			std::cerr << "1" << std::endl;
+			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, itArgs, request, &secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
+			}
 
 		switch ( arg[i] ) {
 			case 'i' :
@@ -133,7 +141,10 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 				}
 				else {
 					if ( typeOfFlag == ADD )
+					{
 						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
+						std::cerr << "secondParam in switch= " << secondParam << std::endl;
+					}
 					else
 						flagsMap[ O_RM_OP_CHANNELMOD ] = "";
 				}
@@ -194,7 +205,8 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 			{
-                channel->getClients().find(flagParam)->second.userMode = "o";
+				std::cerr << flagParam << std::endl;
+				channel->getClients().find(flagParam)->second.userMode = "o";
 				break;
 			}
 			case O_RM_OP_CHANNELMOD:
