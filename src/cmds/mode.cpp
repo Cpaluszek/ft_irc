@@ -122,7 +122,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
 		if ( containSecondParam( arg[i]) )
-			if ( !checkAndFillSecondParam( client, flagsMap, numberOfFlagsWithParam, itArgs, request, secondParam, arg, i, sizeArgs ) )
+			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, itArgs, request, &secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
 
 		switch ( arg[i] ) {
@@ -134,13 +134,13 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					if ( typeOfFlag == ADD )
 						flagsMap[ O_ADD_OP_USERMOD ] = secondParam;
 					else
-						flagsMap[ O_RM_OP_USERMOD ] = "";
+						flagsMap[ O_RM_OP_USERMOD ] = secondParam;
 				}
 				else {
 					if ( typeOfFlag == ADD )
 						flagsMap[ O_ADD_OP_CHANNELMOD ] = secondParam;
 					else
-						flagsMap[ O_RM_OP_CHANNELMOD ] = "";
+						flagsMap[ O_RM_OP_CHANNELMOD ] = secondParam;
 				}
 				break;
 			}
@@ -198,26 +198,31 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 channel->getClients().find(flagParam)->second.userMode = "o";
 				break;
 			}
 			case O_RM_OP_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 channel->getClients().find(flagParam)->second.userMode = "";
 				break;
 			}
 			case O_ADD_OP_USERMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 server->getClientByNick(flagParam)->addMode('o');
 				break;
 			}
 			case O_RM_OP_USERMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 server->getClientByNick(flagParam)->removeMode('o');
 				break;
 			}
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
             {
+				std::cerr << flagParam << std::endl;
                 channel->addMode('l');
 				channel->setClientLimit(flagParam);
 				// check that atoi(std::string) <= 4096 && >0
@@ -226,45 +231,52 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
             }
 			case L_RM_CLIENTLIMIT_CHANNELMOD:
 			{
-
+				std::cerr << flagParam << std::endl;
 				channel->removeMode('l');
 				break;
 			}
 			case I_ADD_INVITEONLY_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 std::cerr << RED << channel->getName() << RESET << std::endl;
 				channel->addMode('i');
 				break;
 			}
 			case I_RM_INVITEONLY_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
 				channel->removeMode('i');
 				break;
 			}
 			case T_ADD_PROTECTEDTOPIC_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
 				channel->addMode('t');
                 channel->updateTopic(flagParam, client->nickName);
 				break;
 			}
 			case T_RM_PROTECTEDTOPIC_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
 				channel->removeMode('t');
 				break;
 			}
 			case K_ADD_KEY_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 channel->addMode('k');
 				channel->setKey(flagParam);
                 break;
 			}
             case K_RM_KEY_CHANNELMOD:
 			{
+				std::cerr << flagParam << std::endl;
                 channel->removeMode('k');
 				break;
 			}
 			case UNKNOWN_FLAG:
 			{
+				std::cerr << flagParam << std::endl;
 				Server::sendToClient( client->socketFd, ERR_UMODEUNKNOWNFLAG( client->nickName, flagParam ) );
 				break;
 			}
