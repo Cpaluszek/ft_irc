@@ -32,7 +32,7 @@ void	kickCmd(Client *client, const Request &request, Server *server)
     {
         user = server->getClientByNick(*it);
         if (channel->isClientConnected(*it) == false)
-            Server::sendToClient(client->socketFd, ERR_USERNOTINCHANNEL(client->nickName, *it, channel->name));
+            Server::sendToClient(client->socketFd, ERR_USERNOTINCHANNEL(client->nickName, *it, channel->getName()));
         else
             kickFromChannel(client, user, channel);
     }
@@ -40,9 +40,10 @@ void	kickCmd(Client *client, const Request &request, Server *server)
 
 void    kickFromChannel(Client *client, Client *user, Channel *channel)
 {
-    Server::sendToClient(user->socketFd, RPL_CMD(user->nickName, user->userName, "KICK", ("You have been kicked from " + channel->name + " by " + client->nickName)));
-    user->eraseChannel(channel->name);
+    Server::sendToClient(user->socketFd, RPL_CMD(user->nickName, user->userName, "KICK", ("You have been kicked from " + channel->getName() + " by " + client->nickName)));
+    user->eraseChannel(channel->getName());
     channel->eraseClient(user->nickName);
-    channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "KICK", (channel->name + " " + user->nickName)));
+	channel->sendToAllClients(
+			RPL_CMD(client->nickName, client->userName, "KICK", (channel->getName() + " " + user->nickName)));
 }
 

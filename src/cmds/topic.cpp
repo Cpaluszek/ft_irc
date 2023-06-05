@@ -41,12 +41,12 @@ bool Request::requestTopicIsValid( Client *client ) const
 void printTopic( Client *client, Channel *specificChannel )
 {
 	if ( specificChannel->getTopic().empty() )
-		Server::sendToClient( client->socketFd, RPL_NOTOPIC( client->nickName, specificChannel->name, specificChannel->getTopic() ));
+		Server::sendToClient( client->socketFd, RPL_NOTOPIC(client->nickName, specificChannel->getName(), specificChannel->getTopic() ));
 	else
 	{
-		Server::sendToClient( client->socketFd, RPL_TOPIC( client->nickName, specificChannel->name, \
+		Server::sendToClient( client->socketFd, RPL_TOPIC( client->nickName, specificChannel->getName(), \
 													specificChannel->getTopic() ));
-		Server::sendToClient( client->socketFd, RPL_TOPICWHOTIME( client->nickName, specificChannel->name, \
+		Server::sendToClient( client->socketFd, RPL_TOPICWHOTIME( client->nickName, specificChannel->getName(), \
 													specificChannel->getTopicUser(), specificChannel->getTopicTime() ));
 	}
 }
@@ -54,7 +54,7 @@ void printTopic( Client *client, Channel *specificChannel )
 void clearTopic( Client *client, Channel *specificChannel )
 {
 	specificChannel->setTopic( "" , client->nickName );
-	specificChannel->sendToAllclient(TOPIC( specificChannel->name, "" ) );
+	specificChannel->sendToAllClients(TOPIC(specificChannel->getName(), ""));
 }
 
 void setTopic( Client *client, Channel *specificChannel, const Request &request )
@@ -62,7 +62,7 @@ void setTopic( Client *client, Channel *specificChannel, const Request &request 
 	std::vector<std::string>::const_iterator itArgs = ++request.args.begin();
 	std::string newTopic = itArgs->substr( 1, itArgs->length() );
 	specificChannel->setTopic( newTopic, client->nickName );
-	specificChannel->sendToAllclient(TOPIC( specificChannel->name, newTopic ) );
+	specificChannel->sendToAllClients(TOPIC(specificChannel->getName(), newTopic));
 }
 
 void topicCmd( Client *client, const Request &request, Server *server )
@@ -75,7 +75,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 	Channel *specificChannel = server->getChannelByName( *itArgs );
 	t_channelUser *channelUser = specificChannel->getChannelUserByNick(client->nickName);
 	if ( !channelUser ) 	{
-		Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name));
+		Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->getName()));
 		return ;
 	}
 
@@ -86,14 +86,14 @@ void topicCmd( Client *client, const Request &request, Server *server )
 	switch ( defineTopicAction( itArgs, request ) ) {
 		case PRINT_TOPIC:
 			if ( !specificChannel->isClientConnected( client->nickName ) )
-				Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->name ));
+				Server::sendToClient( client->socketFd, ERR_NOTONCHANNEL( client->nickName, specificChannel->getName()));
 			else
 				printTopic( client, specificChannel );
 			break;
 		case CLEAR_TOPIC:
 			if (specificChannel->getMode().find('t') != std::string::npos && !UserHasPrivilege)
 			{
-				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->getName()) );
 				return ;
 			}
 			clearTopic( client, specificChannel );//TODO: Check Permissions;
@@ -101,7 +101,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 		case SET_TOPIC:
 			if (specificChannel->getMode().find('t') != std::string::npos && !UserHasPrivilege)
 			{
-				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
+				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->getName()) );
 				return ;
 			}
 			setTopic( client, specificChannel, request );//TODO: Check Permissions

@@ -224,8 +224,8 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 }
 
 void modesOverview( Channel *channel, Client *client ) {
-	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS( client->nickName, channel->name, channel->getMode() ));
-	Server::sendToClient( client->socketFd, RPL_CREATIONTIME( client->nickName, channel->name, channel->getCreationTime() ));
+	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS(client->nickName, channel->getName(), channel->getMode() ));
+	Server::sendToClient( client->socketFd, RPL_CREATIONTIME(client->nickName, channel->getName(), channel->getCreationTime() ));
 }
 
 void getFlagsAndPrintChannelMode( Client *client, const Request &request, Server *server , Channel *channel, std::map<int, std::string> *flagsMap )
@@ -236,7 +236,7 @@ void getFlagsAndPrintChannelMode( Client *client, const Request &request, Server
 		return ;
 	}
 	if ( channel && !channel->isClientOperator( client->nickName ) ) {
-		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->name ) );
+		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->getName()) );
 		return ;
 	}
 	*flagsMap = getFlags( client, request, CHANNELMOD );

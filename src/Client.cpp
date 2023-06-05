@@ -12,7 +12,7 @@ void Client::updateNickname(const std::string& newNickname) {
 }
 
 void Client::addChannel(Channel *newChannel) {
-	this->_channels[newChannel->name] = newChannel;
+	this->_channels[newChannel->getName()] = newChannel;
 }
 
 size_t Client::getNumberOfChannelsJoined() const {
@@ -38,7 +38,7 @@ void	Client::leaveAllChannels() {
 	channelMapIt it = this->_channels.begin();
 	for(; it != this->_channels.end(); it++) {
 		Channel *channel = it->second;
-		channel->sendToAllclient(RPL_CMD(this->nickName, this->userName, "PART", (it->first + " leave all channels")));
+		channel->sendToAllClients(RPL_CMD(this->nickName, this->userName, "PART", (it->first + " leave all channels")));
 		channel->eraseClient(this->nickName);
 	}
 }

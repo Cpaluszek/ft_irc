@@ -11,8 +11,8 @@ void getChannelNames(Channel *channel, Client *client) {
 		names.append(channel->getPrefix(it->first) + it->second.client->nickName);
 	}
 	// Send list of names
-	Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, channel->symbol, channel->name, names));
-	Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, channel->name));
+	Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, channel->getSymbol(), channel->getName(), names));
+	Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, channel->getName()));
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#names-message)

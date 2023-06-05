@@ -35,64 +35,62 @@ public:
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
-	// Todo: use getters and setters + private vars
-	std::string name;
-
-	char symbol;
-
 	Channel(const std::string& name, Client *client, Server *server);
 	Channel();
 
+	// ----- GETTERS -----
+	std::string getName() const;
+	char getSymbol() const;
 	std::string getPrefix(const std::string& clientName);
 	std::string getKey() const;
 	std::string getTopic() const;
 	std::string getTopicUser() const;
 	std::string getTopicTime() const;
+	std::string getCreationTime();
 
+	// ----- TOPIC -----
 	void updateTopic( const std::string &newTopic, const std::string &setBy );
-
 	void setTopic(const std::string &newTopic, const std::string &nick);
 
+	// ----- CLIENTS -----
 	mapClients	getClients() const;
 	size_t		getClientCount() const;
 	bool 		isClientConnected(const std::string& nickName) const;
-	void		sendToAllclient(const std::string& message);
-	void		sendToAllclientExceptSender(const std::string& message, Client *client);
-
-	channelUser * getChannelUserByNick(const std::string &nick);
+	channelUser *getChannelUserByNick(const std::string &nick);
 	void		addClient(Client *client);
 	void		eraseClient(const std::string& client);
 	void		updateClient(const std::string &oldNick, const std::string &newNick);
+	void		sendToAllClients(const std::string& message);
+	void		sendToAllClientsExceptSender(const std::string& message, Client *client);
 
-	// ------- Mode -------
+	// ------- MODE -------
     std::string getMode() const;
     bool		hasMode(char c) const;
     void		addMode(char c);
     void		removeMode(char c);
-
-	size_t      getClientLimit() const;
-	void        setClientLimit(const std::string& limit);
-
-	//Creation Data
-	std::string getCreationTime();
-
-	//Permission
 	bool		isClientOperator(std::string& nickName );
 
-	// INVITE LIST
+
+	// ------- LIMIT -------
+	void        setClientLimit(const std::string& limit);
+	size_t      getClientLimit() const;
+
+	// ------- INVITE -------
 	void 		addInvite(const std::string &nickName);
 	void 		removeInvite(const std::string &nickName);
 	bool 		isInvited(const std::string &nickName) const;
 
 private:
-	Server *_server;
-	mapClients 	_mapClients;
-	std::string _creationTime;
-	std::string _key;
-	std::string _topic;
-	std::string _topicSetBy;
-	std::string _topicSetTime;
-	std::string	_mode;
-	std::vector<std::string> _inviteList;
-    size_t          		_clientLimit;
+	Server 						*_server;
+	mapClients 					_mapClients;
+	std::string 				_name;
+	char 						_symbol;
+	std::string 				_creationTime;
+	std::string 				_key;
+	std::string 				_topic;
+	std::string 				_topicSetBy;
+	std::string 				_topicSetTime;
+	std::string					_mode;
+	std::vector<std::string> 	_inviteList;
+    size_t          			_clientLimit;
 };

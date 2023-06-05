@@ -76,11 +76,11 @@ void privmsgCmd(Client *client, const Request &request, Server *server) {
 			Channel *specificChannel = server->getChannelByName( target );
 			if ( !specificChannel->isClientConnected( client->nickName ) )
 			{
-				Server::sendToClient( client->socketFd, ERR_CANNOTSENDTOCHAN( client->nickName, specificChannel->name ));
+				Server::sendToClient( client->socketFd, ERR_CANNOTSENDTOCHAN( client->nickName, specificChannel->getName()));
 				return ;
 			}
 			messageToSend = RPL_CMD(client->nickName, client->userName, "PRIVMSG " + target , messageToSend);
-			specificChannel->sendToAllclientExceptSender( messageToSend, client );
+			specificChannel->sendToAllClientsExceptSender(messageToSend, client);
 		}
 		return ;
 	}

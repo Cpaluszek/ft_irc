@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, Client *client, Server *server): name(name), symbol('='),  _server(server), _topic("") {
+Channel::Channel(const std::string& name, Client *client, Server *server): _server(server), _name(name), _symbol('='), _topic("") {
 	this->_mode = "nt";
 	channelUser newClient;
 	newClient.client = client;
@@ -69,7 +69,7 @@ size_t Channel::getClientCount() const {
 void Channel::eraseClient(const std::string& client) {
 	this->_mapClients.erase(client);
 	if (this->getClientCount() == 0) {
-		_server->removeChannel(this->name);
+		_server->removeChannel(this->_name);
 	}
 }
 
@@ -81,7 +81,7 @@ void Channel::updateClient(const std::string &oldNick, const std::string &newNic
 		this->_mapClients[newNick] = temp;
 	}
 }
-void Channel::sendToAllclient(const std::string& message) {
+void Channel::sendToAllClients(const std::string& message) {
 	if (this->_mapClients.empty()) {
 		return ;
 	}
@@ -92,7 +92,7 @@ void Channel::sendToAllclient(const std::string& message) {
 	}
 }
 
-void Channel::sendToAllclientExceptSender(const std::string& message, Client *client) {
+void Channel::sendToAllClientsExceptSender(const std::string& message, Client *client) {
 	mapClientsIt it;
 
 	it = this->_mapClients.begin();
@@ -186,4 +186,10 @@ bool Channel::isClientOperator(std::string &nickName) {
 	return false;
 }
 
+std::string Channel::getName() const {
+	return this->_name;
+}
 
+char Channel::getSymbol() const {
+	return this->_symbol;
+}

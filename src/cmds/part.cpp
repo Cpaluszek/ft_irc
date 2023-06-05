@@ -27,12 +27,12 @@ void	partCmd(Client *client, const Request &request, Server *server)
 }
 
 // Todo: leave all channels is not always correct reason
-void	quitChannel(Client *client, Channel *channel)
-{
-	client->eraseChannel(channel->name);
+void	quitChannel(Client *client, Channel *channel) {
+	client->eraseChannel(channel->getName());
 	size_t channelUserCount = channel->getClientCount();
 	channel->eraseClient(client->nickName);
 	if (channelUserCount > 1) {
-		channel->sendToAllclient(RPL_CMD(client->nickName, client->userName, "PART", (channel->name + " has leaveAllChannels")));
+		channel->sendToAllClients(
+				RPL_CMD(client->nickName, client->userName, "PART", (channel->getName() + " has leaveAllChannels")));
 	}
 }

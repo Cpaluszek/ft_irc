@@ -15,7 +15,7 @@ std::string getChannelsList(const Client *client, const std::string &targetNick,
 				channelsList += " ";
 			}
 			channelsList += it->second->getPrefix(targetNick);
-			channelsList += it->second->name;
+			channelsList += it->second->getName();
 		}
 	}
 	return channelsList;

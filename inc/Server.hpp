@@ -52,7 +52,7 @@
 // [RPL\_ISUPPORT Tokens](https://defs.ircdocs.horse/defs/isupport.html)
 #define CHANLIMIT_TOKEN		std::string("CHANLIMIT=" + CHANTYPES + ":10")
 #define CHANMODES_TOKEN		std::string("CHANMODES=" + CHANMODE)
-#define CHANNELLEN_TOKEN 	std::string("CHANNELLEN=32")			// Maximum channel name length
+#define CHANNELLEN_TOKEN 	std::string("CHANNELLEN=32")			// Maximum channel _name length
 #define CHANTYPES_TOKEN		std::string("CHANTYPES=" + CHANTYPES)
 #define KEYLEN_TOKEN		std::string("KEYLEN=10")				// Channel key length limit
 #define KICKLEN_TOKEN		std::string("KICKLEN=")					// No length limit for kick message

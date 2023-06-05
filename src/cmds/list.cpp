@@ -1,7 +1,7 @@
 #include "commands.hpp"
 
 void sendChannelInformation(Client *client, Channel *channel) {
-	std::string channelName = channel->name;
+	std::string channelName = channel->getName();
 	size_t clientCount = channel->getClientCount();
 	std::stringstream s;
 	s << clientCount;

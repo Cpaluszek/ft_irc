@@ -12,7 +12,7 @@ void whoWithoutMask(const Client *client, Server *server) {
 			channelName = "*";
 		}
 		else {
-			channelName = channels.begin()->second->name;
+			channelName = channels.begin()->second->getName();
 			flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 		}
 		Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
@@ -36,7 +36,7 @@ void whoChannel(const Client *client, Channel *channel, bool operatorOnly) {
 			std::string flags = currentClient->isAway ? "G" : "H";
 			flags.append(it->second.prefix);
 			Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName \
-					, currentClient->realName, channel->name, flags));
+					, currentClient->realName, channel->getName(), flags));
 		}
 	}
 }
@@ -60,7 +60,7 @@ void whoMask(const Client *client, Server *server, const std::string& mask, bool
 				 channelName = "*";
 			 }
 			 else {
-				 channelName = channels.begin()->second->name;
+				 channelName = channels.begin()->second->getName();
 				 flags.append(channels.begin()->second->getPrefix(currentClient->nickName));
 			 }
 			 Server::sendToClient(client->socketFd, RPL_WHOREPLY(client->nickName, currentClient->nickName, currentClient->userName, \

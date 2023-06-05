@@ -5,13 +5,13 @@
 void connectClientToChannel(Client *client, Channel *channel) {
 	// Check if invitation is required
 	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {
-		Server::sendToClient(client->socketFd, ERR_INVITEONLYCHAN(client->nickName, channel->name));
+		Server::sendToClient(client->socketFd, ERR_INVITEONLYCHAN(client->nickName, channel->getName()));
 		return ;
 	}
 
 	// Check if the channel as reached limit
 	if (channel->hasMode('l') && channel->getClientLimit() <= channel->getClientCount()) {
-		Server::sendToClient(client->socketFd, ERR_CHANNELISFULL(client->nickName, channel->name));
+		Server::sendToClient(client->socketFd, ERR_CHANNELISFULL(client->nickName, channel->getName()));
 		return ;
 	}
 
@@ -24,7 +24,7 @@ void connectClientToChannel(Client *client, Channel *channel) {
 
 	// Send JOIN to all clients in the channel
 	for (Channel::mapClientsIt it = clients.begin(); it != clients.end(); it++) {
-		Server::sendToClient(it->second.client->socketFd, RPL_CMD(client->nickName, client->userName, "JOIN", channel->name));
+		Server::sendToClient(it->second.client->socketFd, RPL_CMD(client->nickName, client->userName, "JOIN", channel->getName()));
 		if (it != clients.begin()) {
 			names.append(" ");
 		}
@@ -33,13 +33,13 @@ void connectClientToChannel(Client *client, Channel *channel) {
 
 	// Send channel _topic
 	if (channel->getTopic().length() > 0) {
-		Server::sendToClient(client->socketFd, RPL_TOPIC(client->nickName, channel->name, channel->getTopic()));
-		Server::sendToClient(client->socketFd, RPL_TOPICWHOTIME(client->nickName, channel->name, channel->getTopicUser(), channel->getTopicTime()));
+		Server::sendToClient(client->socketFd, RPL_TOPIC(client->nickName, channel->getName(), channel->getTopic()));
+		Server::sendToClient(client->socketFd, RPL_TOPICWHOTIME(client->nickName, channel->getName(), channel->getTopicUser(), channel->getTopicTime()));
 	}
 
 	// Send list of names
-	Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, channel->symbol, channel->name, names));
-	Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, channel->name));
+	Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, channel->getSymbol(), channel->getName(), names));
+	Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, channel->getName()));
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#join-message)
@@ -61,7 +61,7 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 	Server::vecStrIt nameIt;
 	Server::vecStrIt keyIt = keys.begin();
 	for (nameIt = channels.begin(); nameIt != channels.end(); nameIt++) {
-		// check if the channel name is too long
+		// check if the channel _name is too long
 		if (nameIt->length() > CHANNELLEN) {
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *nameIt));
 			continue ;
@@ -89,15 +89,15 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			server->addChannel(newChannel);
 			client->addChannel(newChannel);
 
-			Server::sendToClient(client->socketFd, RPL_CMD(client->nickName, client->userName, "JOIN", newChannel->name));
-			Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, newChannel->symbol,
-																newChannel->name, newChannel->getPrefix(client->nickName) + client->nickName));
-			Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, newChannel->name));
+			Server::sendToClient(client->socketFd, RPL_CMD(client->nickName, client->userName, "JOIN", newChannel->getName()));
+			Server::sendToClient(client->socketFd, RPL_NAMREPLY(client->nickName, newChannel->getSymbol(),
+																newChannel->getName(), newChannel->getPrefix(client->nickName) + client->nickName));
+			Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, newChannel->getName()));
 			continue ;
 		}
 		else {
 			if (existingChannel->hasMode('k') && keyIt != keys.end() && existingChannel->getKey() != *keyIt) {
-				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, existingChannel->name));
+				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, existingChannel->getName()));
 			}
 			else {
 				connectClientToChannel(client, existingChannel);

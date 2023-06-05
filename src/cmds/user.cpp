@@ -7,7 +7,7 @@
  *
  * Example:
  * USER guest 0 * :Ronnie Reagan
- * 	- user get registered with username "guest" and real name "Ronnie Reagan"
+ * 	- user get registered with username "guest" and real _name "Ronnie Reagan"
  */
 void userCmd(Client *client, const Request &request, Server *server) {
 	(void) server;

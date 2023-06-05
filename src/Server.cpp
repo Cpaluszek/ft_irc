@@ -231,7 +231,7 @@ Server::clientIt Server::getClientEndIt() {
 
 Channel *Server::getChannelByName(const std::string& name) {
 	for (channelIt it = this->_channels.begin(); it != this->_channels.end(); it++) {
-		if (it->second->name == name) {
+		if (it->second->getName() == name) {
 			return it->second;
 		}
 	}
@@ -239,7 +239,7 @@ Channel *Server::getChannelByName(const std::string& name) {
 }
 
 void Server::addChannel(Channel *newChannel) {
-	this->_channels[newChannel->name] = newChannel;
+	this->_channels[newChannel->getName()] = newChannel;
 }
 
 void Server::removeChannel(const std::string &channelName) {
