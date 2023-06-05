@@ -32,7 +32,6 @@ typedef struct t_channelUser
 
 class Channel {
 public:
-	// Todo: switch a map of ChannelUser*
 	typedef std::map<std::string, channelUser> mapClients;
 	typedef std::map<std::string, channelUser>::iterator mapClientsIt;
 
@@ -81,9 +80,9 @@ public:
 	bool		isClientOperator(std::string& nickName );
 
 	// INVITE LIST
-	void addInvite(const std::string &nickName);
-	void removeInvite(const std::string &nickName);
-	bool isInvited(const std::string &nickName) const;
+	void 		addInvite(const std::string &nickName);
+	void 		removeInvite(const std::string &nickName);
+	bool 		isInvited(const std::string &nickName) const;
 
 private:
 	Server *_server;
