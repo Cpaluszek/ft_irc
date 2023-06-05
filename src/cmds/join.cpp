@@ -55,7 +55,7 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 	Server::vecStr channels = Utils::split(request.args[0], ",", false);
 	Server::vecStr keys;
 	if (request.args.size() > 1) {
-		keys = Utils::split(request.args[0], ",", false);
+		keys = Utils::split(request.args[1], ",", false);
 	}
 
 	Server::vecStrIt nameIt;
@@ -84,11 +84,13 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 
 		Channel *existingChannel = server->getChannelByName(*nameIt);
 		if (existingChannel == NULL) {
-//			if (keyIt != keys.end()) {
-				// Todo: set the key if present
-//			}
 			Channel *newChannel = new Channel(*nameIt, client, server);
 
+			if (keyIt != keys.end()) {
+				std::cout << RED << *nameIt << " key: " << *keyIt << std::endl;
+				newChannel->setKey(*keyIt);
+				newChannel->addMode('k');
+			}
 			server->addChannel(newChannel);
 			client->addChannel(newChannel);
 
@@ -98,8 +100,8 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			Server::sendToClient(client->socketFd, RPL_ENDOFNAMES(client->nickName, newChannel->getName()));
 			continue ;
 		}
-		else {
-			if (existingChannel->hasMode('k') && keyIt != keys.end() && existingChannel->getKey() != *keyIt) {
+		else if (!existingChannel->isClientConnected(client->nickName)) {
+			if (existingChannel->hasMode('k') && (keyIt == keys.end() || existingChannel->getKey() != *keyIt)) {
 				Server::sendToClient(client->socketFd, ERR_BADCHANNELKEY(client->nickName, existingChannel->getName()));
 			}
 			else {
