@@ -96,6 +96,13 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
 	return true;
 }
 
+/***
+ *
+ * @param client
+ * @param request
+ * @param mode : USERMOD or CHANNELMOD
+ * @return a map<int, std::string>, string are empty when flags doesn't need secondParam. Int contains all flags or UNKNOWN_FLAG if not known.
+ */
 std::map<int, std::string> getFlags( Client *client, const Request &request, int mode ) {
 	std::map<int, std::string>					flagsMap;
 	std::vector<std::string>::const_iterator	itArgs = (request.args.begin() + 1);
