@@ -25,9 +25,9 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, RPL_LISTEND(client->nickName));
 		return ;
 	}
-	Server::channelIt channelIt = channels.find(request.args[0]);
-	if (channelIt == server->getChannelEnd())
+	Channel *channel = server->getChannelByName(request.args[0]);
+	if (channel == NULL)
 		std::cerr << "No such channel: " << request.args[0] << std::endl;
 	else
-		sendChannelInformation(client, channelIt->second);
+		sendChannelInformation(client, channel);
 }

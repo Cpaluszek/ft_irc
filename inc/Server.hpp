@@ -107,8 +107,6 @@ public:
 	bool		isAChannel(const std::string& channel);
 	channelMap	getChannels();
 	Channel 	*getChannelByName(const std::string& name);
-	channelIt	getChannelEnd(); // Todo: remove
-	bool		isAChannel( const std::string &channel ) const;
 	void		addChannel(Channel *newChannel);
 	void 		removeChannel(const std::string &channelName);
 

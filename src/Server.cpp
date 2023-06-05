@@ -238,10 +238,6 @@ Channel *Server::getChannelByName(const std::string& name) {
 	return NULL;
 }
 
-Server::channelIt Server::getChannelEnd() {
-	return this->_channels.end();
-}
-
 void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->name] = newChannel;
 }
