@@ -91,7 +91,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 				printTopic( client, specificChannel );
 			break;
 		case CLEAR_TOPIC:
-			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			if (specificChannel->getMode().find('t') != std::string::npos && !UserHasPrivilege)
 			{
 				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
 				return ;
@@ -99,7 +99,7 @@ void topicCmd( Client *client, const Request &request, Server *server )
 			clearTopic( client, specificChannel );//TODO: Check Permissions;
 			break;
 		case SET_TOPIC:
-			if ( specificChannel->getMods().find('t') != std::string::npos && !UserHasPrivilege)
+			if (specificChannel->getMode().find('t') != std::string::npos && !UserHasPrivilege)
 			{
 				Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, specificChannel->name) );
 				return ;

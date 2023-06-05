@@ -109,7 +109,7 @@ void Channel::updateTopic( const std::string &newTopic, const std::string &setBy
 		setTopic(newTopic, setBy);
 }
 
-std::string Channel::getMods() const {
+std::string Channel::getMode() const {
     return this->_mode;
 }
 

@@ -224,7 +224,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 }
 
 void modesOverview( Channel *channel, Client *client ) {
-	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS( client->nickName, channel->name, channel->getMods() ));
+	Server::sendToClient( client->socketFd, RPL_CHANNELMODEIS( client->nickName, channel->name, channel->getMode() ));
 	Server::sendToClient( client->socketFd, RPL_CREATIONTIME( client->nickName, channel->name, channel->getCreationTime() ));
 }
 

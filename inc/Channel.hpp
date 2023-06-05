@@ -66,7 +66,7 @@ public:
 	void		updateClient(const std::string &oldNick, const std::string &newNick);
 
 	// ------- Mode -------
-    std::string getMods() const;
+    std::string getMode() const;
     bool		hasMode(char c) const;
     void		addMode(char c);
     void		removeMode(char c);

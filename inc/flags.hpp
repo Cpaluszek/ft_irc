@@ -1,11 +1,6 @@
-//
-// Created by aurel on 5/31/23.
-//
-
 #pragma once
 
-typedef enum
-{
+typedef enum {
 	CHANNELMOD,
 	USERMOD,
 	ADD,
@@ -25,5 +20,4 @@ typedef enum
 	K_RM_KEY_CHANNELMOD,
 
 	UNKNOWN_FLAG,
-}FLAGS_MODS;
-
+} FLAGS_MODE;
