@@ -21,7 +21,7 @@ void	kickCmd(Client *client, const Request &request, Server *server)
         Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
         return ;
     }
-    else if (client->isOnChannel(*it) == false)
+    else if (!client->isOnChannel(*it))
     {
         Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
         return ;
@@ -31,7 +31,7 @@ void	kickCmd(Client *client, const Request &request, Server *server)
     for (; it != request.args.end(); it++)
     {
         user = server->getClientByNick(*it);
-        if (channel->isClientConnected(*it) == false)
+        if (!channel->isClientConnected(*it))
             Server::sendToClient(client->socketFd, ERR_USERNOTINCHANNEL(client->nickName, *it, channel->getName()));
         else
             kickFromChannel(client, user, channel);

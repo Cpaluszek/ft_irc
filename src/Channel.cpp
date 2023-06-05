@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, Client *client, Server *server): _server(server), _name(name), _symbol('='), _topic("") {
+Channel::Channel(const std::string& name, Client *client, Server *server): _server(server), _name(name), _symbol('='){
 	this->_mode = "nt";
 	channelUser newClient;
 	newClient.client = client;
@@ -114,7 +114,8 @@ std::string Channel::getMode() const {
 }
 
 void Channel::addMode(char c) {
-    if (this->_mode.find(c) == std::string::npos) {
+    std::cerr << RED << this->_mode << RESET << std::endl;
+    if (this->_mode.empty() || this->_mode.find(c) == std::string::npos) {
         this->_mode += c;
     }
 }
@@ -180,10 +181,10 @@ std::string Channel::getCreationTime() {
 }
 
 bool Channel::isClientOperator(std::string &nickName) {
-	std::string mode = this->getChannelUserByNick( nickName )->userMode;
-	if ( !mode.empty() && mode.find('o') != std::string::npos )
-		return true;
-	return false;
+	channelUser *user = this->getChannelUserByNick(nickName);
+	if (user == NULL)
+		return false;
+	return ( user->userMode.find('o') != std::string::npos );
 }
 
 std::string Channel::getName() const {

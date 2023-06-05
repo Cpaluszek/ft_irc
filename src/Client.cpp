@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): socketFd(0), hasPassword(false), isAway(false), socketBuffer("") {
+Client::Client(): socketFd(0), hasPassword(false), isAway(false) {
 }
 
 Client::~Client() {

@@ -22,8 +22,7 @@ class Server;
  * t - Set or remove the restriction of the TOPIC command to channel operators
  */
 
-typedef struct t_channelUser
-{
+typedef struct t_channelUser {
 	Client *client;
 	std::string prefix;
 	std::string joinTime;
