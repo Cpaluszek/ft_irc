@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, Client *client, Server *server): _server(server), _name(name), _symbol('='), _topic("") {
+Channel::Channel(const std::string& name, Client *client, Server *server): _server(server), _name(name), _symbol('='){
 	this->_mode = "nt";
 	channelUser newClient;
 	newClient.client = client;

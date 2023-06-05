@@ -37,7 +37,7 @@ Request::Request(std::string message): isValid(true) {
 	}
 }
 
-Request::Request() {}
+Request::Request() : isValid(true) {}
 
 std::ostream &operator<<(std::ostream &out, const Request &src) {
 	out << "\" ---> command:[" << src.command << "] - args {";
