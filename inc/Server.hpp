@@ -98,8 +98,6 @@ public:
 	static void 	sendToClient(int fd, const std::string &content);
 
 	std::string getPassword() const;
-	clientIt 	getClientBeginIt();
-	clientIt 	getClientEndIt();
 	clientMap 	getClients();
 
 	// Channel

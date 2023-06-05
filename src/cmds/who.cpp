@@ -1,8 +1,9 @@
 #include "commands.hpp"
 
 void whoWithoutMask(const Client *client, Server *server) {
-	Server::clientIt it;
-	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
+	Server::clientMap clientMap = server->getClients();
+	Server::clientIt it = clientMap.begin();
+	for (; it != clientMap.end(); it++) {
 		std::string channelName;
 		Client *currentClient = it->second;
 		std::string flags = currentClient->isAway ? "G" : "H";
@@ -43,8 +44,9 @@ void whoChannel(const Client *client, Channel *channel, bool operatorOnly) {
 
 void whoMask(const Client *client, Server *server, const std::string& mask, bool operatorOnly) {
 	// Get all clients from the server
-	Server::clientIt it;
-	for (it = server->getClientBeginIt(); it != server->getClientEndIt(); it++) {
+	Server::clientMap clientMap = server->getClients();
+	Server::clientIt it = clientMap.begin();
+	for (; it != clientMap.end(); it++) {
 		Client *currentClient = it->second;
 		if (operatorOnly && currentClient->hasMode('o')) {
 			continue ;

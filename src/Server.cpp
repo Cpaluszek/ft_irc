@@ -221,14 +221,6 @@ void Server::sendWelcome(Client *client) {
 	motdCmd(client, Request(), this);
 }
 
-Server::clientIt Server::getClientBeginIt() {
-	return _clients.begin();
-}
-
-Server::clientIt Server::getClientEndIt() {
-	return _clients.end();
-}
-
 Channel *Server::getChannelByName(const std::string& name) {
 	for (channelIt it = this->_channels.begin(); it != this->_channels.end(); it++) {
 		if (it->second->getName() == name) {
@@ -259,11 +251,9 @@ bool Server::isAChannel(const std::string& channel) {
 	return true;
 }
 
-bool Server::isUser( const std::string& user )
-{
-	clientIt it = this->getClientBeginIt();
-	clientIt itEnd = this->getClientEndIt();
-	for (; it != itEnd ; it++) {
+bool Server::isUser( const std::string& user ) {
+	clientIt it = this->_clients.begin();
+	for (; it != this->_clients.end() ; it++) {
 		if ( it->second->nickName == user )
 			return true;
 	}

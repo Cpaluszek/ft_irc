@@ -3,22 +3,19 @@
 
 void	quitChannel(Client *client, Channel *channel);
 
-void	partCmd(Client *client, const Request &request, Server *server)
-{
+void	partCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty()){
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, request.command));
 		return ;
 	}
 	std::vector<std::string>::const_iterator it = request.args.begin();
-	for (; it != request.args.end(); it++)
-	{
+	for (; it != request.args.end(); it++) 	{
 		Channel *channel = server->getChannelByName(*it);
 		if (channel == NULL)
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *it));
 		else if (!client->isOnChannel(*it))
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, *it));
-		else
-		{
+		else {
 			quitChannel(client, channel);
 			break ;
 		}
