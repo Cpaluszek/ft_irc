@@ -180,10 +180,10 @@ std::string Channel::getCreationTime() {
 }
 
 bool Channel::isClientOperator(std::string &nickName) {
-	std::string mode = this->getChannelUserByNick( nickName )->userMode;
-	if ( !mode.empty() && mode.find('o') != std::string::npos )
-		return true;
-	return false;
+	channelUser *user = this->getChannelUserByNick(nickName);
+	if (user == NULL)
+		return false;
+	return ( user->userMode.find('o') != std::string::npos );
 }
 
 std::string Channel::getName() const {
