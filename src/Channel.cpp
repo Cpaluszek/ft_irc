@@ -114,7 +114,8 @@ std::string Channel::getMode() const {
 }
 
 void Channel::addMode(char c) {
-    if (this->_mode.find(c) == std::string::npos) {
+    std::cerr << RED << this->_mode << RESET << std::endl;
+    if (this->_mode.empty() || this->_mode.find(c) == std::string::npos) {
         this->_mode += c;
     }
 }

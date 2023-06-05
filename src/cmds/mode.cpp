@@ -184,7 +184,6 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 	(void)server;
 	(void)request;
 	(void)flagsMap;
-	(void)channel;
 	std::map<int, std::string>::const_iterator itFlags = flagsMap.begin();
 	std::map<int, std::string>::const_iterator itFlagsEnd = flagsMap.end();
 
@@ -228,6 +227,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 			}
 			case I_ADD_INVITEONLY_CHANNELMOD:
 			{
+                std::cerr << RED << channel->getName() << RESET << std::endl;
 				channel->addMode('i');
 				break;
 			}
@@ -274,15 +274,15 @@ void modesOverview( Channel *channel, Client *client ) {
 	Server::sendToClient( client->socketFd, RPL_CREATIONTIME(client->nickName, channel->getName(), channel->getCreationTime() ));
 }
 
-void getFlagsAndPrintChannelMode( Client *client, const Request &request, Server *server , Channel *channel, std::map<int, std::string> *flagsMap )
+void getFlagsAndPrintChannelMode( Client *client, const Request &request, Server *server , Channel **channel, std::map<int, std::string> *flagsMap )
 {
-	channel = server->getChannelByName( *request.args.begin() );
+	*channel = server->getChannelByName( *request.args.begin() );
 	if ( request.args.size() == 1 ) {
-		modesOverview( channel, client );
+		modesOverview( *channel, client );
 		return ;
 	}
-	if ( channel && !channel->isClientOperator( client->nickName ) ) {
-		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, channel->getName()) );
+	if ( *channel && !(*channel)->isClientOperator( client->nickName ) ) {
+		Server::sendToClient( client->socketFd, ERR_CHANOPRIVSNEEDED( client->nickName, (*channel)->getName()) );
 		return ;
 	}
 	*flagsMap = getFlags( client, request, CHANNELMOD );
@@ -298,7 +298,7 @@ void mode( Client *client, const Request &request, Server *server )
 		return ;
 	// usermod or channel mod ==> get flags
 	if ( itRequest->find('#', 0) != std::string::npos )
-		getFlagsAndPrintChannelMode( client, request, server, channel, &flagsMap );
+		getFlagsAndPrintChannelMode( client, request, server, &channel, &flagsMap );
 	else
 		flagsMap = getFlags( client, request, USERMOD );
 	//Exec
