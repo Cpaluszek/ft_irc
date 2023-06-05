@@ -68,6 +68,7 @@ public:
     void		addMode(char c);
     void		removeMode(char c);
 	bool		isClientOperator(std::string& nickName );
+    void        setKey(std::string &key);
 
 
 	// ------- LIMIT -------
