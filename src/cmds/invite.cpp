@@ -1,7 +1,6 @@
 #include "commands.hpp"
 
 // Todo: check each error
-// Todo: do we allow invite with no parameters to get the invite list ?
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#invite-message)
 void inviteCmd(Client *client, const Request &request, Server *server) {
@@ -12,8 +11,6 @@ void inviteCmd(Client *client, const Request &request, Server *server) {
 
 	std::string targetNick = request.args[0];
 	std::string targetChannel = request.args[1];
-
-	// Todo: check if we need to remove '#' on channel name
 
 	// Check the channel existence - ERR_NOSUCHCHANNEL
 	Channel *channel = server->getChannelByName(targetChannel);
