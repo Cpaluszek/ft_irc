@@ -29,7 +29,7 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 		return false;
 	}
 	else if ( formatIsChannel( *itArgs ) ) {
-		std::string channel = *itArgs;
+		const std::string& channel = *itArgs;
 		if ( this->args.size() == 1 )
 			return true;
 		else if ( !channelExist( server, client, channel ) )
@@ -81,7 +81,7 @@ static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWith
 
 static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int &numberOfFlagsWithParam, \
 	std::vector<std::string>::const_iterator itArgs, const Request &request, \
-		std::string secondParam, const std::string arg, size_t i, size_t sizeArgs )
+		std::string secondParam, const std::string& arg, size_t i, size_t sizeArgs )
 {
 	std::vector<std::string>::const_iterator itSecondParam = itArgs + numberOfFlagsWithParam;
 
