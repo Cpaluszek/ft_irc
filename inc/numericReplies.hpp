@@ -87,16 +87,16 @@
 #define RPL_LISTEND(client) (":" + SERVER_NAME + " 323 " + client \
 		+ " :End of /LIST\r\n")
 
-//324
-#define RPL_CHANNELMODEIS( nick, channel, modestring ) (":" + SERVER_NAME + " 332 " + nick + \
+// 324
+#define RPL_CHANNELMODEIS( nick, channel, modestring ) (":" + SERVER_NAME + " 324 " + nick + \
 		+ " " + channel + " " + modestring + "\r\n")
 
-//329
-#define RPL_CREATIONTIME( nick, channel, creationTime ) (":" + SERVER_NAME + " 332 " + nick + \
+// 329
+#define RPL_CREATIONTIME( nick, channel, creationTime ) (":" + SERVER_NAME + " 329 " + nick + \
 		+ " " + channel + " " + creationTime + "\r\n")
 
 // 331 : topic is not set yet on channel
-#define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " + nick + \
+#define RPL_NOTOPIC(nick, channel, topic) (":" + SERVER_NAME + " 331 " + nick + \
 		+ " " + channel + " :No topic is set\r\n")
 
 // 332 : Sent to a client when joining the channel to inform of the current topic
@@ -108,7 +108,7 @@
 		+ " " + channel + " " + who + " " + time + "\r\n")
 
 // 341
-#define RPL_INVITING(client, nick, channel) (":" + SERVER_NAME + " " + client \
+#define RPL_INVITING(client, nick, channel) (":" + SERVER_NAME + " 341 " + client \
 		+ " " + nick + " " + channel + "\r\n")
 
 // 352
