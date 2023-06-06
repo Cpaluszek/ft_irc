@@ -1,7 +1,6 @@
 #include "commands.hpp"
 #include "Channel.hpp"
 
-// Todo: test limit and invite mode
 void connectClientToChannel(Client *client, Channel *channel) {
 	// Check if invitation is required
 	if (channel->hasMode('i') && !channel->isInvited(client->nickName)) {
