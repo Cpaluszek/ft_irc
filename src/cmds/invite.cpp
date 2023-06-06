@@ -1,7 +1,5 @@
 #include "commands.hpp"
 
-// Todo: check each error
-
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#invite-message)
 void inviteCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty() || request.args.size() < 2) {

@@ -1,7 +1,6 @@
 #include "commands.hpp"
 #include "Utils.hpp"
 
-// Todo: use an enum
 enum topicAction {
 	NONE,
 	SET_TOPIC,

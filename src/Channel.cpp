@@ -114,7 +114,6 @@ std::string Channel::getMode() const {
 }
 
 void Channel::addMode(char c) {
-    std::cerr << RED << this->_mode << RESET << std::endl;
     if (this->_mode.empty() || this->_mode.find(c) == std::string::npos) {
         this->_mode += c;
     }
@@ -138,8 +137,13 @@ channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 
 
 void Channel::setClientLimit(const std::string& limit) {
-	// Todo: verify that the limit is >0
-    this->_clientLimit = atoi(limit.c_str());
+	std::istringstream cpp98Sucks(limit);
+	int limitValue;
+	cpp98Sucks >> limitValue;
+	if (cpp98Sucks.fail() || !cpp98Sucks.eof() || limitValue <= 0 || limitValue > 4096) {
+		return ;
+	}
+    this->_clientLimit = limitValue;
 }
 
 size_t Channel::getClientLimit() const {

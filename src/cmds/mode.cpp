@@ -222,8 +222,6 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
             {
                 channel->addMode('l');
 				channel->setClientLimit(flagParam);
-				// check that atoi(std::string) <= 4096 && >0
-                // si cest bon appel a la fncton de limit channel
                 break;
             }
 			case L_RM_CLIENTLIMIT_CHANNELMOD:
