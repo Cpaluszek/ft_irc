@@ -164,6 +164,8 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					flagsMap[ L_RM_CLIENTLIMIT_CHANNELMOD ] = "";
 				break;
 			}
+			case 'n':
+				typeOfFlag == ADD ? flagsMap[ N_ADD_CHANNELMODE ] = "" : flagsMap[ N_RM_CHANNELMODE ] = "";
 			case ' ':
 				return flagsMap;
 			default: {
@@ -254,6 +256,14 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
             case K_RM_KEY_CHANNELMOD:
 			{
                 channel->removeMode('k');
+				break;
+			}
+			case N_ADD_CHANNELMODE:
+			{
+				break;
+			}
+			case N_RM_CHANNELMODE:
+			{
 				break;
 			}
 			case UNKNOWN_FLAG:
