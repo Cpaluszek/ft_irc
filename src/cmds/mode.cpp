@@ -56,9 +56,7 @@ bool	modeParamIsValid( int flag, const std::string& param ) //TODO: change if on
 }
 
 bool	containSecondParam( char arg ) {
-	if ( arg == 'o' || arg == 'k' || arg == 'l' )
-		return true;
-	return false;
+	return ( arg == 'o' || arg == 'k' || arg == 'l' )
 }
 
 bool	setTypeOfFlag( int *typeOfFlag, char c ) {

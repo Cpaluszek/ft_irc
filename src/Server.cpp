@@ -6,6 +6,7 @@ Server::Server(const std::string& port, const std::string& password) : _serverSo
 	if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
+	// Todo: add more protection
 	int portNumber = atoi(port.c_str());
 	if (portNumber < 1 || portNumber > 65535) {
 		throw std::invalid_argument("Error: Wrong port format");
