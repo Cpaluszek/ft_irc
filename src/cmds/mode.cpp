@@ -183,7 +183,6 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 	std::map<int, std::string>::const_iterator itFlags = flagsMap.begin();
 	std::map<int, std::string>::const_iterator itFlagsEnd = flagsMap.end();
 
-    //todo : checker si le client existe
 	for (; itFlags != itFlagsEnd ; ++itFlags) {
 		std::string flagParam = itFlags->second;
 		switch ( itFlags->first ) {
@@ -192,7 +191,7 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				channelUser *user = channel->getChannelUserByNick(flagParam);
 				if (user == NULL) {
 					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
-					return ;
+					break ;
 				}
 				user->userMode = "o";
 				user->prefix = "@";
@@ -204,7 +203,7 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				channelUser *user = channel->getChannelUserByNick(flagParam);
 				if (user == NULL) {
 					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
-					return ;
+					break ;
 				}
 				user->userMode = "";
 				user->prefix = "";
@@ -213,73 +212,60 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 			}
 			case O_ADD_OP_USERMOD:
 			{
-                server->getClientByNick(flagParam)->addMode('o');
+				Client *user = server->getClientByNick(flagParam);
+				if (user == NULL) {
+					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
+					break ;
+				}
+				user->addMode('o');
 				break;
 			}
 			case O_RM_OP_USERMOD:
 			{
-                server->getClientByNick(flagParam)->removeMode('o');
+				Client *user = server->getClientByNick(flagParam);
+				if (user == NULL) {
+					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
+					break ;
+				}
+                user->removeMode('o');
 				break;
 			}
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
-            {
                 channel->addMode('l');
 				channel->setClientLimit(flagParam);
                 break;
-            }
 			case L_RM_CLIENTLIMIT_CHANNELMOD:
-			{
 				channel->removeMode('l');
 				break;
-			}
 			case I_ADD_INVITEONLY_CHANNELMOD:
-			{
-                std::cerr << RED << channel->getName() << RESET << std::endl;
 				channel->addMode('i');
 				break;
-			}
 			case I_RM_INVITEONLY_CHANNELMOD:
-			{
 				channel->removeMode('i');
 				break;
-			}
 			case T_ADD_PROTECTEDTOPIC_CHANNELMOD:
-			{
 				channel->addMode('t');
                 channel->updateTopic(flagParam, client->nickName);
 				break;
-			}
 			case T_RM_PROTECTEDTOPIC_CHANNELMOD:
-			{
 				channel->removeMode('t');
 				break;
-			}
 			case K_ADD_KEY_CHANNELMOD:
-			{
                 channel->addMode('k');
 				channel->setKey(flagParam);
                 break;
-			}
             case K_RM_KEY_CHANNELMOD:
-			{
                 channel->removeMode('k');
 				break;
-			}
 			case N_ADD_CHANNELMODE:
-			{
 				channel->addMode('n');
 				break;
-			}
 			case N_RM_CHANNELMODE:
-			{
 				channel->addMode('n');
 				break;
-			}
 			case UNKNOWN_FLAG:
-			{
 				Server::sendToClient( client->socketFd, ERR_UMODEUNKNOWNFLAG( client->nickName, flagParam ) );
 				break;
-			}
 			default:
 				break;
 		}
