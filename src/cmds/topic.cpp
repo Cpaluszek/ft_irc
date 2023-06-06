@@ -1,12 +1,15 @@
 #include "commands.hpp"
 #include "Utils.hpp"
 
-# define NONE			0
-# define SET_TOPIC		1
-# define PRINT_TOPIC	2
-# define CLEAR_TOPIC	3
+// Todo: use an enum
+enum topicAction {
+	NONE,
+	SET_TOPIC,
+	PRINT_TOPIC,
+	CLEAR_TOPIC
+};
 
-int defineTopicAction(const Request &request) {
+topicAction defineTopicAction(const Request &request) {
 	if ( request.args.size() == 1)
 		return PRINT_TOPIC;
 	std::string channelName = request.args[1];
