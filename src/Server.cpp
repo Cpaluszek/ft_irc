@@ -298,4 +298,5 @@ void Server::sendToClient(int fd, const std::string &content) {
 void Server::handleKeyboardInterrupt(int signal) {
 	std::cout << std::endl << RED << "Received signal: " << signal << RESET << std::endl;
 	Server::keyboardInterrupt = true;
+	// Todo: send a message to all clients for disconnection
 }
