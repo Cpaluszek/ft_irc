@@ -48,10 +48,13 @@ Server::~Server() {
 	while (!this->_clients.empty()) {
 		clientIt it = this->_clients.begin();
 		it->second->leaveAllChannels();
+		Server::sendToClient(it->second->socketFd, ERR_MSG(std::string("Server is shutting down")));
 		disconnectClient(it->second);
 	}
 	close(this->_serverSocketFd);
 	delete [] this->_pollFds;
+	std::cout << BLUE << "[" << Utils::getCurrentDateTime() << "]" << RESET \
+		<< GREEN << ": Server is shutting down" << RESET << std::endl;
 }
 
 void Server::SetupServerSocket(int port) {
@@ -299,5 +302,4 @@ void Server::sendToClient(int fd, const std::string &content) {
 void Server::handleKeyboardInterrupt(int signal) {
 	std::cout << std::endl << RED << "Received signal: " << signal << RESET << std::endl;
 	Server::keyboardInterrupt = true;
-	// Todo: send a message to all clients for disconnection
 }
