@@ -56,7 +56,7 @@ bool	modeParamIsValid( int flag, const std::string& param ) //TODO: change if on
 }
 
 bool	containSecondParam( char arg ) {
-	return ( arg == 'o' || arg == 'k' || arg == 'l' )
+	return ( arg == 'o' || arg == 'k' || arg == 'l' );
 }
 
 bool	setTypeOfFlag( int *typeOfFlag, char c ) {
@@ -212,7 +212,7 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
             {
                 channel->addMode('l');
 				channel->setClientLimit(flagParam);
-				// check that atoi(std::string) <= 4096 && >0
+				// Todo: check that atoi(std::string) <= 4096 && >0
                 // si cest bon appel a la fncton de limit channel
                 break;
             }
