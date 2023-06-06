@@ -55,8 +55,8 @@ bool	modeParamIsValid( int flag, const std::string& param ) //TODO: change if on
 	return true;
 }
 
-bool	containSecondParam( char arg ) {
-	if ( arg == 'o' || arg == 'k' || arg == 'l' )
+bool	containSecondParam( char arg, int typeOfFlag ) {
+	if ( arg == 'o' || ( typeOfFlag == ADD && ( arg == 'k' || arg == 'l' ) ) )
 		return true;
 	return false;
 }
@@ -115,7 +115,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 	for (size_t i = 0; i < itArgs->length(); ++i) {
 		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
-		if ( containSecondParam( arg[i]) )
+		if ( containSecondParam( arg[i], typeOfFlag ) )
 			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, request, &secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
 
