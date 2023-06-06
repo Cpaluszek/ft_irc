@@ -7,8 +7,11 @@ Server::Server(const std::string& port, const std::string& password) : _serverSo
 		throw std::invalid_argument("Error: Wrong port format");
 	}
 	// Todo: add more protection
-	int portNumber = atoi(port.c_str());
-	if (portNumber < 1 || portNumber > 65535) {
+
+	std::istringstream cpp98Sucks(port);
+	int portNumber;
+	cpp98Sucks >> portNumber;
+	if (cpp98Sucks.fail() || cpp98Sucks.eof() || portNumber < 1 || portNumber > 65535) {
 		throw std::invalid_argument("Error: Wrong port format");
 	}
 	if (password.empty()) {
