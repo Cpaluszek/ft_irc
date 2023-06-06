@@ -3,7 +3,6 @@
 
 void leaveChannel(Client *client, Channel *channel, const std::string& reason);
 
-// Todo: check for multi channel part command
 void	partCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty()){
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, request.command));
@@ -25,11 +24,8 @@ void	partCmd(Client *client, const Request &request, Server *server) {
 }
 
 void leaveChannel(Client *client, Channel *channel, const std::string& reason) {
+	channel->sendToAllClients(
+			RPL_CMD(client->nickName, client->userName, "PART", (channel->getName() + " " + reason)));
 	client->eraseChannel(channel->getName());
-	size_t channelUserCount = channel->getClientCount();
 	channel->eraseClient(client->nickName);
-	if (channelUserCount > 1) {
-		channel->sendToAllClients(
-				RPL_CMD(client->nickName, client->userName, "PART", (channel->getName() + " " + reason)));
-	}
 }
