@@ -260,10 +260,12 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 			}
 			case N_ADD_CHANNELMODE:
 			{
+				channel->addMode('n');
 				break;
 			}
 			case N_RM_CHANNELMODE:
 			{
+				channel->addMode('n');
 				break;
 			}
 			case UNKNOWN_FLAG:
