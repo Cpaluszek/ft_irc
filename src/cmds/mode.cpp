@@ -44,9 +44,8 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 	return true;
 }
 
-bool	modeParamIsValid( int flag, const std::string& param ) //TODO: change if only one flag
+bool modeParamIsValid(const std::string &param)
 {
-	(void) flag;
 	int maxClient;
 	std::istringstream ss( param );
 	ss >> maxClient;
@@ -152,7 +151,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 			case 'l': {
 				if ( typeOfFlag == ADD )
 				{
-					if ( !modeParamIsValid( L_ADD_CLIENTLIMIT_CHANNELMOD, secondParam ) )
+					if ( !modeParamIsValid(secondParam))
 					{
 						flagsMap.clear();
 						Server::sendToClient( client->socketFd, "Client MaxLimit has to be a number\r\n");
@@ -179,12 +178,8 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 }
 
 
-static void executeModeCmd( Client *client, Server *server, const Request &request, const std::map<int, std::string> &flagsMap, Channel *channel )
+static void executeModeCmd(Client *client, Server *server, const std::map<int, std::string> &flagsMap, Channel *channel)
 {
-	(void)client;
-	(void)server;
-	(void)request;
-	(void)flagsMap;
 	std::map<int, std::string>::const_iterator itFlags = flagsMap.begin();
 	std::map<int, std::string>::const_iterator itFlagsEnd = flagsMap.end();
 
@@ -195,6 +190,10 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 			case O_ADD_OP_CHANNELMOD:
 			{
 				channelUser *user = channel->getChannelUserByNick(flagParam);
+				if (user == NULL) {
+					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
+					return ;
+				}
 				user->userMode = "o";
 				user->prefix = "@";
 				channel->sendToAllClients(RPL_UPDATE_USER_CHAN_MODE(client->nickName, client->userName, channel->getName(), "+", "o" , user->client->nickName));
@@ -203,6 +202,10 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 			case O_RM_OP_CHANNELMOD:
 			{
 				channelUser *user = channel->getChannelUserByNick(flagParam);
+				if (user == NULL) {
+					Server::sendToClient(client->socketFd, ERR_NOSUCHNICK(client->nickName, flagParam));
+					return ;
+				}
 				user->userMode = "";
 				user->prefix = "";
 				channel->sendToAllClients(RPL_UPDATE_USER_CHAN_MODE(client->nickName, client->userName, channel->getName(), "-", "o" , user->client->nickName));
@@ -317,7 +320,7 @@ void mode( Client *client, const Request &request, Server *server )
 		flagsMap = getFlags( client, request, USERMOD );
 	//Exec
 	if ( !flagsMap.empty() )
-		executeModeCmd( client, server, request, flagsMap, channel );
+		executeModeCmd(client, server, flagsMap, channel);
 //	std::map<int, std::string>::iterator itprint = flagsMap.begin(); //print map DEBUG
 //	for (;itprint != flagsMap.end() ; itprint++) {
 //		std::cout << itprint->first << std::endl;
