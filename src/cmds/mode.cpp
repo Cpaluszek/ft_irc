@@ -194,12 +194,18 @@ static void executeModeCmd( Client *client, Server *server, const Request &reque
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 			{
-                channel->getClients().find(flagParam)->second.userMode = "o";
+				channelUser *user = channel->getChannelUserByNick(flagParam);
+				user->userMode = "o";
+				user->prefix = "@";
+				channel->sendToAllClients(RPL_UPDATE_USER_CHAN_MODE(client->nickName, client->userName, channel->getName(), "+", "o" , user->client->nickName));
 				break;
 			}
 			case O_RM_OP_CHANNELMOD:
 			{
-                channel->getClients().find(flagParam)->second.userMode = "";
+				channelUser *user = channel->getChannelUserByNick(flagParam);
+				user->userMode = "";
+				user->prefix = "";
+				channel->sendToAllClients(RPL_UPDATE_USER_CHAN_MODE(client->nickName, client->userName, channel->getName(), "-", "o" , user->client->nickName));
 				break;
 			}
 			case O_ADD_OP_USERMOD:

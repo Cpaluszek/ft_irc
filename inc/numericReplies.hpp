@@ -12,8 +12,9 @@
 #define RPL_NICK(oldNick, nick, user) ( ":" + oldNick + "!"  \
 	+ user + "@" + LOCAL_HOST_IP + " NICK " + nick + "\r\n")
 
-//TOPIC command to send to all user when change/cleared topic
-#define TOPIC(channel, newTopic) ("TOPIC " + channel + " :" + newTopic + "\r\n")
+#define RPL_UPDATE_USER_CHAN_MODE(nick, user, channel, sign, mode ,arg) (":" + nick + "!" + user + "@" + LOCAL_HOST_IP \
+	+ " MODE " + channel + " " + sign + mode + " " + arg + "\r\n")
+
 
 // 001 - RPL_WELCOME
 #define RPL_WELCOME(nick, user) ( ":" + SERVER_NAME + " 001 " + nick \
