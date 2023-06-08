@@ -32,7 +32,6 @@ SRC_FILES		:=	main.cpp Server.cpp Client.cpp Utils.cpp Request.cpp \
 					cmds/mode.cpp \
 					cmds/kick.cpp
 
-
 SRCS			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 BUILD_DIR		:=	build
@@ -59,12 +58,10 @@ _WHITE			:=	\x1b[37m
 #########################
 # 		RULES			#
 #########################
-
 all: banner $(NAME)
 
 debug: all
 	valgrind --show-leak-kinds=all --leak-check=full --track-fds=yes --verbose --show-mismatched-frees=yes --read-var-info=yes ./$(NAME) 6697 test
-
 
 $(NAME): $(OBJS)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBS) -o $@
