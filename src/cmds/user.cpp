@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   user.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/08 13:45:17 by cpalusze          #+#    #+#             */
+/*   Updated: 2023/06/08 13:45:17 by cpalusze         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands.hpp"
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#user-message)
@@ -10,7 +22,6 @@
  * 	- user get registered with username "guest" and real _name "Ronnie Reagan"
  */
 void userCmd(Client *client, const Request &request, Server *server) {
-	(void) server;
 	if (request.args.empty() || request.args.size() < 3){
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, std::string("USER")));
 	}

@@ -1,5 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/08 13:44:12 by cpalusze          #+#    #+#             */
+/*   Updated: 2023/06/08 13:44:12 by cpalusze         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "Server.hpp"
+
 bool Server::keyboardInterrupt = false;
 
 Server::Server(const std::string& port, const std::string& password) : _serverSocketFd(), _connectionCount(), _pollFds() {
