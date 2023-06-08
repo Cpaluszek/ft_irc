@@ -172,16 +172,6 @@ void Channel::addInvite(const std::string &nickName) {
 	this->_inviteList.push_back(nickName);
 }
 
-void Channel::removeInvite(const std::string &nickName) {
-	std::vector<std::string>::iterator it;
-	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {
-		if (*it == nickName) {
-			this->_inviteList.erase(it);
-			break ;
-		}
-	}
-}
-
 bool Channel::isInvited(const std::string &nickName) const {
 	std::vector<std::string>::const_iterator it;
 	for (it = this->_inviteList.begin(); it != this->_inviteList.end(); it++) {

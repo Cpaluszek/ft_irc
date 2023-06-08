@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:17 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:47:17 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/08 13:53:57 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,12 @@ public:
 	bool		isClientOperator(std::string& nickName );
     void        setKey(std::string &key);
 
-
 	// ------- LIMIT -------
 	void        setClientLimit(const std::string& limit);
 	size_t      getClientLimit() const;
 
 	// ------- INVITE -------
 	void 		addInvite(const std::string &nickName);
-	void 		removeInvite(const std::string &nickName);
 	bool 		isInvited(const std::string &nickName) const;
 
 private:
