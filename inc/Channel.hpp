@@ -16,14 +16,9 @@
 
 #include "Client.hpp"
 #include "Utils.hpp"
-# define ADDMOD		200
-# define REMOVMOD 	201
-
-// [IRC Client Protocol Specification](https://modern.ircdocs.horse/#channels)
 
 class Client;
 class Server;
-
 
 /*  ----- CHANNEL MODES -----
  * i - Set or remove invite-only channel
