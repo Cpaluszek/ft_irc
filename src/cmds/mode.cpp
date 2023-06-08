@@ -91,7 +91,7 @@ static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWith
 }
 
 static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int *numberOfFlagsWithParam, \
-	const Request &request, std::string *secondParam, const std::string arg, size_t i, size_t sizeArgs )
+	const Request &request, std::string *secondParam, const std::string& arg, size_t i, size_t sizeArgs )
 {
 	std::vector<std::string>::const_iterator itSecondParam = request.args.begin() + 2 + *numberOfFlagsWithParam;
 
@@ -273,7 +273,7 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				channel->addMode('n');
 				break;
 			case N_RM_CHANNELMODE:
-				channel->addMode('n');
+				channel->removeMode('n');
 				break;
 			case UNKNOWN_FLAG:
 				Server::sendToClient( client->socketFd, ERR_UMODEUNKNOWNFLAG( client->nickName, flagParam ) );
