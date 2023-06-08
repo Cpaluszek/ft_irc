@@ -155,6 +155,8 @@ void Server::readClientRequest(unsigned int index) {
 
 	ssize_t nBytes = recv(clientFd, buffer, sizeof(buffer), 0);
 
+	std::cout << RED << buffer << RESET << std::endl;
+
 	if (nBytes <= 0) {
 		if (nBytes < 0) {
 			std::cout << "recv() error: " << strerror(errno) << std::endl;
@@ -167,9 +169,9 @@ void Server::readClientRequest(unsigned int index) {
 	}
 	client->socketBuffer += std::string(buffer);
 	size_t pos;
-	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
+	while ((pos = client->socketBuffer.find("\n")) != std::string::npos) {
 		std::string current = client->socketBuffer.substr(0, pos);
-		client->socketBuffer.erase(0, pos + 2);
+		client->socketBuffer.erase(0, pos + 1);
 		handleClientRequest(client, current);
 		if (this->_clients.find(clientFd) == this->_clients.end()) {
 			break ;
