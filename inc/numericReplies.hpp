@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:29 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:47:29 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/08 13:47:51 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,19 +236,12 @@
 #define ERR_INVITEONLYCHAN(nick, channel) (":" + SERVER_NAME + " 473 " + nick \
 		+ " " + channel + " :Cannot join channel (+i)\r\n")
 
-// 474
-#define ERR_BANNEDFROMCHAN
-
 // 475
 #define ERR_BADCHANNELKEY(nick, channel) (":" + SERVER_NAME + " 475 " + nick \
 		+ " " + channel + " :Cannot join channel (+k)\r\n")
 
 // 476
 #define ERR_BADCHANMASK(channel) (":" + SERVER_NAME + " 476 " + channel + " :Bad Channel Mask\r\n")
-
-// 481
-#define ERR_NOPRIVILEGES( nick ) (":" + SERVER_NAME + " 481 " + nick + " :" + "Permission Denied- \
-		You're not an IRC operator/r/n")
 
 // 482
 #define ERR_CHANOPRIVSNEEDED(nick, channel) (":" + SERVER_NAME + " 482 " + nick \
