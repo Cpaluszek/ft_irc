@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aurel <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:53 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:53 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/11 18:34:42 by aurel            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 		return ;
 	}
 	// No nickname given
-	std::string nick = request.args[0];
-	if (request.args.empty() || request.args[0].length() == 0) {
+	std::string nick;
+	if ( !request.args.empty() && request.args[0].length() != 0 )
+		nick = request.args[0];
+	else {
 		Server::sendToClient(client->socketFd, ERR_NONICKNAMEGIVEN(std::string("Client")));
 	}
 	// Invalid characters
-	else if (containsInvalidChars(nick)) {
+	if (containsInvalidChars(nick)) {
 		Server::sendToClient(client->socketFd, ERR_ERRONEUSNICKNAME(nick));
 	}
 	// Nickname already used
