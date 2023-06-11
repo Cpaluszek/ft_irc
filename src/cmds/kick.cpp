@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aurel <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:36 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:36 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/11 15:49:40 by aurel            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "commands.hpp" //TODO: When kick someone, channel page is not closed, so kicked people is always in a fake channel (alone), and can't rejoin the channel.
+#include "commands.hpp" //TODO: When someone is kicked, channel page is not closed, so kicked people is always in a fake channel (alone), and can't rejoin the channel.
 
 void kickFromChannel(Client *client, Client *user, Channel *channel, const std::string& reason);
 
