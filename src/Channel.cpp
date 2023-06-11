@@ -134,7 +134,7 @@ void Channel::addMode(char c) {
 void Channel::removeMode(char c) {
     size_t pos = this->_mode.find(c);
     if (pos != std::string::npos) {
-        this->_mode.erase(pos);
+        this->_mode.erase(pos, 1);
     }
 }
 

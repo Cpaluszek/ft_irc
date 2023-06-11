@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "commands.hpp"
+#include "commands.hpp" //TODO: When kick someone, channel page is not closed, so kicked people is always in a fake channel (alone), and can't rejoin the channel.
 
 void kickFromChannel(Client *client, Client *user, Channel *channel, const std::string& reason);
 

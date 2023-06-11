@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: aurel <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:41 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:41 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:33:12 by aurel            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ bool modeParamIsValid(const std::string &param)
 	int maxClient;
 	std::istringstream ss( param );
 	ss >> maxClient;
-	if ( ss.fail() && !ss.eof() )
+	std::cerr << maxClient << std::endl;
+	if ( ss.fail() || !ss.eof() )
 		return false;
 	return true;
 }
@@ -90,19 +91,32 @@ static bool lackOfParam( size_t i, const std::string& arg, int numberOfFlagsWith
 	return (i == arg.size() - 1 && numberOfFlagsWithParam > (int)sizeArgs - 2);
 }
 
-static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> flagsMap, int *numberOfFlagsWithParam, \
+static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> *flagsMap, int *numberOfFlagsWithParam, \
 	const Request &request, std::string *secondParam, const std::string& arg, size_t i, size_t sizeArgs )
 {
-	std::vector<std::string>::const_iterator itSecondParam = request.args.begin() + 2 + *numberOfFlagsWithParam;
+	std::cerr << "before creation iterator secondParam" << std::endl;
+	std::vector<std::string> requestArg = request.args;
+	std::vector<std::string>::const_iterator itSecondParam = requestArg.begin() + 2 + *numberOfFlagsWithParam;
+	std::vector<std::string>::const_iterator itSecondParamEnd = requestArg.end();
 
-	(*numberOfFlagsWithParam)++;
-	if ( itSecondParam != request.args.end() )
+	std::cerr << "NumberofParam=" << *numberOfFlagsWithParam << std::endl;
+	std::cerr << "iytSecond - 1 =" << *(itSecondParam - 1) << std::endl;
+	std::cerr << "iytSecond =" << *itSecondParam << std::endl;
+	std::cerr << "Before itSecond == end ?" << std::endl;
+	if ( itSecondParam != itSecondParamEnd )
+	{
 		*secondParam = *( itSecondParam );
-	else if ( lackOfParam( i, arg, *numberOfFlagsWithParam, sizeArgs ) ) 	{
-		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
-		flagsMap.clear();
-		return false;
+		++(*numberOfFlagsWithParam);
 	}
+	else if ( lackOfParam( i, arg, ++(*numberOfFlagsWithParam), sizeArgs ) ) 	{
+		{
+			std::cerr << "Enter in statement lackOfParam" << std::endl;
+			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
+			flagsMap->clear();
+			return false;
+		}
+	}
+	std::cerr << "after itSecond" << std::endl;
 	return true;
 }
 
@@ -126,9 +140,11 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 	for (size_t i = 0; i < itArgs->length(); ++i) {
 		if ( setTypeOfFlag( &typeOfFlag, arg[i] ) )
 			continue;
+		std::cerr << "2" << std::endl;
 		if ( containSecondParam( arg[i], typeOfFlag ) )
-			if ( !checkAndFillSecondParam( client, flagsMap, &numberOfFlagsWithParam, request, &secondParam, arg, i, sizeArgs ) )
+			if ( !checkAndFillSecondParam( client, &flagsMap, &numberOfFlagsWithParam, request, &secondParam, arg, i, sizeArgs ) )
 				return flagsMap;
+		std::cerr << "3" << std::endl;
 
 		switch ( arg[i] ) {
 			case 'i' :
@@ -175,8 +191,10 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					flagsMap[ L_RM_CLIENTLIMIT_CHANNELMOD ] = "";
 				break;
 			}
-			case 'n':
+			case 'n': {
 				typeOfFlag == ADD ? flagsMap[ N_ADD_CHANNELMODE ] = "" : flagsMap[ N_RM_CHANNELMODE ] = "";
+				break;
+			}
 			case ' ':
 				return flagsMap;
 			default: {
@@ -185,6 +203,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 				break;
 			}
 		}
+		std::cerr << "4" << std::endl;
 	}
 	return flagsMap;
 }
@@ -197,6 +216,7 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 
 	for (; itFlags != itFlagsEnd ; ++itFlags) {
 		std::string flagParam = itFlags->second;
+		std::cerr << "Flags->second: " << flagParam << std::endl;
 		switch ( itFlags->first ) {
 			case O_ADD_OP_CHANNELMOD:
 			{
@@ -243,9 +263,9 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				break;
 			}
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
-                channel->addMode('l');
 				channel->setClientLimit(flagParam);
-                break;
+				channel->addMode('l');
+				break;
 			case L_RM_CLIENTLIMIT_CHANNELMOD:
 				channel->removeMode('l');
 				break;
@@ -259,7 +279,7 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				channel->addMode('t');
                 channel->updateTopic(flagParam, client->nickName);
 				break;
-			case T_RM_PROTECTEDTOPIC_CHANNELMOD:
+			case T_RM_PROTECTEDTOPIC_CHANNELMOD: //TODO: '/mode -nt' erase only 'n', when 'tn' is ok
 				channel->removeMode('t');
 				break;
 			case K_ADD_KEY_CHANNELMOD:
@@ -317,8 +337,10 @@ void mode( Client *client, const Request &request, Server *server )
 	else
 		flagsMap = getFlags( client, request, USERMOD );
 	//Exec
+	std::cerr << "1" << std::endl;
 	if ( !flagsMap.empty() )
 		executeModeCmd(client, server, flagsMap, channel);
+	std::cerr << "5" << std::endl;
 //	std::map<int, std::string>::iterator itprint = flagsMap.begin(); //print map DEBUG
 //	for (;itprint != flagsMap.end() ; itprint++) {
 //		std::cout << itprint->first << std::endl;
