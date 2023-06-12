@@ -78,7 +78,7 @@ public:
     void        setKey(std::string &key);
 
 	// ------- LIMIT -------
-	void        setClientLimit(const std::string& limit);
+	void        setClientLimit(unsigned int value);
 	size_t      getClientLimit() const;
 
 	// ------- INVITE -------

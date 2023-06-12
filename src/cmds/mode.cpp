@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aurel <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:41 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/11 18:24:10 by aurel            ###   ########.fr       */
+/*   Updated: 2023/06/12 13:49:03 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool Request::requestModeIsValid( Client *client, Server *server ) const
 		return false;
 	}
 	else if ( formatIsModestring( *( itArgs + 1 ) ) )
-		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command ) );
+		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, this->command) );
 	return true;
 }
 
@@ -102,11 +102,9 @@ static bool checkAndFillSecondParam( Client *client, std::map<int, std::string> 
 		++(*numberOfFlagsWithParam);
 	}
 	else if ( lackOfParam( i, arg, ++(*numberOfFlagsWithParam), sizeArgs ) ) 	{
-
-			Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
-			flagsMap->clear();
-			return false;
-
+		Server::sendToClient( client->socketFd, ERR_NEEDMOREPARAMS( client->nickName, request.command) );
+		flagsMap->clear();
+		return false;
 	}
 	return true;
 }
@@ -171,7 +169,7 @@ std::map<int, std::string> getFlags( Client *client, const Request &request, int
 					if ( !modeParamIsValid(secondParam))
 					{
 						flagsMap.clear();
-						Server::sendToClient( client->socketFd, "Client MaxLimit has to be a number\r\n");
+						Server::sendToClient( client->socketFd, ERR_MSG(std::string("Client MaxLimit must be a positive number")));
 						return flagsMap;
 					}
 					flagsMap[ L_ADD_CLIENTLIMIT_CHANNELMOD ] = secondParam;
@@ -250,9 +248,18 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 				break;
 			}
 			case L_ADD_CLIENTLIMIT_CHANNELMOD:
-				channel->setClientLimit(flagParam);
+			{
+				std::istringstream cpp98Sucks(flagParam);
+				int limitValue;
+				cpp98Sucks >> limitValue;
+				if (cpp98Sucks.fail() || !cpp98Sucks.eof() || limitValue <= 0 || limitValue > 4096) {
+					Server::sendToClient( client->socketFd, ERR_MSG(std::string("Client MaxLimit must be a positive number")));
+					break ;
+				}
+				channel->setClientLimit(limitValue);
 				channel->addMode('l');
 				break;
+			}
 			case L_RM_CLIENTLIMIT_CHANNELMOD:
 				channel->removeMode('l');
 				break;
@@ -269,10 +276,15 @@ static void executeModeCmd(Client *client, Server *server, const std::map<int, s
 			case T_RM_PROTECTEDTOPIC_CHANNELMOD:
 				channel->removeMode('t');
 				break;
-			case K_ADD_KEY_CHANNELMOD:
+			case K_ADD_KEY_CHANNELMOD: {
+				if (flagParam.find(' ') != std::string::npos) {
+					Server::sendToClient( client->socketFd, ERR_INVALIDKEY(client->nickName, channel->getName()));
+					break ;
+				}
                 channel->addMode('k');
 				channel->setKey(flagParam);
                 break;
+			}
             case K_RM_KEY_CHANNELMOD:
                 channel->removeMode('k');
 				break;

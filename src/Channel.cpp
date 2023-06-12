@@ -148,14 +148,8 @@ channelUser * Channel::getChannelUserByNick(const std::string &nick) {
 }
 
 
-void Channel::setClientLimit(const std::string& limit) {
-	std::istringstream cpp98Sucks(limit);
-	int limitValue;
-	cpp98Sucks >> limitValue;
-	if (cpp98Sucks.fail() || cpp98Sucks.eof() || limitValue <= 0 || limitValue > 4096) {
-		return ;
-	}
-    this->_clientLimit = limitValue;
+void Channel::setClientLimit(unsigned int value) {
+    this->_clientLimit = value;
 }
 
 size_t Channel::getClientLimit() const {

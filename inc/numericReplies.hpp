@@ -249,3 +249,7 @@
 
 // 501
 #define ERR_UMODEUNKNOWNFLAG( nick, modes ) (":" + SERVER_NAME + " 501 " + nick + " :Unknown MODE flag : '" + modes + "\r\n")
+
+// 525
+#define ERR_INVALIDKEY(client, channel) (":" + SERVER_NAME + " 525 " + client \
+		+ " " + channel + " :Key is not well-formed\r\n")

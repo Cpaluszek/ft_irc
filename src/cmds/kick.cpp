@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aurel <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:36 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/11 15:49:40 by aurel            ###   ########.fr       */
+/*   Updated: 2023/06/12 13:30:43 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "commands.hpp" //TODO: When someone is kicked, channel page is not closed, so kicked people is always in a fake channel (alone), and can't rejoin the channel.
+#include "commands.hpp"
 
 void kickFromChannel(Client *client, Client *user, Channel *channel, const std::string& reason);
 
@@ -47,9 +47,8 @@ void	kickCmd(Client *client, const Request &request, Server *server)
 void kickFromChannel(Client *client, Client *user, Channel *channel, const std::string& reason)
 {
     Server::sendToClient(user->socketFd, RPL_CMD(user->nickName, user->userName, "KICK", channel->getName() + " " + client->nickName + " " + reason));
-    user->eraseChannel(channel->getName());
-    channel->eraseClient(user->nickName);
 	channel->sendToAllClients(
 			RPL_CMD(client->nickName, client->userName, "KICK", channel->getName() + " " + user->nickName + " " + reason));
+    user->eraseChannel(channel->getName());
+    channel->eraseClient(user->nickName);
 }
-
