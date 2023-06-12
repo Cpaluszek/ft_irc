@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:29 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/12 10:43:04 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:58:04 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@
 
 // 411
 # define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " + \
-		nick + " :No recipient given (command)\r\n")
+		nick + " :No recipient given <" + command +">\r\n")
 
 // 412
 # define ERR_NOTEXTTOSEND(nick) (":" + SERVER_NAME + " 412 " + nick + " :No text to send\r\n")

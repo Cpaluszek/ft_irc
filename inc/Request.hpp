@@ -30,7 +30,7 @@ public:
 	std::string command;
 	std::vector<std::string> args;
 
-	bool requestPrivMsgIsValid(Client *client) const;
+	bool requestPrivMsgIsValid(Client *client, const Request &request) const;
 	bool requestTopicIsValid(Client *client) const;
 	bool requestModeIsValid(Client *client, Server *server) const;
 };

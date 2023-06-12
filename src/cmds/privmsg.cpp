@@ -40,7 +40,7 @@ std::string extractMessage( const Request &request )
 }
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#privmsg-message)
-bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &request
+bool Request::requestPrivMsgIsValid(Client *client, const Request &request) const
 {
 	if (this->args.empty()) {
 		Server::sendToClient( client->socketFd, ERR_NORECIPIENT( client->nickName, request.command));
@@ -77,7 +77,7 @@ bool	Request::requestPrivMsgIsValid(Client *client) const//, const Request &requ
 
 void privmsgCmd(Client *client, const Request &request, Server *server) {
 
-	if ( !request.requestPrivMsgIsValid( client ) )
+	if ( !request.requestPrivMsgIsValid(client, request))
 		return ;
 	std::string target = extractTarget( request );
 	std::string messageToSend = extractMessage( request );
