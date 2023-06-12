@@ -15,7 +15,7 @@
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#ping-message)
 void pingCmd(Client *client, const Request &request, Server *server) {
 	(void) server;
-	if (request.args.empty()) {
+	if (request.args.empty() || request.args[0].empty()) {
 		Server::sendToClient(client->socketFd, ERR_NEEDMOREPARAMS(client->nickName, request.command));
 		return ;
 	}

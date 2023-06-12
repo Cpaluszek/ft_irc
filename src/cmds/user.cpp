@@ -19,7 +19,7 @@
  *
  * Example:
  * USER guest 0 * :Ronnie Reagan
- * 	- user get registered with username "guest" and real _name "Ronnie Reagan"
+ * 	- user get registered with username "guest" and realname "Ronnie Reagan"
  */
 void userCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty() || request.args.size() < 3){
