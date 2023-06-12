@@ -83,7 +83,7 @@ void joinCmd(Client *client, const Request &request, Server *server) {
 			continue ;
 		}
 		// check 1st char == # || &
-		if ((*nameIt)[0] != '#' && (*nameIt)[0] != '&') {
+		if ((*nameIt)[0] != '#') {
 			Server::sendToClient(client->socketFd, ERR_NOSUCHCHANNEL(client->nickName, *nameIt));
 			continue ;
 		}
