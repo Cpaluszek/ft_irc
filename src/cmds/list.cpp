@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:39 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:39 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:43:48 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,13 @@ void listCmd(Client *client, const Request &request, Server *server) {
 		Server::sendToClient(client->socketFd, RPL_LISTEND(client->nickName));
 		return ;
 	}
-	Channel *channel = server->getChannelByName(request.args[0]);
-	if (channel == NULL)
-		std::cerr << "No such channel: " << request.args[0] << std::endl;
-	else
-		sendChannelInformation(client, channel);
+	Server::vecStr targetChannels = Utils::split(request.args[0], ",", false);
+	Server::vecStrIt itNames;
+	for (itNames = targetChannels.begin(); itNames != targetChannels.end(); itNames++) {
+		Channel *channel = server->getChannelByName(*itNames);
+		if (channel == NULL)
+			std::cerr << "No such channel: " << *itNames << std::endl;
+		else
+			sendChannelInformation(client, channel);
+	}
 }
