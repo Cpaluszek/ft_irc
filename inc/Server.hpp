@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:43 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:47:43 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:47:45 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

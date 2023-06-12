@@ -6,15 +6,13 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:26 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:47:26 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 13:07:11 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Server.hpp"
-#include <sstream>
-#include <fstream>
 
 class Server;
 class Client;

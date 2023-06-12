@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "commands.hpp"
+#include <fstream>
 
 // [IRC Client Protocol Specification](https://modern.ircdocs.horse/#motd-message)
 void motdCmd(Client *client, const Request &request, Server *server) {

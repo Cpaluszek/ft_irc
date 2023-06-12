@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:45:17 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/12 10:39:15 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 13:17:36 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ void userCmd(Client *client, const Request &request, Server *server) {
 	client->userName = request.args[0];
 	if (request.args.size() > 3) {
 		client->realName = request.args[3];
+		if (client->realName[0] == ':') {
+			client->realName.erase(0, 1);
+		}
 	}
 	if (!client->nickName.empty()) {
 		client->addMode('r');
