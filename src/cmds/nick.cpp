@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:53 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/12 10:09:06 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 10:10:10 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void nickCmd(Client *client, const Request &request, Server *server) {
 	}
 	std::string nick = request.args[0];
 	// Invalid characters
-	if (containsInvalidChars(nick)) {
+	if (containsInvalidChars(nick) || request.args.size() > 1) {
 		Server::sendToClient(client->socketFd, ERR_ERRONEUSNICKNAME(nick));
 		return ;
 	}
