@@ -6,14 +6,14 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:47:29 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:47:51 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 10:43:04 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "Server.hpp"
 
-#define ERR_MSG(content) ("Error :" + content + "\r\n")
+#define ERR_MSG(content) ("Error: " + content + "\r\n")
 
 #define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@" + LOCAL_HOST_IP + " " + cmd \
 		+ " " + reply + "\r\n")
@@ -38,7 +38,7 @@
 
 // 003
 #define RPL_CREATED(nick, creationDate) (":" + SERVER_NAME + " 003 " + nick \
-		+ ":This server was created " + creationDate + "\r\n")
+		+ " :This server was created " + creationDate + "\r\n")
 
 // 004
 #define RPL_MYINFO(nick) (":" + SERVER_NAME + " 004 " + nick \
