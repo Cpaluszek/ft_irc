@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:12 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:12 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 10:15:19 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,12 @@ void Server::readClientRequest(unsigned int index) {
 		return ;
 	}
 	client->socketBuffer += std::string(buffer);
+
+#ifdef DEBUG
+	if (client->socketBuffer.find("\r\n") == std::string::npos)
+		std::cout << RED << "* " << buffer << std::endl;
+#endif
+
 	size_t pos;
 	while ((pos = client->socketBuffer.find("\r\n")) != std::string::npos) {
 		std::string current = client->socketBuffer.substr(0, pos);
