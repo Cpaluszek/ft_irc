@@ -39,6 +39,7 @@ public:
 	~Client();
 	void		updateNickname(const std::string& newNickname);
 	void		leaveAllChannels();
+	void 		leaveChannel(Channel *channel, const std::string& reason);
 
 	// ---- Channels ----
 	void		addChannel(Channel *newChannel);

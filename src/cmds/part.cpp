@@ -6,13 +6,11 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:44:57 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:44:57 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:32:14 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "commands.hpp"
-
-void leaveChannel(Client *client, Channel *channel, const std::string& reason);
 
 void	partCmd(Client *client, const Request &request, Server *server) {
 	if (request.args.empty()){
@@ -29,14 +27,6 @@ void	partCmd(Client *client, const Request &request, Server *server) {
 		else if (!client->isOnChannel(targetChannel))
 			Server::sendToClient(client->socketFd, ERR_NOTONCHANNEL(client->nickName, targetChannel));
 		else
-			leaveChannel(client, channel, reason);
+			client->leaveChannel(channel, reason);
 	}
-
-}
-
-void leaveChannel(Client *client, Channel *channel, const std::string& reason) {
-	channel->sendToAllClients(
-			RPL_CMD(client->nickName, client->userName, "PART", (channel->getName() + " " + reason)));
-	client->eraseChannel(channel->getName());
-	channel->eraseClient(client->nickName);
 }

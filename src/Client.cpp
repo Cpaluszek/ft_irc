@@ -6,7 +6,7 @@
 /*   By: cpalusze <cpalusze@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 13:43:59 by cpalusze          #+#    #+#             */
-/*   Updated: 2023/06/08 13:43:59 by cpalusze         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:26:41 by cpalusze         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,17 @@ void Client::eraseChannel(const std::string& channel) {
 }
 
 void	Client::leaveAllChannels() {
-	channelMapIt it = this->_channels.begin();
-	for(; it != this->_channels.end(); it++) {
-		Channel *channel = it->second;
-		channel->sendToAllClientsExceptSender(RPL_CMD(this->nickName, this->userName, "PART", (it->first + " leave all channels")), this);
-		channel->eraseClient(this->nickName);
+	while(!this->_channels.empty()) {
+		leaveChannel(this->_channels.begin()->second, "Leaving all channels");
 	}
 }
 
+void Client::leaveChannel(Channel *channel, const std::string& reason) {
+	channel->sendToAllClients(
+			RPL_CMD(this->nickName, this->userName, "PART", (channel->getName() + " " + reason)));
+	this->eraseChannel(channel->getName());
+	channel->eraseClient(this->nickName);
+}
 std::string Client::getMode() const {
 	return this->_mode;
 }
